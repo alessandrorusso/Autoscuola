@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="1.7" type="plugin" group="system">
+	<name>System - Simple jQuery</name>
+	<author>Giovanni Mansillo</author>
+	<creationDate>Febbraio 2012</creationDate>
+	<copyright>Giovanni Mansillo</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>giovanni.mansillo@gmail.com</authorEmail>
+	<version>1.1</version>
+	<description>Grazie per aver installato questa estensione: questo plugin permette di includere facilmente la libreria jQuery 1.7 all'interno delle pagine del sito.</description>
+	<files>
+		<filename plugin="simplejquery">simplejquery.php</filename>
+		<filename>simplejquery.xml</filename>
+		<filename>index.html</filename>
+		<folder>js</folder>
+	</files>
+	<config>
+		<fields name="params">
+			<fieldset name="basic" label="Impostazioni plugin">
+				<field name="safe-mode" type="radio" default="0"
+					description="Se questa opzione è attiva il plugin caricherà la copia locale di jquery (ver. 1.7) ignorando tutte le impostazioni del plugin."
+					label="Safe-mode"
+				>
+					<option value="1">On</option>
+					<option value="0">Off</option>
+				</field>
+				<field name="no-conflict" type="radio" default="1"
+					description="Questa opzione, se attiva, evita conflitti con altre librerie javascript."
+					label="Attiva jQuery noConflict"
+				>
+					<option value="1">Si</option>
+					<option value="0">No</option>
+				</field>
+				<field name="no-conflict-var" type="string" default=""
+					description="Se stai utilizzando la modalità noConflict, specifica qui l'indicatore da adottare come alias di jQuery (se lasciato vuoto verrà utilizzato l'alias predefinito 'jQuery'."
+					label="Alias jQuery"
+				>
+					<option value="1">Si</option>
+					<option value="0">No</option>
+				</field>
+				<field name="code" type="textarea" default=""
+					description="Esegui codice javascript personalizzato dopo aver caricato la libreria jQuery e le sue eventuali estensioni. Scrivi solo codice significativo o riscontrerai errori di compilazione nel caricamento della pagina!"
+					label="Codice personalizzato"
+				/>
+			</fieldset>
+			<fieldset name="advanced" label="Impostazioni funzionalità estese">
+				<field name="ui" type="radio" default="0"
+					description="Questa opzione, se attiva, estende le funzionalità della libreria caricando la User Interface di jQuery."
+					label="Carica jQuery UI"
+				>
+					<option value="1">Si</option>
+					<option value="0">No</option>
+				</field>
+				<field name="ui-style" type="list" default="0"
+					description="Se questa opzione è attiva, il plugin include nelle pagine del sito il css relativo allo stile per jQuery selezionato."
+					label="Carica stile per jQuery UI"
+				>
+					<option value="-1">disattivato</option>
+					<option value="0">base</option>
+					<option value="1">black-tie</option>
+					<option value="2">blitzer</option>
+					<option value="3">cupertino</option>
+					<option value="4">dark-hive</option>
+					<option value="5">dot-luv</option>
+					<option value="7">eggplant</option>
+					<option value="8">excite-bike</option>
+					<option value="9">flick</option>
+					<option value="10">hot-sneaks</option>
+					<option value="11">humanity</option>
+					<option value="12">le-frog</option>
+					<option value="13">mint-choc</option>
+					<option value="14">overcast</option>
+					<option value="15">pepper-grinder</option>
+					<option value="16">redmond</option>
+					<option value="17">smoothness</option>
+					<option value="18">south-street</option>
+					<option value="19">start</option>
+					<option value="20">sunny</option>
+					<option value="21">swanky-purse</option>
+					<option value="22">trontastic</option>
+					<option value="23">ui-darkness</option>
+					<option value="24">ui-lightness</option>
+					<option value="25">vader</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
