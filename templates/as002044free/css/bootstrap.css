@@ -5317,7 +5317,7 @@ progress-bar-stripes
 
 /***************************************************************************************/
 
-@media (min-width: 1200px) 
+@media (min-width: 1500px) 
 {
 	
 	.row
@@ -5355,7 +5355,7 @@ progress-bar-stripes
 	
 	.span12
 	{
-		width: 1132px;
+		width: 1500px;
 	}
 	
 	.span11
