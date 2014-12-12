@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><extension version="3.2" type="plugin" group="content" method="upgrade">
-	<name>Content - Load Gallery WD Lite</name>	<author>Web Dorado</author>	<creationDate>June 2014</creationDate>	<copyright>Copyright (C) 2014 Web-Dorado.com 2014. All rights reserved.</copyright> 	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>	<authorEmail>info@web-dorado.com</authorEmail>	<authorUrl>http://web-dorado.com/</authorUrl>	<version>1.0</version> 	<files>
-		<filename plugin="loadgallery_wd">loadgallery_wd.php</filename>
-		<filename>index.html</filename>
-	</files>
-</extension>
