@@ -17,7 +17,7 @@
 body
 {
 	
-	color: #121212;
+	color: #104160;
 	background-image: url("../images/bg.body.png");	
 }
 
@@ -683,7 +683,7 @@ blockquote.pull-right
 .body__home #featured-row,
 #featured-row .container
 {
-	background-color: #161616;
+	background-color: #104160;
 	background-image: url(../images/styles/black/bg.featured.png);
 }
 
