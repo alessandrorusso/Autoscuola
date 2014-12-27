@@ -6988,7 +6988,7 @@ body {
 	background-image: -webkit-radial-gradient(circle,#165387,#142849);
 	background-image: -moz-radial-gradient(circle,#165387,#142849);
 	background-image: -o-radial-gradient(circle,#165387,#142849);
-	background-image: radial-gradient(circle,#165387,#142849);
+	background-image: radial-gradient(circle,#ffffff,#142849);
 	background-repeat: no-repeat;
 }
 .view-login .container {
@@ -7021,7 +7021,7 @@ body {
 	height: 24px;
 	width: 24px;
 	text-indent: -9999px;
-	background: url('../images/login-joomla.png') no-repeat;
+	
 	margin-left: -12px;
 }
 .view-login .navbar-fixed-bottom {
@@ -7153,7 +7153,7 @@ body .navbar-fixed-top {
 	height: auto;
 }
 .page-title {
-	color: white;
+	color: black;
 	text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
 	font-weight: normal;
 	font-size: 20px;
