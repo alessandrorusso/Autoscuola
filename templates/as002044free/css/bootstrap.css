@@ -2587,6 +2587,7 @@ input[type="submit"].btn.btn-mini
 	font-size: 0;
 	white-space: nowrap;
 	*margin-left: .3em;
+        
 }
 
 .btn-group:first-child
