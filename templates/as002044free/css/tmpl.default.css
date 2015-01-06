@@ -645,9 +645,6 @@ ul.categories-module h5
 
 .moduletable ul li
 {
-	line-height: 25px;
-	list-style-image: url("../images/liststyle.1.png");
-	list-style-position: inside;
 }
 
 .moduletable ul.item-list li
