@@ -321,15 +321,7 @@ include ('includes/includes.php');
                       Copyright &copy; <?php echo date('Y'); ?> <?php echo $app->getCfg('sitename'); ?>
                   </div>                
                   <div id="copyright-menu" class="row">
-                      <!-- DO NOT REMOVE OR CHANGE THE CONTENT BELOW, THIS THEME MAY NOT WORK PROPERLY -->
                       
-                          <div id="ascopy">
-                          <a href="http://www.astemplates.com/" target="_blank">
-                              &nbsp;&nbsp;&nbsp;&nbsp;DESIGNED BY:&nbsp;&nbsp;AS DESIGNING
-                          </a>
-                          </div>
-                      
-                      <!-- DO NOT REMOVE OR CHANGE THE CONTENT ABOVE, THIS THEME MAY NOT WORK PROPERLY -->
                   </div>  
             </div>
         </div>

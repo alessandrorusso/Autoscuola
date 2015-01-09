@@ -86,7 +86,7 @@ $sitename = $app->get('sitename');
 		<div id="content">
 			<!-- Begin Content -->
 			<div id="element-box" class="login well">
-				<img src="<?php echo $this->baseurl; ?>/templates/<?php echo $this->template ?>/images/testata.jpg" alt="Joomla!" />
+				<img src="<?php echo $this->baseurl; ?>/templates/<?php echo $this->template ?>/images/logo-administrator.png"/>
 				<hr />
 				<jdoc:include type="message" />
 				<jdoc:include type="component" />
