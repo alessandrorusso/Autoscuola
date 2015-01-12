@@ -2077,6 +2077,7 @@ p .price
 #featured-row .moduletable
 {
 	margin-top: 15px;
+        margin-bottom: 0px;
 }
 
 #featured-row .moduletable .moduletable-wrapper

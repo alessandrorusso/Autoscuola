@@ -27,6 +27,7 @@ class AriExtMenuHelper
 
 		$doc =& JFactory::getDocument();
 		$doc->addStyleSheet($cssUrl . 'menu.min.css');
+                $doc->addStyleSheet($cssUrl . 'menu.min.sub.css');
 		$doc->addStyleSheet($cssUrl . 'menu.fix.css');
 		$doc->addCustomTag('<!--[if IE]><link rel="stylesheet" type="text/css" href="' . $cssUrl . 'menu.ie.min.css" /><![endif]-->');
 		if ($loadExtJS)

@@ -83,7 +83,7 @@ img
 	max-width: 100%;
 	height: auto;
 	vertical-align: middle;
-	border: 0;
+	border: 20px;
 	-ms-interpolation-mode: bicubic;
 }
 
