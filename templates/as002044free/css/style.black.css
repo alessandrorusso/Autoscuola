@@ -24,7 +24,8 @@ body
 
 a
 {
-	color: #4BBBE1;	
+	color: #4BBBE1;
+        
 }
 
 a:hover,
@@ -437,7 +438,7 @@ a.readmore:hover,
 
 .pagination ul li a.pagenav
 {
-	color: #161616;
+	color: #ffffff;
 }
 
 .pagination ul li.num span.pagenav
@@ -731,6 +732,8 @@ blockquote.pull-right
 {
 	background-color: #161616;
     color: #FFFFFF;
+    margin-left: 20px;
+    width: 40%;
 }
 
 
