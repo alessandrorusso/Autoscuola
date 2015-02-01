@@ -133,6 +133,7 @@
 						<option value="style.cherry.css">Cherry</option>	
 						<option value="style.forest.css">Forest</option>																				
 						<option value="style.orange.css">Orange</option>	
+                                                <option value="style.gray.css">Gray</option>	
 				</field>
 				<field type="spacer" label=" " />
 				
