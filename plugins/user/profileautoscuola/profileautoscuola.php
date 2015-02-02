@@ -62,7 +62,8 @@ class plgUserProfileautoscuola extends JPlugin
 		$form->setFieldAttribute('region', 'required', 'required', 'profileautoscuola');		
 		$form->setFieldAttribute('postal_code', 'required', 'required', 'profileautoscuola');
 		$form->setFieldAttribute('phone', 'required', 'required', 'profileautoscuola');
-		$form->setFieldAttribute('office', 'required', 'required', 'profileautoscuola');		
+		$form->setFieldAttribute('office', 'required', 'required', 'profileautoscuola');
+                $form->setFieldAttribute('license', 'required', 'required', 'profileautoscuola');   
     }
  
     function onUserAfterSave($data, $isNew, $result, $error)

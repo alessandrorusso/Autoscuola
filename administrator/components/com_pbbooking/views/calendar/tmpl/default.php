@@ -31,7 +31,10 @@ defined('_JEXEC') or die('Restricted access');
 				                <?php echo JText::_( 'ID' ); ?>
 				            </th>
 				            <th><?php echo JText::_( 'COM_PBBOOKING_CAL_NAME' ); ?></th>
+                                            <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_OFFICE');?></th>
+                                            <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_TRANSPORT');?></th>
 				            <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_EMAIL');?></th>
+                                            <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_STATUS');?></th>                                            
 				        </tr>            
 				    </thead>
 					<?php
@@ -47,7 +50,10 @@ defined('_JEXEC') or die('Restricted access');
 				            <td><?php echo $checked;?></td>
 							<td><?php echo $row['id']; ?></td>
 				       		<td><?php echo $row['name']; ?></td>
+                                                <td><?php echo $row['office']; ?></td>
+                                                <td><?php echo $row['transport']; ?></td>
 				       		<td><?php echo (isset($row['email'])) ? $row['email'] : '';?></td>
+                                                <td><?php echo ($row['status']== 0) ? 'Chiuso' : 'Aperto';?></td>
 				        </tr>
 				        <?php
 				        $k = 1 - $k;

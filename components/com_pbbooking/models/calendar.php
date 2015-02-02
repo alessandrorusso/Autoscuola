@@ -16,6 +16,7 @@ public $events;
 public $kTimeslots;
 public $cal_id;
 public $name;
+public $office;
 
 function __construct() {
 
@@ -49,6 +50,7 @@ function loadCalendarFromDbase($cals)
 	if ($this->cal_id > 0) {
 		$cal = $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($this->cal_id))->loadObject();
 		$this->name = $cal->name;
+                $this->office = $cal->office;
 	}
 
 	

@@ -128,7 +128,14 @@ td.bookings a {
 			<!-- end draw date rows -->
 		
 		</table>
-	</div>
+            <div style="margin-top: 15px;">
+            <select name="office" id="office">
+                <?php foreach ($this->cal_objs as $cal) :?>
+                <option value="<?php echo $cal->cal_id ;?>"><?php echo $cal->office ;?></option>                
+                <?php endforeach;?>
+            </select>
+            </div>
+	</div>       
 
 	<div class="span8">
 		

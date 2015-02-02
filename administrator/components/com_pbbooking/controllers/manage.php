@@ -41,7 +41,7 @@ class PbbookingsControllermanage extends JControllerLegacy
 		$view->date = (JRequest::getVar('date')) ? date_create(JRequest::getVar('date'),new DateTimeZone(PBBOOKING_TIMEZONE)) : date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE));
 		$db->setQuery('select * from #__pbbooking_config');
 		$view->config = $db->loadObject();
-		$db->setQuery('select * from #__pbbooking_cals');
+		$db->setQuery('select * from #__pbbooking_cals where status=1');
 		$view->cals = $db->loadObjectList();
 		$view->cal_objs = array();
 		foreach ($view->cals as $cal) {

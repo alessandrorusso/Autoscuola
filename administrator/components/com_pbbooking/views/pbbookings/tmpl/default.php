@@ -80,37 +80,6 @@ defined('_JEXEC') or die('Restricted access');
 		</div>
 	</div>
 
-
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="well well-small">
-				<div class="module-title nav-header"><?php echo JText::_('COM_PBBOOKING_DASHBOARD_ANNOUNCEMENTS');?></div>
-					<div class="row-striped">
-					<?php foreach ($this->announcements as $announcement) :?>
-					<div class="row-fluid">
-						<div class="span12">
-							<strong><?php echo $announcement->get_title();?></strong>
-						</div>
-					</div>
-					<div class="row-fluid">
-						<div class="span12">
-							<?php echo $announcement->get_description();?>
-							<p>
-								<hr style="width:90%;margin:0px auto;color:#F0F0EE;"/>
-							</p>
-							<i><?php echo JText::_('COM_PBBOOKING_DASHBOARD_ANNOUNCEMENT_POSTED');?> <?php echo $announcement->get_date();?></i>
-						</div>
-					</div>
-
-					<?php endforeach;?>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-
-
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php //echo $listOrder; ?>" />

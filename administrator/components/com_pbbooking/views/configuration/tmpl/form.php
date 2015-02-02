@@ -133,24 +133,24 @@ defined('_JEXEC') or die('Restricted access');
 
 
 	<div class="tab-pane" id="date-configuration">
-		<p>For compatibility with PBBooking please ensure all date formats are in the format accepted by PHP's date command.</p>
-		<p>Refer to the <?php echo JHtml::_('link','http://www.php.net/manual/en/function.date.php','PHP reference manual');?> for an example.</p>
+		<p>Fare attenzione ad inserire un formato data supportato da PHP.</p>
+		<p>Fare riferimento al <?php echo JHtml::_('link','http://www.php.net/manual/en/function.date.php','PHP reference manual');?> per un esempio.</p>
 		<div class="control-group">
-			<label class="control-label">Calendar Heading Date Format</label>
+			<label class="control-label">Formato Data Intestazione Calendario</label>
 			<div class="controls">
 				<input type="text" class="input-medium" name="date_format_heading" id="date_format_heading" size="64" maxlength="250" value="<?php echo $this->configuration['date_format_heading'];?>" />
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">Calendar Cell Date Format</label>
+			<label class="control-label">Formato Data Cella Calendario</label>
 			<div class="controls">
 				<input type="text" class="input-medium" name="date_format_cell" id="date_format_cell" size="64" maxlength="250" value="<?php echo $this->configuration['date_format_cell'];?>" />
 	        </div>
 	    </div>
 
 	    <div class="control-group">
-	    	<label class="control-label">Confirmation Messages Date Format:</label>
+	    	<label class="control-label">Formato Data Messaggi di Conferma:</label>
 	    	<div class="controls">
 				<input type="text" class="input-medium" name="date_format_message" id="date_format_message" size="64" maxlength="250" value="<?php echo $this->configuration['date_format_message'];?>" />
 	        </div>
@@ -158,7 +158,7 @@ defined('_JEXEC') or die('Restricted access');
 	</div>
 
 	<div class="tab-pane" id="publish-subscribe-settings">
-		<p>Please be careful configuring this.  This section will allow remote downloads of all details stored in your calendars.</p>
+		<p>Attenzione a questa configurazione. Questa sezione consentirà il download remoto di tutti i dettagli salvati nei calendari.</p>
 		<div class="control-group">
 			<label class="control-label"><?php echo JText::_( 'COM_PBBOOKING_ALLOW_SUBSCRIBE' ); ?>:</label>
 			<div class="controls">

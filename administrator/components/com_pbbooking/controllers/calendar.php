@@ -79,7 +79,7 @@ class PbbookingsControllercalendar extends JControllerLegacy
 			$view->calendar = $cals[0];
 			$view->trading_hours = ($cals[0]['hours'] > '') ? json_decode($cals[0]['hours'],true) : json_decode($config->trading_hours,true);
 		} else {
-			$view->calendar = Array("in_cal"=>1,"out_cal"=>0,"id"=>0,"name"=>"Calendar Name",'email'=>'');
+			$view->calendar = Array("in_cal"=>1,"out_cal"=>0,"id"=>0,"name"=>"Nome Calendario",'office'=>'Colleferro','transport'=>'auto1','email'=>'','status'=>1);
 		}
 
 	    $view->display();
@@ -92,18 +92,29 @@ class PbbookingsControllercalendar extends JControllerLegacy
 		$in_cal = JRequest::getVar('in_cal',0);
 		$out_cal = JRequest::getVar('out_cal',0);
 		$name = JRequest::getVar('name');
+                $office = JRequest::getVar('office');
+                $transport = JRequest::getVar('transport');
 		$id = JRequest::getVar('id');
 		$is_open_arr = JRequest::getVar('is-open');
 		$email = JRequest::getVar('email');
+                $status = JRequest::getVar('status');
+                $has_pause_arr = JRequest::getVar('has-pause');
 
 		//retreive opening hours
-		$opening_hours = array();
+		$opening_hours = array();                
 		$i=0;
 		foreach (array('sunday','monday','tuesday','wednesday','thursday','friday','saturday') as $day) {
 			if (in_array($i,$is_open_arr)) {
 				$open_time = JRequest::getVar('open-time-'.$i);
 				$close_time = JRequest::getVar('close-time-'.$i);
-				$opening_hours[$i] = array('status'=>'open','open_time'=>$open_time,'close_time'=>$close_time);
+                                if(in_array($i, $has_pause_arr)){
+                                    $pause_star_time = JRequest::getVar('pause-start-time-'.$i);
+                                    $pause_end_time = JRequest::getVar('pause-end-time-'.$i);
+                                    $opening_hours[$i] = array('status'=>'open','open_time'=>$open_time,'close_time'=>$close_time,'pause'=>'yes', 'pause_start_time'=>$pause_star_time,'pause_end_time'=>$pause_end_time);
+                                }
+                                else{
+                                    $opening_hours[$i] = array('status'=>'open','open_time'=>$open_time,'close_time'=>$close_time);
+                                }				
 			} else {
 				$opening_hours[$i] = array('status'=>'closed');
 			}
@@ -114,11 +125,11 @@ class PbbookingsControllercalendar extends JControllerLegacy
 		$opening_hours_string = (count($opening_hours)>0) ? json_encode($opening_hours) : '';
 
 		if ($id !=0) {
-			$sql = sprintf("update #__pbbooking_cals set in_cal=%s,out_cal=%s,name='%s', hours = '%s', email = '%s' where id = %s",
-				$in_cal,$out_cal,$db->escape($name),$db->escape($opening_hours_string),$db->escape($email),$id);
+			$sql = sprintf("update #__pbbooking_cals set in_cal=%s,out_cal=%s,name='%s', hours = '%s', email = '%s', office = '%s', transport = '%s', status = '%s' where id = %s",
+				$in_cal,$out_cal,$db->escape($name),$db->escape($opening_hours_string),$db->escape($email), $db->escape($office),$db->escape($transport),$db->escape($status), $id);
 		} else {
-			$sql = sprintf("insert into #__pbbooking_cals (in_cal,out_cal,name,hours,email) values (%s,%s,'%s','%s','%s')",
-			$in_cal,$out_cal,$db->escape($name),$db->escape($opening_hours_string),$db->escape($email));
+			$sql = sprintf("insert into #__pbbooking_cals (in_cal,out_cal,name,hours,email, office, transport, status) values (%s,%s,'%s','%s','%s','%s','%s','%s')",
+			$in_cal,$out_cal,$db->escape($name),$db->escape($opening_hours_string),$db->escape($email), $db->escape($office),$db->escape($transport),$db->escape($status));
 		}
 					
 		$db->setQuery( $sql );
@@ -140,6 +151,20 @@ class PbbookingsControllercalendar extends JControllerLegacy
 		}
 		$this->setRedirect( 'index.php?option=com_pbbooking&controller=calendar', null );
 	}
+        
+        function close()
+        {
+            $ids = JRequest::getVar('cid');
+		foreach ($ids as $id) 
+		{
+			$sql = sprintf("update #__pbbooking_cals set status = 0 where id = %s",$id);
+			//echo $sql;
+			$db =JFactory::getDBO();
+			$db->setQuery($sql);
+			$db->query();
+		}
+		$this->setRedirect( 'index.php?option=com_pbbooking&controller=calendar', null );
+        }
 	
 
 }

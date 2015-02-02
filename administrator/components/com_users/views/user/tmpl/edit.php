@@ -18,7 +18,7 @@ JHtml::_('formbehavior.chosen', 'select');
 // Get the form fieldsets.
 $fieldsets = $this->form->getFieldsets();
 ?>
-
+<script src="<?php echo JURI::root(false);?>administrator/components/com_users/scripts/profileautoscuola.js"></script>
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
 	{

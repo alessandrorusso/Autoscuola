@@ -2,6 +2,7 @@
 	
 	$doc = JFactory::getDocument();
 	$doc->addStyleSheet(JURI::root(false)."components/com_pbbooking/user_view.css");
+        $user =& JFactory::getUser();
 ?>
 
 
@@ -11,6 +12,7 @@
 	<tr>
 		<th></th> <!-- first column left blank to display time slots -->
 		<?php foreach ($this->cals as $cal) :?>
+                    <?php if() :?>
 			<th><?php echo $cal->name;?></th>
 		<?php endforeach;?>
 	</tr>

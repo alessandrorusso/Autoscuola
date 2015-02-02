@@ -74,6 +74,27 @@
 			<option value="Palestrina">palestrina</option>
 			<option value="Paliano">paliano</option>
 			</field>	
+                        
+                        <field
+				name="license"
+				type="text"
+				id="license"
+				required="true"
+				description="PLG_USER_PROFILEAUTOSCUOLA_FIELD_LICENSE_DESC"
+				filter="string"
+				label="PLG_USER_PROFILEAUTOSCUOLA_FIELD_LICENSE_LABEL"
+				size="30"			
+				
+			>
+			<option value="A">A</option>
+			<option value="B">B</option>
+			<option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="AM">AM</option>
+                        <option value="Nautica">Nautica</option>
+                        <option value="Speciali">Speciali</option>
+			</field>	
 			
 			<field
 				name="car"
@@ -83,10 +104,34 @@
 				filter="string"
 				label="PLG_USER_PROFILEAUTOSCUOLA_FIELD_CAR_LABEL"
 				size="30"
-			>
-								
+			>                         
 				<option value="Auto1">auto1</option>
 				<option value="Auto2">auto2</option>
+                                <!--option value="Auto3">auto3</option-->
+			</field>
+                        
+                        <field
+				name="bike"
+				type="text"
+				id="bike"
+				description="PLG_USER_PROFILEAUTOSCUOLA_FIELD_BIKE_DESC"
+				filter="string"
+				label="PLG_USER_PROFILEAUTOSCUOLA_FIELD_BIKE_LABEL"
+				size="30"
+			>			
+				<option value="Moto1">moto1</option>				
+			</field>
+                        
+                        <field
+				name="truck"
+				type="text"
+				id="truck"
+				description="PLG_USER_PROFILEAUTOSCUOLA_FIELD_TRUCK_DESC"
+				filter="string"
+				label="PLG_USER_PROFILEAUTOSCUOLA_FIELD_TRUCK_LABEL"
+				size="30"
+			>                                
+				<option value="Camion1">camion1</option>
 			</field>
 		</fieldset>
 	</fields>

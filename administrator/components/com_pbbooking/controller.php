@@ -29,7 +29,11 @@ class PbbookingsController extends JControllerLegacy
 
         //load some data for the view....
         $query = $db->getQuery(true);
-        $query->select('#__pbbooking_events.*,#__pbbooking_treatments.name')->from('#__pbbooking_events')->join('inner','#__pbbooking_treatments on #__pbbooking_events.service_id = #__pbbooking_treatments.id')->order('#__pbbooking_events.dtstart DESC')->where('#__pbbooking_events.dtstart >= "'.date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM).'"');
+        $query->select('#__pbbooking_events.*,#__pbbooking_treatments.name')
+              ->from('#__pbbooking_events')
+              ->join('inner','#__pbbooking_treatments on #__pbbooking_events.service_id = #__pbbooking_treatments.id')
+              ->order('#__pbbooking_events.dtstart DESC')
+              ->where('#__pbbooking_events.dtstart = "'.date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM).'"');
         $query->setLimit(10,0);
         $view->upcoming_events = $db->setQuery($query)->loadObjectList();
 
@@ -76,12 +80,7 @@ class PbbookingsController extends JControllerLegacy
             $view->cals[$i] = new Calendar();
             $view->cals[$i]->loadCalendarFromDbase(array($cal->id),$view->dtstart,$view->dtend); 
             $view->cals[$i]->name = $cal->name;
-        }
-
-
-
-        //get the latest announcemenets into the view
-        $view->announcements = $this->_load_announcements();
+        }        
 
         $view->config = $config;
 
