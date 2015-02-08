@@ -24,7 +24,7 @@ body
 
 a
 {
-	color: #4BBBE1;
+	color: #343A90;
         
 }
 
@@ -730,9 +730,10 @@ f
 #header-bottom-row h2,
 #header-bottom-row h3
 {
-	background-color: #e1e1e1;
-    color: #FFFFFF;
-    margin-left: 0px;
+    
+    background-color: #ffffff;
+    color: red;
+    margin-left: -34px;
     width: 40%;
 }
 
@@ -774,6 +775,7 @@ f
 #content-row-3 .moduletable-wrapper
 {
 	border: 1px solid #eee;
+        margin-top: -289px;
 }
 
 

@@ -114,6 +114,22 @@ include ('includes/includes.php');
                                 </div>
                                 <?php endif; ?>                            
                             </div>
+                            <?php $user =& JFactory::getUser(); ?>
+
+ <?php if ($user->get('guest')) { ?>   
+                            
+  <?php }else{  //echo 'You are logged in as: '. $user->username; ?>
+                            
+  <div style="text-align: right; width: 1100px;">
+                            <img src="images/freccia-login.png" alt="Smiley face" >
+                            Benvenuto
+     <?php 
+    print ($user->get('name'));
+   
+  ?>
+  </div>
+  <?php }?>
+                            
 							<?php if ($this->countModules('as-position-4')): ?>
                             <jdoc:include type="modules" name="as-position-4" style="themeHtml5" />
 							<?php endif; ?>
@@ -156,7 +172,29 @@ include ('includes/includes.php');
                     <div class="row">
                         <jdoc:include type="modules" name="as-position-6" style="themeHtml5" />
                     </div>
+                    
                 </div>
+                <div style="text-align: center; width: 1200px;margin-left: 20px;">
+                    <span style="font-family:CenturyGothic, AppleGothic, sans-serif; color:graytext;font-size:12px">
+                        <span style="font-family:CenturyGothic, AppleGothic, sans-serif;font-size: 18px;">Conti Autoscuole & Delegazione Aci</span></br></br>
+                    Il Gruppo “Conti Autoscuole & Delegazione Aci” sin dal 1985 si ispira a migliorare tutti i servizi per Voi clienti</br> 
+                    attraverso la formazione di personale giovane e qualificato.</br></br>
+                    
+                Ci distinguiamo nell’insegnamento e nell’istruzione della guida utilizzando metodi </br>
+                    all’avanguardia con l’ausilio di supporti informatici e multimediali, che ogni singolo allievo avrà </br>
+                    a disposizione sia in aula che comodamente da casa.</br></br>
+
+                    Le nostre agenzie di pratiche auto e delegazione ACI sono gestite da consulenti automobilistici </br>
+                    in grado offrire un servizio sempre efficiente e professionale al fine di soddisfare ogni Vostra richiesta. </br></br>
+
+                    Vi aspettiamo presso le nostre sedi di <span style="font-family:CenturyGothic, AppleGothic, sans-serif;font-size: 15px;">Colleferro, Palestrina e Paliano.</span></br></br>
+                    </span>
+                    
+                    
+                   
+                    
+                </div> 
+                
             </div>
             <div class="wrapper-featured-bottom">
             </div>          
@@ -187,6 +225,7 @@ include ('includes/includes.php');
                     <?php if(($this->countModules('as-position-10') || $this->countModules('as-position-11')) && 
 									($hideByOption) == false && $view !== 'form' && $layout !== 'edit'): ?>
                     <div id="aside-left" class="span<?php echo $aside_left_width; ?>">
+                        &nbsp;
                         <aside>
                         	<?php if($this->countModules('as-position-11')): ?>
                         	<div id="aside-row-2-left">
@@ -202,20 +241,21 @@ include ('includes/includes.php');
                         </aside>
                     </div>
                     <?php endif; ?>
+                    <div></div>
                     <!-- END OF COlUMN LEFT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
                             
                     <!-- COLUMN MAIN ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->                
                     <div id="component" class="span<?php echo $mainContentWidth; ?>">
                 
                         <?php if ($this->countModules('as-position-20')): ?>
-                        <div id="content-row-1" class="row">
+                        <div  id="content-row-1" class="row">
                             <div class="content-row-1">
                                 <jdoc:include type="modules" name="as-position-20" style="themeHtml5" />
                             </div>
                         </div>
                         <?php endif; ?>
                         <?php if ($this->countModules('as-position-21')): ?>
-                        <div id="content-row-2" class="row">
+                        <div   style="width: 600px" id="content-row-2" >
                             <div class="content-row-2">
                                 <jdoc:include type="modules" name="as-position-21" style="themeHtml5" />
                             </div>

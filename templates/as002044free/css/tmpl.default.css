@@ -641,6 +641,7 @@ ul.categories-module h5
 .moduletable ul
 {
 	margin-left: 0px;
+        margin-top: -19px;
 }
 
 .moduletable ul li
@@ -2084,6 +2085,7 @@ p .price
 #featured-row .moduletable .moduletable-wrapper
 {
 	padding: 0 25px 25px; 
+        margin-top: 30px;
 }
 
 #featured-row .mod-newsflash .item img, 
@@ -2206,7 +2208,7 @@ p .price
 
 #header-bottom-row .moduletable-wrapper
 {
-	margin-left: 20px;
+	margin-left: 40px;
 }
 
 #header-bottom-row h2,
@@ -2838,7 +2840,9 @@ aside .moduletable
 
 #aside-row-1-right .moduletable
 {
-	margin-left: 30px;
+    margin-top: -154px;	
+    margin-left: -129px;
+    width:600px;    
 }
 
 #aside-row-2-right .moduletable
