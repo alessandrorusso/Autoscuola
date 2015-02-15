@@ -121,13 +121,13 @@ include ('includes/includes.php');
   <?php }else{  //echo 'You are logged in as: '. $user->username; ?>
                             
   <div style="text-align: right; width: 1100px;">
-                            <img src="images/freccia-login.png" alt="Smiley face" >
-                            Benvenuto
+                           <!-- <img src="images/freccia-login.png" alt="Smiley face" > -->
+                                <h7>Benvenuto
      <?php 
     print ($user->get('name'));
    
   ?>
-  </div>
+  </div></h7>
   <?php }?>
                             
 							<?php if ($this->countModules('as-position-4')): ?>
