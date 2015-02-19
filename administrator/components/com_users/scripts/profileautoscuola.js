@@ -1,8 +1,18 @@
 window.addEvent('domready',function(){
-    
+        
+    if(jQuery('#jform_profileautoscuola_car').val() == ''){
         jQuery('#jform_profileautoscuola_car').parent().parent().hide();
+    }
+    
+    if(jQuery('#jform_profileautoscuola_bike').val() == ''){
         jQuery('#jform_profileautoscuola_bike').parent().parent().hide();
-        jQuery('#jform_profileautoscuola_truck').parent().parent().hide();
+    }
+    
+    if(jQuery('#jform_profileautoscuola_truck').val() == ''){
+        jQuery('#jform_profileautoscuola_truck').parent().parent().hide();    
+    }
+        
+        
 	
 	jQuery('#jform_profileautoscuola_license').change(function(){
             

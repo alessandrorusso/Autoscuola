@@ -530,5 +530,23 @@ class Pbbookinghelper
 		}
 
 	}
+        
+        public static function evaluate_user_profile_transport(){
+            $user =& JFactory::getUser();
+            $userProfile = JUserHelper::getProfile($user->id);
+            $transportField = '';
+            switch ($userProfile->profileautoscuola['license']){
+                case "A" :
+                    $transportField = $userProfile->profileautoscuola['bike'];
+                    break;
+                case "B" :
+                    $transportField = $userProfile->profileautoscuola['car'];
+                    break;
+                case "C" :
+                    $transportField = $userProfile->profileautoscuola['truck'];
+                    break;
+            }
+            return $transportField;
+        }
 
 }

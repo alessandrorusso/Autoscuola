@@ -16,13 +16,24 @@ defined('_JEXEC') or die('Restricted access');
 	$just_days = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
 	
 		
+JHtml::_('behavior.formvalidation');
+
 ?>
-
-
+<script type="text/javascript">
+	Joomla.submitbutton = function(task)
+	{
+		if (task == 'display' || document.formvalidator.isValid(document.id('adminForm')))
+		{
+			Joomla.submitform(task, document.getElementById('adminForm'));
+		}
+                else{
+                    
+                }
+	}
+</script>
 <div class="bootstrap-wrap">
-
  
-<form action="index.php" method="POST" name="adminForm" id="adminForm">
+    <form action="index.php" method="POST" name="adminForm" id="adminForm" class="form-validate">
 	<div class="row-fluid">
 
 		<div class="span12">
@@ -35,26 +46,26 @@ defined('_JEXEC') or die('Restricted access');
 			        <table class="admintable" style="width:100%;">
 				   	<tr>
 				            <td align="left" class="key" width="200">
-				                <label>
-				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_NAME' ); ?>:
+                                                <label for="name">
+				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_NAME' ); ?>
 				                </label>
 				            </td>
 							<td>
-				                <input class="text_area" type="text" name="name" id="name" size="64" maxlength="250" value="<?php echo $this->calendar['name'];?>" />
+                                                            <input class="text_area required" type="text" name="name" id="name" size="64" maxlength="250" value="<?php echo $this->calendar['name'];?>" required="required"/>
 				            </td>
 				        </tr>
                                         
                                         <tr>
 				            <td align="left" class="key" width="200">
 				                <label>
-				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_OFFICE' ); ?>:
+				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_OFFICE' ); ?>
 				                </label>
 				            </td>
                                             <td>
-                                                <select name="office" id="office">
-                                                    <option value="Colleferro" <?php if($this->calendar['office'] == 'Colleferro') echo ' selected="selected"';?>>Colleferro</option>
-                                                    <option value="Paliano" <?php if($this->calendar['office'] == 'Paliano')  echo ' selected="selected"';?>>Paliano</option>
-                                                    <option value="Palestrina"<?php if($this->calendar['office'] == 'Palestrina') echo ' selected="selected"';?>>Palestrina</option>
+                                                <select name="office" id="office">                                                    
+                                                    <?php foreach ($this->office as $currentOffice):?>
+                                                        <option value="<?php echo $currentOffice['id'];?>" <?php if($this->calendar['office'] == $currentOffice['id']) echo ' selected="selected"';?>><?php echo $currentOffice['desc'];?></option>                                                                                                                
+                                                    <?php endforeach;?>
                                                 </select>				                
 				            </td>
 				        </tr>
@@ -62,16 +73,29 @@ defined('_JEXEC') or die('Restricted access');
                                         <tr>
 				            <td align="left" class="key" width="200">
 				                <label>
-				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_TRANSPORT' ); ?>:
+				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_LICENSE' ); ?>
+				                </label>
+				            </td>
+                                            <td>
+                                                <select name="license" id="license">
+                                                    <?php foreach ($this->license as $currentLicense):?>
+                                                        <option value="<?php echo $currentLicense['id'];?>" <?php if($this->calendar['license'] == $currentLicense['id']) echo ' selected="selected"';?>><?php echo $currentLicense['desc'];?></option>                                                                                                                
+                                                    <?php endforeach;?>                                                    
+                                                </select>				                
+				            </td>
+				        </tr>
+                                        
+                                        <tr>
+				            <td align="left" class="key" width="200">
+				                <label>
+				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_TRANSPORT' ); ?>
 				                </label>
 				            </td>
                                             <td>
                                                 <select name="transport" id="transport">
-                                                    <option value="auto1" <?php if($this->calendar['transport'] == 'auto1') echo ' selected="selected"';?>>Auto 1</option>
-                                                    <option value="auto2" <?php if($this->calendar['transport'] == 'auto2') echo ' selected="selected"';?>>Auto 2</option>
-                                                    <option value="auto3"<?php if($this->calendar['transport'] == 'auto3') echo ' selected="selected"';?>>Auto 3</option>
-                                                    <option value="moto1" <?php if($this->calendar['transport'] == 'moto1') echo ' selected="selected"';?>>Moto 1</option>
-                                                    <option value="camion1"<?php if($this->calendar['transport'] == 'camion1') echo ' selected="selected"';?>>Camion 1</option>
+                                                    <?php foreach ($this->transport as $currentTransport):?>
+                                                        <option value="<?php echo $currentTransport['id'];?>" <?php if($this->calendar['transport'] == $currentTransport['id']) echo ' selected="selected"';?>><?php echo $currentTransport['desc'];?></option>                                                                                                                
+                                                    <?php endforeach;?>                                                      
                                                 </select>				                
 				            </td>
 				        </tr>
@@ -79,7 +103,7 @@ defined('_JEXEC') or die('Restricted access');
 				   	<tr>
 				            <td align="left" class="key">
 				                <label >
-				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_EMAIL' ); ?>:
+				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_EMAIL' ); ?>
 				                </label>
 				            </td>
 							<td>
@@ -90,7 +114,7 @@ defined('_JEXEC') or die('Restricted access');
                                         <tr>
 				            <td align="left" class="key" width="200">
 				                <label>
-				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_STATUS' ); ?>:
+				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_STATUS' ); ?>
 				                </label>
 				            </td>
                                             <td>
@@ -139,6 +163,4 @@ defined('_JEXEC') or die('Restricted access');
 <input type="hidden" name="task" value="save" />
 <input type="hidden" name="controller" value="calendar" />
 </form>
-
-
 </div>

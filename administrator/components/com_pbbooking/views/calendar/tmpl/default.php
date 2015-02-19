@@ -32,6 +32,7 @@ defined('_JEXEC') or die('Restricted access');
 				            </th>
 				            <th><?php echo JText::_( 'COM_PBBOOKING_CAL_NAME' ); ?></th>
                                             <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_OFFICE');?></th>
+                                            <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_LICENSE');?></th>
                                             <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_TRANSPORT');?></th>
 				            <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_EMAIL');?></th>
                                             <th><?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_STATUS');?></th>                                            
@@ -50,9 +51,16 @@ defined('_JEXEC') or die('Restricted access');
 				            <td><?php echo $checked;?></td>
 							<td><?php echo $row['id']; ?></td>
 				       		<td><?php echo $row['name']; ?></td>
-                                                <td><?php echo $row['office']; ?></td>
-                                                <td><?php echo $row['transport']; ?></td>
-				       		<td><?php echo (isset($row['email'])) ? $row['email'] : '';?></td>
+                                                <?php foreach ($this->office as $currentOffice):?>
+                                                <?php if($row['office'] == $currentOffice['id']){ ?><td><?php echo $currentOffice['desc'];?></td><?php } ?>
+                                                <?php endforeach;?>      
+                                                <?php foreach ($this->license as $currentLicense):?>
+                                                <?php if($row['license'] == $currentLicense['id']){ ?><td><?php echo $currentLicense['desc'];?></td><?php } ?>
+                                                <?php endforeach;?>      
+                                                <?php foreach ($this->transport as $currentTransport):?>
+                                                <?php if($row['transport'] == $currentTransport['id']){ ?><td><?php echo $currentTransport['desc'];?></td><?php } ?>
+                                                <?php endforeach;?>      
+                                                <td><?php echo (isset($row['email'])) ? $row['email'] : '';?></td>
                                                 <td><?php echo ($row['status']== 0) ? 'Chiuso' : 'Aperto';?></td>
 				        </tr>
 				        <?php

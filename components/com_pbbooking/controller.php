@@ -275,9 +275,17 @@ class PbbookingController extends JControllerLegacy
 		$view->dt_last_slot = clone $view->day_dt_end;
 		$view->dt_last_slot->modify('- '.$config->time_increment.' minutes');
 
+                $user = JFactory::getUser();
+                $userProfile = JUserHelper::getProfile($user->id);
 		foreach ($cals as $i=>$cal) {
-			$view->cals[$i] = new Calendar();
-			$view->cals[$i]->loadCalendarFromDbase(array($cal->id)); 
+                    if($cal->status == 1 && strcasecmp($cal->office, $userProfile->profileautoscuola['office']) == 0){
+                        $transportField = Pbbookinghelper::evaluate_user_profile_transport();                     
+                        if(!$transportField || strcasecmp($cal->transport, $transportField) == 0){
+                            $view->cals[$i] = new Calendar();
+                            $view->cals[$i]->loadCalendarFromDbase(array($cal->id));                         
+                            
+                        }
+                    }
 		}
 
 		$view->setLayout('dayview');
@@ -316,5 +324,4 @@ class PbbookingController extends JControllerLegacy
 		$view->setLayout('create');
 		$view->display();
 	}
-
 }

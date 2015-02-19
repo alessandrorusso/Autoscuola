@@ -130,8 +130,9 @@ td.bookings a {
 		</table>
             <div style="margin-top: 15px;">
             <select name="office" id="office">
+                <option value="">Seleziona un Calendario</option>
                 <?php foreach ($this->cal_objs as $cal) :?>
-                <option value="<?php echo $cal->cal_id ;?>"><?php echo $cal->office ;?></option>                
+                <option value="<?php echo $cal->cal_id ;?>"><?php echo $cal->name ;?></option>                
                 <?php endforeach;?>
             </select>
             </div>
