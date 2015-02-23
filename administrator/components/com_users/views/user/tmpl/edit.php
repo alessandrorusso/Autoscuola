@@ -17,6 +17,11 @@ JHtml::_('formbehavior.chosen', 'select');
 
 // Get the form fieldsets.
 $fieldsets = $this->form->getFieldsets();
+$formData = $this->form->getData();
+$transportId = "null";
+if($formData['profileautoscuola']->transport){
+    $transportId = $formData['profileautoscuola']->transport;
+}
 ?>
 <script src="<?php echo JURI::root(false);?>administrator/components/com_users/scripts/profileautoscuola.js"></script>
 <script type="text/javascript">
@@ -43,6 +48,17 @@ $fieldsets = $this->form->getFieldsets();
 			}
 		});
 	}
+        
+        window.addEvent('domready',function(){            
+            var url = 'index.php?option=com_pbbooking&controller=calendar&task=populateTransport&licenseId='+jQuery('#jform_profileautoscuola_license').val();
+            var selectedTransport = <?php echo $transportId ?>;            
+            populateTransport(url, jQuery('#jform_profileautoscuola_license').val(), selectedTransport, "#jform_profileautoscuola_transport");    
+                        
+            jQuery('#jform_profileautoscuola_license').change(function(){
+                var url = 'index.php?option=com_pbbooking&controller=calendar&task=populateTransport&licenseId='+jQuery('#jform_profileautoscuola_license').val();
+                populateTransport(url, jQuery('#jform_profileautoscuola_license').val(), "", "#jform_profileautoscuola_transport");                                                        
+            });
+        });
 </script>
 
 <form action="<?php echo JRoute::_('index.php?option=com_users&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="user-form" class="form-validate form-horizontal" enctype="multipart/form-data">

@@ -34,9 +34,37 @@
 
 ?>
 
-
-
-
+<script type="text/javascript">
+        window.addEvent('domready',function(){            
+            jQuery('#pbbooking tbody td a').click(function(event){ 
+                var dateParam = getURLParameter(jQuery(this).attr('href'), 'dateparam');
+                var selectedTime = new Date(dateParam.substring(0,4), dateParam.substring(4,6)-1, dateParam.substring(6,8));             
+                var today = new Date();                
+                var tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate()+1);
+                var maxTime = new Date(today);
+                maxTime.setDate(today.getDate()+15);
+                if(selectedTime < today){
+                    alert("Non è possibile selezionare una data passata!");
+                    event.preventDefault();
+                }                
+                else if(selectedTime <= tomorrow){
+                    alert("Occorre prenotare con più di 24 ore di anticipo!");                    
+                    event.preventDefault();
+                }
+                else if(selectedTime > maxTime){
+                    alert("E' possibile prenotare con un massimo di 15 giorni di anticipo!");
+                    event.preventDefault();
+                }                
+            });
+        });
+        
+        function getURLParameter(url, name) {
+            return (RegExp(name + '=' + '(.+?)(&|$)').exec(url)||[,null])[1];
+        }
+        
+        
+</script>
 <div class="calendar-window">
 
 	<div id="calendar">

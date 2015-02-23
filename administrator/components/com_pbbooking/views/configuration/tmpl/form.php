@@ -65,13 +65,20 @@ defined('_JEXEC') or die('Restricted access');
 
 
 	<div class="tab-pane" id="view-settings">
-		
+		<div class="control-group">
+			<label class="control-label"><?php echo JText::_( 'COM_PBBOOKING_BLOCK_SAME_DAY' ); ?>:</label>
+			<div class="controls">
+				<input type="checkbox" name="block_same_day" value="1" <?php if ($this->configuration['block_same_day']) {echo "checked=\"checked\"";}?>/>
+			</div>
+		</div>
+            
 		<div class="control-group">
 			<label class="control-label"><?php echo JText::_( 'COM_PBBOOKING_CONFIG_SHOW_LINK' ); ?>:</label>
 			<div class="controls">
 				<input type="checkbox" name="show_link" value="1" <?php if ($this->configuration['show_link']) {echo "checked=\"checked\"";}?>/>
 			</div>
 		</div>
+                
 		<div class="control-group">
 			<label class="control-label"><?php echo JText::_( 'COM_PBBOOKING_CONFIG_SHOW_PRICES' ); ?>:</label>
 			<div class="controls">

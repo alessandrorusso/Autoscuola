@@ -19,7 +19,9 @@ defined('_JEXEC') or die('Restricted access');
 JHtml::_('behavior.formvalidation');
 
 ?>
-<script type="text/javascript">
+
+<script src="<?php echo JURI::root(false);?>administrator/components/com_users/scripts/profileautoscuola.js"></script>
+<script type="text/javascript">                 
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'display' || document.formvalidator.isValid(document.id('adminForm')))
@@ -30,6 +32,13 @@ JHtml::_('behavior.formvalidation');
                     
                 }
 	}
+        
+        window.addEvent('domready',function(){            
+            jQuery('#license').change(function(){
+                var url = 'index.php?option=com_pbbooking&controller=calendar&task=populateTransport&licenseId='+jQuery('#license').val();
+                populateTransport(url, jQuery('#license').val(), "", "#transport");                                        
+            });
+        });
 </script>
 <div class="bootstrap-wrap">
  
@@ -72,12 +81,13 @@ JHtml::_('behavior.formvalidation');
                                         
                                         <tr>
 				            <td align="left" class="key" width="200">
-				                <label>
+                                                <label for="license">
 				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_LICENSE' ); ?>
 				                </label>
 				            </td>
                                             <td>
-                                                <select name="license" id="license">
+                                                <select name="license" id="license" class="required">
+                                                    <option value=""> --Seleziona una Patente-- </option>
                                                     <?php foreach ($this->license as $currentLicense):?>
                                                         <option value="<?php echo $currentLicense['id'];?>" <?php if($this->calendar['license'] == $currentLicense['id']) echo ' selected="selected"';?>><?php echo $currentLicense['desc'];?></option>                                                                                                                
                                                     <?php endforeach;?>                                                    
@@ -87,12 +97,13 @@ JHtml::_('behavior.formvalidation');
                                         
                                         <tr>
 				            <td align="left" class="key" width="200">
-				                <label>
+                                                <label for="transport">
 				                    <?php echo JText::_( 'COM_PBBOOKING_CAL_OVERRIDE_TRANSPORT' ); ?>
 				                </label>
 				            </td>
                                             <td>
-                                                <select name="transport" id="transport">
+                                                <select name="transport" id="transport" class="required">
+                                                    <option value=""> --Seleziona una Veicolo-- </option>
                                                     <?php foreach ($this->transport as $currentTransport):?>
                                                         <option value="<?php echo $currentTransport['id'];?>" <?php if($this->calendar['transport'] == $currentTransport['id']) echo ' selected="selected"';?>><?php echo $currentTransport['desc'];?></option>                                                                                                                
                                                     <?php endforeach;?>                                                      

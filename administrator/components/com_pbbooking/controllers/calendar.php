@@ -81,7 +81,7 @@ class PbbookingsControllercalendar extends JControllerLegacy
             $sql = "select * from #__pbbooking_cals where id = ".$cid[0];
             $db->setQuery( $sql );
             $cals = $db->loadAssocList();            
-            $this->setupLov($db, $view);    
+            $this->setupLov($db, $view, $cals[0]['license']);    
             $view->calendar = $cals[0];
             $view->trading_hours = ($cals[0]['hours'] > '') ? json_decode($cals[0]['hours'],true) : json_decode($config->trading_hours,true);
         } else {
@@ -173,7 +173,29 @@ class PbbookingsControllercalendar extends JControllerLegacy
         $this->setRedirect( 'index.php?option=com_pbbooking&controller=calendar', null );
     }
     
-    private function setupLov($db, $view)
+    function populateTransport(){
+        JFactory::getDocument()->setMimeEncoding( 'application/json' );
+        JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+        $licenseId = JRequest::getVar('licenseId');
+        $db =JFactory::getDBO();        
+        echo json_encode($this->calculateTransport($db, $licenseId));        
+        JFactory::getApplication()->close(); // or jexit();
+    }
+    
+    private function calculateTransport($db, $licenseId){
+        if($licenseId){
+            $sql = sprintf("select tr.* from  #__pbbooking_lov_transport tr, #__pbbooking_lov_transport_license tr_ls "
+             . "where tr.id = tr_ls.id_transport and "
+             . "tr_ls.id_license = %s", $licenseId);        
+        }
+        else {
+            $sql = "select * from #__pbbooking_lov_transport";
+        }
+        $db->setQuery( $sql );
+        return $db->loadAssocList();
+    } 
+
+    private function setupLov($db, $view, $licenseId)
     {        
         //Office loading...
         $sqlOffice = "select * from #__pbbooking_lov_office";
@@ -188,15 +210,7 @@ class PbbookingsControllercalendar extends JControllerLegacy
         $view->license = $lovLicense;
         
         //Transport loading...
-        $sqlTransport = "select * from #__pbbooking_lov_transport";
-        $db->setQuery( $sqlTransport );
-        $lovTransport = $db->loadAssocList();
-        $view->transport = $lovTransport;
-        
-        //Transport_License loading...
-        $sqlTransportLicense = "select * from #__pbbooking_lov_transport_license";
-        $db->setQuery( $sqlTransportLicense );
-        $lovTransportLicense = $db->loadAssocList();
-        $view->transportLicense = $lovTransportLicense;
+        $lovTransport = $this->calculateTransport($db, $licenseId);
+        $view->transport = $lovTransport;                
     }
 }

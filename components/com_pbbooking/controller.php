@@ -279,15 +279,16 @@ class PbbookingController extends JControllerLegacy
                 $userProfile = JUserHelper::getProfile($user->id);
 		foreach ($cals as $i=>$cal) {
                     if($cal->status == 1 && strcasecmp($cal->office, $userProfile->profileautoscuola['office']) == 0){
-                        $transportField = Pbbookinghelper::evaluate_user_profile_transport();                     
-                        if(!$transportField || strcasecmp($cal->transport, $transportField) == 0){
-                            $view->cals[$i] = new Calendar();
-                            $view->cals[$i]->loadCalendarFromDbase(array($cal->id));                         
-                            
+                        $licenseField = $userProfile->profileautoscuola['license'];                        
+                        if(strcmp($cal->license, $userProfile->profileautoscuola['license']) == 0){
+                            $transportField = $userProfile->profileautoscuola['transport'];                            
+                            if(!$transportField || strcasecmp($cal->transport, $transportField) == 0){
+                               $view->cals[$i] = new Calendar();
+                                $view->cals[$i]->loadCalendarFromDbase(array($cal->id));
+                            }
                         }
                     }
 		}
-
 		$view->setLayout('dayview');
 		$view->display();
 		
