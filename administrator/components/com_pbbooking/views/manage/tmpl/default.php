@@ -22,6 +22,7 @@
 	$end_selected_day->setTime(23,59,59);
 	
 	$version = new JVersion;
+        JHTML::_('behavior.modal');
 ?>
 
 
@@ -68,6 +69,82 @@ td.bookings a {
 
 
 </style>
+<link href="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/css/jquery-ui.css" rel="stylesheet" type="text/css">
+<script src="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/scripts/jquery-ui.min.js"></script>
+<script>
+    jQuery(document).ready(function() {
+    
+    var width = jQuery(window).width();
+    var height = jQuery(window).height();
+    
+    function addNote() {
+        jQuery('#text').removeClass("ui-state-error");
+        if(jQuery('#text').val() == ""){
+            jQuery('#text').addClass("ui-state-error");
+            return false;
+        }
+        var id ='';
+        if(jQuery('.post-it').length > 0){
+            id =jQuery('.post-it')[0].id.substring(5);            
+        }
+         
+        var date ="<?php echo $this->date->format('Y-m-d');?>";
+        var url = 'index.php?option=com_pbbooking&controller=manage&task=add_note&noteDate='+date+'&noteText='+jQuery('#text').val()+'&nodeId='+id;
+        jQuery.getJSON( url, function( data ) {
+           if(jQuery('.post-it').length > 0){
+               jQuery('.post-it')[0].id='note_'+data.id;
+               jQuery('.post-it')[0].text=data.text;
+            }
+            else{
+              jQuery('p').attr('class', 'post-it').attr('id', 'note_'+data.id).text(data.text).insertBefore('.openModal');  
+            }
+            jQuery('.openModal')[0].text='Modifica Nota';
+            jQuery('#dialog-form').dialog( "close" );
+        }).fail(function() {
+            alert('Errore nel salvataggio della Nota. Si prega di riprovare.'); // or whatever
+        });
+    }
+    
+    jQuery('#dialog-form').dialog({
+      autoOpen: false,
+      height: (height-(height*0.40)),
+      width: (width-(width*0.40)),
+      modal: true,
+      buttons: {
+        "Salva Nota": addNote,
+        Cancel: function() {
+          jQuery('#dialog-form').dialog( "close" );
+        }
+      },
+      close: function() {
+        jQuery('#dialog-form').find( "form" )[0].reset();        
+      }
+    });
+        
+    jQuery('#modalForm').on('submit', function( event ) {
+        event.preventDefault();
+        addNote();
+    });
+    
+    jQuery('.openModal').click(function() {        
+        if(jQuery('.post-it').length > 0){
+            jQuery('#text').val(jQuery('.post-it').text());            
+        }
+        jQuery('#dialog-form').dialog('open');
+    });  
+    
+});
+</script>
+
+<div id="dialog-form" title="Inserisci Nota">
+    <form id="modalForm" class="adminForm">
+    <fieldset>
+      <label for="text">Testo Nota</label>
+      <textarea name="text" rows="8" id="text" class="text ui-widget-content ui-corner-all" style="width: 98%;"></textarea> 
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+</div>
 
 <div class="bootstrap-wrap">
 <div class="row-fluid">
@@ -135,6 +212,20 @@ td.bookings a {
                 <option value="<?php echo $cal->cal_id ;?>"><?php echo $cal->name ;?></option>                
                 <?php endforeach;?>
             </select>
+            </div>
+            <div style="margin-top: 15px;" id="noteContainer">
+                <?php if ($this->day_notes):?>
+                    <?php foreach ($this->day_notes as $day_note) :?>                
+                        <?php if ($day_note->date == $this->date->format('Y-m-d')):?>                            
+                            <p id="note_<?php echo $day_note->id; ?>" class="post-it"><?php echo $day_note->text; ?></p>
+                            <a href="#" class="openModal">Modifica nota</a>
+                        <?php else:?>
+                            <a href="#" class="openModal">Aggiungi Nota</a>
+                        <?php endif;?>
+                    <?php endforeach;?>			
+		<?php else:?>
+                            <a href="#" class="openModal">Aggiungi una Nota</a>
+		<?php endif;?>
             </div>
 	</div>       
 

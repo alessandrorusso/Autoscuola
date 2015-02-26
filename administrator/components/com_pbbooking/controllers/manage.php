@@ -38,9 +38,12 @@ class PbbookingsControllermanage extends JControllerLegacy
 		$view = $this->getView('manage','html');
 		
 		//stuff params
+                $view->dateString = JRequest::getVar('date') ? JRequest::getVar('date') : '';
 		$view->date = (JRequest::getVar('date')) ? date_create(JRequest::getVar('date'),new DateTimeZone(PBBOOKING_TIMEZONE)) : date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE));
 		$db->setQuery('select * from #__pbbooking_config');
 		$view->config = $db->loadObject();
+                $db->setQuery('select * from #__pbbooking_day_note');
+                $view->day_notes = $db->loadObjectList();
 		$db->setQuery('select * from #__pbbooking_cals where status=1');
 		$view->cals = $db->loadObjectList();
 		$view->cal_objs = array();
@@ -59,7 +62,7 @@ class PbbookingsControllermanage extends JControllerLegacy
 		$view->dt_end->setTime((int)$closing_time_arr[0],(int)$closing_time_arr[1]);
 		
 		//display the view.
-		JToolbarHelper::addNew('create');
+		//JToolbarHelper::addNew('create');
 		$view->display();
     }
     
@@ -339,9 +342,35 @@ class PbbookingsControllermanage extends JControllerLegacy
 		
 		$view->display();
 	}
-	
+        
+        function add_note()
+	{
+            JFactory::getDocument()->setMimeEncoding( 'application/json' );
+            JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+            $noteId = JRequest::getVar('noteId') ? JRequest::getVar('noteId') : 0;
+            $date = (JRequest::getVar('noteDate'));
+            $text = JRequest::getVar('noteText');
+            $db = JFactory::getDbo();
+            try{
+                $day_note = new JObject(array('date'=>$db->escape($date),'text'=>$db->escape($text)));
+                if ($noteId != 0) {
+                    $day_note->setProperties(array('id'=>$noteId));
+                    $db->updateObject('#__pbbooking_day_note',$day_note, 'id');
+                }		
+                else{
+                    $db->insertObject('#__pbbooking_day_note',$day_note); 
+                    $lastRowId = $db->insertid();
+                    $day_note->setProperties(array('id'=>$lastRowId));
+                }
+                
+                echo json_encode($day_note);        
+                JFactory::getApplication()->close(); // or jexit();
 
-
-
-
+            } catch (Exception $ex) {
+                var_dump($ex);
+                echo 'Caught exception: ',  $ex->getMessage(), "\n";
+                JFactory::getApplication()->close(); // or jexit();
+            }
+            
+	}
 }

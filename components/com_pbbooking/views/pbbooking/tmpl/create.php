@@ -6,6 +6,9 @@
 	//push in mootools.
 	Jhtml::_('behavior.framework');
 	Jhtml::_('behavior.framework','more');
+        
+        $user = JFactory::getUser();
+        $userProfile = JUserHelper::getProfile($user->id);
 ?>
 
 <link rel="stylesheet" href="<?php echo JURI::root(false);?>components/com_pbbooking/user_view.css" type="text/css"/>
@@ -21,13 +24,33 @@
 
 	<?php
 		echo '<input type="hidden" name="date" id="text-date" value='.$this->dateparam->format('Ymd').'>';
+                echo '<input type="hidden" name="userId" id="userId" value='.$user->id.'>';
+                echo '<input type="hidden" name="name" id="name" value='.$user->name.'>';
+                echo '<input type="hidden" name="phone" id="phone" value='.$userProfile->profileautoscuola['phone'].'>';
+                echo '<input type="hidden" name="email" id="email" value='.$user->email.'>';
 	?>
 	
 	<h2><?php echo JText::_('COM_PBBOOKING_YOURDETAILS');?></h2>
 	
 	
 	<!-- begin render custom fields -->
-	<table style="width:80%;" class="pbbooking-data-table">
+	<table class="pbbooking-data-table">
+            <tr>
+                <td style="width:200px;">Nome</td>
+                <td><?php echo $user->name; ?></td>
+            </tr>
+            <tr>
+                <td>Telefono</td>
+                <td><?php echo $userProfile->profileautoscuola['phone']; ?></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td><?php echo $user->email; ?></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
 	<?php foreach($this->customfields as $customfield) : ?>
 		<tr>
 			<td><?php echo $customfield->fieldname;?></td>
@@ -79,8 +102,7 @@
 		<tr>
 			<td><?php echo JText::_('COM_PBBOOKING_BOOKINGTYPE');?></td>
 			<td>
-				<select name="treatment_id">
-					<option value="0"><?php echo JText::_('COM_PBBOOKING_SELECT_DEFAULT');?></option>
+				<select name="treatment_id">					
 					<?php foreach($this->treatments as $treatment) : ?>
 						<option value="<?php echo $treatment->id;?>" 
 							<?php echo ($this->cal->can_book_treatment_at_time($treatment->id,$this->dateparam,$this->closing_time)) ? null : 'disabled';?>
@@ -103,17 +125,11 @@
 	
 	<!-- begin render service types -->
 	<?php $i=0;?>
-	<h3></h3>
 	<div id="service-error-msg"></div>
-	
-	
-	
 	<!-- end render service types -->
 	<div style="text-align:center;">
 		<p></p><input type="submit" value="<?php echo JText::_('COM_PBBOOKING_SUBMIT_BUTTON');?>" id="pbbooking-submit"></p>
 	</div>
-	
-	
 	
 	<input type="hidden" name="cal_id" id="text-cal-id" value="<?php echo $this->cal->cal_id;?>"/> 
 	<input type="hidden" name="date" value="<?php echo $this->dateparam->format('Ymd');?>"/>

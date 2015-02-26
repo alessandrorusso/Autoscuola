@@ -31,7 +31,7 @@ if (isset($this->calendar_message)) {
 }
  
 if ($this->config->show_link) {
-	echo '<p>Powered by <a href="http://www.purplebeanie.com">PBBooking - Online Booking for Joomla</a>.</p>';
+	echo '';
 }
 
 ?>
