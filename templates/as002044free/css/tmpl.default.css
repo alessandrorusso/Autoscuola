@@ -642,6 +642,8 @@ ul.categories-module h5
 {
 	margin-left: 0px;
         margin-top: -19px;
+        list-style-type: square;
+        color: red;
 }
 
 .moduletable ul li
