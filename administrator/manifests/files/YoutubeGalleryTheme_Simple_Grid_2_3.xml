@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="file" version="2.5.0" method="install">
+    <name>YoutubeGalleryTheme_Simple_Grid_2_3</name>
+    <version>4.2.5</version>
+    <creationDate>September 2014</creationDate>
+    <author>Super User</author>
+    <authorEmail>admin@designcompasscorp.com</authorEmail>
+    <authorUrl>http://www.joomlaboat.com/administrator/</authorUrl>
+    <license>http://www.gnu.org/licenseses/gpl-2.0.html GNU/GPL</license>
+    <description><![CDATA[
+
+		      <h3>YoutubaGallery Theme - Simple Grid 2.3</h3>
+<div><a href="http://www.joomlaboat.com/youtube-gallery/youtube-gallery-themes" target="_blank">
+More Themes</a></div>
+			 <div><br/>If you use YoutubeGallery, please post a
+			 review at the <a href="http://extensions.joomla.org/extensions/social-web/social-media/video-channels/13075" target="_blank">Joomla! Extensions Directory.</a> Thank you.<div>
+			 <br/><br/>
+]]></description>
+	
+	<installfile>install.php</installfile>
+	<scriptfile>install.php</scriptfile>
+	
+	<files>
+		<filename>Simple_Grid_2_3.xml</filename>
+		<filename>theme.txt</filename>
+		<filename>install.php</filename>
+</files>
+</extension>

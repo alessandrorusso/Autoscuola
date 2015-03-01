@@ -62,7 +62,7 @@ class PbbookingsControllermanage extends JControllerLegacy
 		$view->dt_end->setTime((int)$closing_time_arr[0],(int)$closing_time_arr[1]);
 		
 		//display the view.
-		//JToolbarHelper::addNew('create');
+		JToolbarHelper::addNew('create');
 		$view->display();
     }
     
