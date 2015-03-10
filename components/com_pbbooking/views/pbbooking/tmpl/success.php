@@ -20,18 +20,32 @@ defined('_JEXEC') or die('Restricted access');
 
 <table>
 	<tr>
-		<th>
-			<?php echo JTEXT::_('COM_PBBOOKING_SUCCESS_DATE');?>
-		</th>
-		<td>
-			<?php echo JHtml::_('date',date_create($this->pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),$this->config->date_format_message);?>
-		</td>
-	<tr><th><?php echo JTEXT::_('COM_PBBOOKING_SUCCESS_TIME');?></th><td><?php echo Jhtml::_('date',date_create($this->pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></td></tr>
-	<tr><th><?php echo JTEXT::_('COM_PBBOOKING_BOOKINGTYPE');?></th><td><?php echo $this->service->name;?></td></tr>
+            <th>
+                <?php echo JTEXT::_('COM_PBBOOKING_SUCCESS_DATE');?>
+            </th>
+            <td style="padding-left: 3px;">
+                <?php echo JHtml::_('date',date_create($this->pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),$this->config->date_format_message);?>
+            </td>
+	<tr>
+            <th>
+                <?php echo JTEXT::_('COM_PBBOOKING_SUCCESS_TIME');?>
+            </th>
+            <td style="padding-left: 3px;">
+                <?php echo Jhtml::_('date',date_create($this->pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?>
+            </td>
+        </tr>
+	<tr>
+            <th>
+                <?php echo JTEXT::_('COM_PBBOOKING_BOOKINGTYPE');?>
+            </th>
+            <td style="padding-left: 3px;">
+                <?php echo $this->service->name;?>
+            </td>
+        </tr>
 	<?php if (isset($this->calendar)) {?>
 		<tr><th><?php echo JTEXT::_('COM_PBBOOKING_SUCCESS_CALENDAR');?></th><td><?php echo $this->calendar->name;?></td></tr>
 	<?php
-	}?>
+	}?>                    
 </table>
-
-<p><?php echo ($this->config->validation != 'admin') ? JTEXT::_('COM_PBBOOKING_SUCCESS_VALIDATION_MESSAGE') : JText::_('COM_PBBOOKING_SUCCESS_PENDING_ADMIN_VALIDATION_NOTICE');?></p>
+<br>
+<br>

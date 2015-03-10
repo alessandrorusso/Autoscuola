@@ -106,8 +106,7 @@ class PbbookingController extends JControllerLegacy
         $config = $db->loadObject();
     	
         //load up the appointment data in an array.
-        $data = array();
-        $error = false;
+        $data = array();        
         	
         $data['treatment_id'] = JRequest::getInt('treatment_id',0);
         $data['date'] = JRequest::getVar('date',"");
@@ -116,10 +115,10 @@ class PbbookingController extends JControllerLegacy
         
         $user = JFactory::getUser();
         $data['calendar-user'] = $user->id;                
-        $pending_id = Pbbookinghelper::save_pending_event($_POST);                    
+        $pending_id = Pbbookinghelper::save_pending_event($data);                    
         if(is_int($pending_id)){
             $valid = Pbbookinghelper::validate_pending($pending_id, null);
-            /*if ($valid) {
+            if ($valid) {
                 $data['pending_id'] = $pending_id;
                 $view = $this->getView('PBBooking','html');
                 $view->setLayout('success');
@@ -134,7 +133,7 @@ class PbbookingController extends JControllerLegacy
                 $view->display();
             } else {
                 $this->setRedirect('index.php/option=com_pbbooking',JText::_('COM_PBBOOKING_BOOKING_PROBLEM'));
-            }*/
+            }
         } else {
             $this->setRedirect('index.php/option=com_pbbooking',JText::_('COM_PBBOOKING_BOOKING_PROBLEM'));				
         }       

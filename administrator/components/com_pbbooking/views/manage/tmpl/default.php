@@ -25,6 +25,7 @@
         JHTML::_('behavior.modal');
         
         $addNote = true ;
+        
 ?>
 
 <style>
@@ -71,7 +72,70 @@ td.bookings a {
 <link href="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/css/jquery-ui.css" rel="stylesheet" type="text/css">
 <script src="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/scripts/jquery-ui.min.js"></script>
 <script src="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/scripts/pbbooking_manage_days.js"></script>
-
+<script type="text/javascript">
+jQuery(document).ready(function() 
+{
+    var width = jQuery(window).width();
+    var height = jQuery(window).height();
+    
+    jQuery('#dialog-form').dialog({
+      autoOpen: false,
+      height: (height-(height*0.40)),
+      width: (width-(width*0.40)),
+      modal: true,
+      buttons: {
+        "Salva Nota": addNote,
+        Cancel: function() {
+          jQuery('#dialog-form').dialog( "close" );
+        }
+      },
+      close: function() {
+        jQuery('#dialog-form').find( "form" )[0].reset();        
+      }
+    });
+        
+    jQuery('#modalForm').on('submit', function( event ) {
+        event.preventDefault();
+        addNote();
+    });
+    
+    jQuery('.openModal').click(function() {        
+        if(jQuery('.post-it').length > 0){
+            jQuery('#text').val(jQuery('.post-it').text());            
+        }
+        jQuery('#dialog-form').dialog('open');
+    });  
+    
+    function addNote() {
+        jQuery('#text').removeClass("ui-state-error");
+        if(jQuery('#text').val() == ""){
+            jQuery('#text').addClass("ui-state-error");
+            return false;
+        }
+        var id ='';
+        if(jQuery('.post-it').length > 0){
+            id =jQuery('.post-it').attr('id').substring(5);            
+        }
+         
+        var date ="<?php echo $this->date->format('Y-m-d');?>";
+        var url = 'index.php?option=com_pbbooking&controller=manage&task=add_note&noteDate='+date+'&noteText='+jQuery('#text').val()+'&noteId='+id;
+        jQuery.getJSON( url, function( data ) {
+            
+           if(jQuery('.post-it').length > 0){               
+               jQuery('.post-it').html(data.text);
+            }
+            else{
+              jQuery('p').attr('class', 'post-it').attr('id', 'note_'+data.id).text(data.text).insertBefore('.openModal');  
+            }
+            jQuery('.openModal:eq(0)').html('Modifica Nota');
+            jQuery('#dialog-form').dialog( "close" );
+        }).fail(function() {
+            alert('Errore nel salvataggio della Nota. Si prega di riprovare.'); // or whatever
+        });
+    }
+    
+});
+</script>
 <div id="dialog-form" title="Inserisci Nota">
     <form id="modalForm" class="adminForm">
     <fieldset>

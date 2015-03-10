@@ -86,7 +86,8 @@ class PbbookingsControllercalendar extends JControllerLegacy
             $view->calendar = $cals[0];
             $view->trading_hours = ($cals[0]['hours'] > '') ? json_decode($cals[0]['hours'],true) : json_decode($config->trading_hours,true);
         } else {
-            $view->calendar = Array("in_cal"=>1,"out_cal"=>0,"id"=>0,"name"=>"Nome Calendario",'office'=>'1','transport'=>'1','email'=>'','status'=>1);
+            $this->setupLov($db, $view);    
+            $view->calendar = Array("in_cal"=>1,"out_cal"=>0,"id"=>0,"name"=>"",'office'=>'1','transport'=>'1','email'=>'','status'=>1);
         }
 
         $view->display();
@@ -188,7 +189,7 @@ class PbbookingsControllercalendar extends JControllerLegacy
         return $db->loadAssocList();
     } 
 
-    private function setupLov($db, $view, $licenseId)
+    private function setupLov($db, $view, $licenseId=null)
     {        
         //Office loading...
         $sqlOffice = "select * from #__pbbooking_lov_office";

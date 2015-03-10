@@ -310,24 +310,26 @@ class PbbookingsControllermanage extends JControllerLegacy
     {
         JFactory::getDocument()->setMimeEncoding( 'application/json' );
         JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
-        $noteId = JRequest::getVar('noteId') ? JRequest::getVar('noteId') : 0;
+        $noteId = JRequest::getVar('noteId');
         $date = (JRequest::getVar('noteDate'));
-        $text = JRequest::getVar('noteText');
+        $text = JRequest::getVar('noteText');                
         $db = JFactory::getDbo();
-        try{
-            $day_note = new JObject(array('date'=>$db->escape($date),'text'=>$db->escape($text)));
-            if ($noteId != 0) {
-                $day_note->setProperties(array('id'=>$noteId));
-                
-                $db->updateObject('#__pbbooking_day_note',new JObject($day_note), 'id');
+        try{                      
+            if ($noteId) {
+                $db->setQuery('select * from #__pbbooking_day_note where id = '.$db->escape(JRequest::getVar('noteId')));
+                $note = $db->loadObject();                
+                $note->text = $text;                
+                $db->updateObject('#__pbbooking_day_note',$note, 'id');
+                echo json_encode($note);
             }		
             else{
+                $day_note = new JObject(array('date'=>$db->escape($date),'text'=>$db->escape($text)));  
                 $db->insertObject('#__pbbooking_day_note',$day_note); 
                 $lastRowId = $db->insertid();
                 $day_note->setProperties(array('id'=>$lastRowId));
-            }
-                
-            echo json_encode($day_note);        
+                echo json_encode($day_note);
+            }               
+                    
             JFactory::getApplication()->close();
 
         } catch (Exception $ex) {                 
