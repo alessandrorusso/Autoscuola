@@ -22,14 +22,6 @@
 
 <form action="<?php echo JRoute::_('index.php?option=com_pbbooking&task=save');?>" method="POST" id = "pbbooking-reservation-form">
 
-	<?php
-		echo '<input type="hidden" name="date" id="text-date" value='.$this->dateparam->format('Ymd').'>';
-                echo '<input type="hidden" name="userId" id="userId" value='.$user->id.'>';
-                echo '<input type="hidden" name="name" id="name" value='.$user->name.'>';
-                echo '<input type="hidden" name="phone" id="phone" value='.$userProfile->profileautoscuola['phone'].'>';
-                echo '<input type="hidden" name="email" id="email" value='.$user->email.'>';
-	?>
-	
 	<h2><?php echo JText::_('COM_PBBOOKING_YOURDETAILS');?></h2>
 	
 	
@@ -118,6 +110,9 @@
 						</option>
 					<?php endforeach;?>
 				</select>
+                                <input type="hidden" name="cal_id" id="text-cal-id" value="<?php echo $this->cal->cal_id;?>"/> 
+                                <input type="hidden" name="date" value="<?php echo $this->dateparam->format('Ymd');?>"/>
+                                <input type="hidden" name="treatment_time" value="<?php echo $this->dateparam->format('Hi');?>"/>
 			</td>
 		</tr>
 	</table>
@@ -130,9 +125,5 @@
 	<div style="text-align:center;">
 		<p></p><input type="submit" value="<?php echo JText::_('COM_PBBOOKING_SUBMIT_BUTTON');?>" id="pbbooking-submit"></p>
 	</div>
-	
-	<input type="hidden" name="cal_id" id="text-cal-id" value="<?php echo $this->cal->cal_id;?>"/> 
-	<input type="hidden" name="date" value="<?php echo $this->dateparam->format('Ymd');?>"/>
-	<input type="hidden" name="treatment_time" value="<?php echo $this->dateparam->format('Hi');?>"/>
 </form>
 

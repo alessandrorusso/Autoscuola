@@ -39,7 +39,7 @@
 				<table>
 					<tr>
 						<th><label><?php echo JText::_('COM_PBBOOKING_EVENT_SUMMARY');?></label></th>
-						<td><input type="text" name="summary" value="<?php echo $this->event->summary;?>" style="width:500px;"/></td>
+                                                <td><input type="text" name="summary" value="<?php echo $this->event->summary;?>" style="width:500px;" readonly="readonly"/></td>
 					</tr>
 
 					<tr>
@@ -49,43 +49,21 @@
 
 					<tr>
 						<th><label><?php echo JText::_('COM_PBBOOKING_BOOKING_DATE');?></label></th>
-						<td><?php echo JHTML::_('calendar',date_create($this->event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d'),'date','date');?></td>
+						<td><input type="text" name="date" value="<?php echo date_create($this->event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d');?>" style="width:500px;" readonly="readonly"/></td>
 					</tr>
 					
 
 					<tr>
 						<th><label><?php echo JText::_('COM_PBBOOKING_BOOKING_TIME');?></label></th>
-						<td>
-							<select name="treatment-time">
-								<?php while($this->dt_start<= $this->dt_end):?>
-									<option value="<?php echo $this->dt_start->format('Hi');?>"
-											<?php echo (date_create($this->event->dtstart,new DateTimezone(PBBOOKING_TIMEZONE)) == $this->dt_start) ? 'selected = true' : null;?>
-										>
-										<?php echo Jhtml::_('date',$this->dt_start->format(DATE_ATOM),Jtext::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?>
-									</option>
-									<?php $this->dt_start->modify('+ '.$this->config->time_increment.' minutes');?>
-								<?php endwhile;?>
-							</select>
-						</td>
+                                                <td><input type="text" name="treatment-time" value="<?php echo date_create($this->event->dtstart,new DateTimezone(PBBOOKING_TIMEZONE))->format('Hi');?>" style="width:500px;" readonly="readonly"/></td>
+						
 					</tr>
 
-					<?php if ($this->config->consolidated_view == 0) :?>
-						<tr>
-							<th><label><?php echo JText::_('COM_PBBOOKING_CAL_LABEL');?></label></th>
-							<td>
-								<select name="cal_id">
-									<option value="0"><?php echo Jtext::_('COM_PBBOOKING_CAL_DROPDOWN');?></option>
-									<?php foreach ($this->cals as $cal) :?>
-										<option value="<?php echo $cal->id;?>"
-										<?php if ($this->event->cal_id == $cal->id) :?>
-											selected
-										<?php endif;?>
-										><?php echo $cal->name;?></option>
-									<?php endforeach;?>
-								</select>
-							</td>
-						</tr>				
-					<?php endif;?> 
+					<tr>
+						<th><label><?php echo JText::_('COM_PBBOOKING_CAL_LABEL');?></label></th>
+						<td><input type="text" name="cal_id" value="<?php echo $this->cal->name;?>" style="width:500px;" readonly="readonly"/></td>
+                                        </tr>				
+					
 					
 				</table>
 			</fieldset>

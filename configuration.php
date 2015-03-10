@@ -14,7 +14,7 @@ class JConfig {
 	public $dbtype = 'mysql';
 	public $host = 'localhost';
 	public $user = 'root';
-	public $password = 'autoscuola';
+	public $password = 'tricenzo';
 	public $db = 'autoscuola';
 	public $dbprefix = 'e3xea_';
 	public $live_site = '';
@@ -54,8 +54,8 @@ class JConfig {
 	public $sef_suffix = '0';
 	public $unicodeslugs = '0';
 	public $feed_limit = '10';
-	public $log_path = 'C:\\Programmi\\Apache Software Foundation\\Apache2.2\\htdocs\\joomla/logs';
-	public $tmp_path = 'C:\\Programmi\\Apache Software Foundation\\Apache2.2\\htdocs\\joomla/tmp';
+        public $log_path = 'C:\\Users\\651646\\Bitnami\\apache2\\htdocs\\Autoscuola/logs';
+	public $tmp_path = 'C:\\Users\\651646\\Bitnami\\apache2\\htdocs\\Autoscuola/tmp';
 	public $lifetime = '15';
 	public $session_handler = 'database';
 	public $memcache_persist = '1';

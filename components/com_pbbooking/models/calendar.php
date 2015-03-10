@@ -41,91 +41,81 @@ function __construct() {
 
 function loadCalendarFromDbase($cals)
 {
-	$db = JFactory::getDBO();
+    $db = JFactory::getDBO();
 
-	//set the cal_id for future calendars
-	$this->cal_id = (count($cals)>1) ? 0 : $cals[0];
+    //set the cal_id for future calendars
+    $this->cal_id = (count($cals)>1) ? 0 : $cals[0];
 
-	//set the calendar name if we have if
-	if ($this->cal_id > 0) {
-		$cal = $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($this->cal_id))->loadObject();
-		$this->name = $cal->name;
-                $this->office = $cal->office;
-	}
+    //set the calendar name if we have if
+    if ($this->cal_id > 0) {
+        $cal = $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($this->cal_id))->loadObject();
+        $this->name = $cal->name;
+        $this->office = $cal->office;
+    }
 
+    $events = array();
+    foreach($cals as $cal) {
+        $db->setQuery("select * from #__pbbooking_events where cal_id = ".(int)$cal);
+        $cal_events = $db->loadObjectList();
+        if (count($cal_events) > 0 ) {
+            foreach ($cal_events as $cal_event) {
+                //$date_string = date(DATE_ATOM,$cal_event->dtend);
+                $event = new event();
+                $event->summary = $cal_event->summary;
+                $event->dtend = date_create($cal_event->dtend,new DateTimeZone(PBBOOKING_TIMEZONE));
+                $event->dtstart = date_create($cal_event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE));
+                $event->description = $cal_event->description;
+                $event->id = $cal_event->id;
+                $event->r_int = $cal_event->r_int;
+                $event->r_end = $cal_event->r_end;
+                $event->r_freq = $cal_event->r_freq;
+                $events[] = $event;
+            }
+        }
+    }
 	
-	$events = array();
-
-	foreach($cals as $cal) {
-		$db->setQuery("select * from #__pbbooking_events where cal_id = ".(int)$cal);
-		$cal_events = $db->loadObjectList();
-		if (count($cal_events) > 0 ) {
-			foreach ($cal_events as $cal_event) {
-				//$date_string = date(DATE_ATOM,$cal_event->dtend);
-				$event = new event();
-				$event->summary = $cal_event->summary;
-				$event->dtend = date_create($cal_event->dtend,new DateTimeZone(PBBOOKING_TIMEZONE));
-				$event->dtstart = date_create($cal_event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE));
-				$event->description = $cal_event->description;
-				$event->id = $cal_event->id;
-				$event->r_int = $cal_event->r_int;
-				$event->r_end = $cal_event->r_end;
-				$event->r_freq = $cal_event->r_freq;
-				$events[] = $event;
-			}
-		}
-	}
-	
-	$this->events = $events;
+    $this->events = $events;
 }
 
-
-
 /**
-* returns any events booked on a given date in a given timeslot
-* @param the date to check
-* @param the slot to set
-* @return the booked event or null
-* @deprecated this is no longed used since moving to freeflow in 2.2.  Use is_free_from_to instead
-*/
-
+ * returns any events booked on a given date in a given timeslot
+ * @param the date to check
+ * @param the slot to set
+ * @return the booked event or null
+ * @deprecated this is no longed used since moving to freeflow in 2.2.  Use is_free_from_to instead
+ */
 function isFree($date,$timeslot){
-	
-	$db=JFactory::getDbo();
-	$config =JFactory::getConfig();
+    $db=JFactory::getDbo();
+    $config =JFactory::getConfig();
     date_default_timezone_set($config->get('offset'));	
 
+    $eventstart = date_create($date->format('Y-m-d'),new DateTimeZone(PBBOOKING_TIMEZONE));
+    $eventend = date_create($date->format('Y-m-d'),new DateTimeZone(PBBOOKING_TIMEZONE));
 
-	$eventstart = date_create($date->format('Y-m-d'),new DateTimeZone(PBBOOKING_TIMEZONE));
-	$eventend = date_create($date->format('Y-m-d'),new DateTimeZone(PBBOOKING_TIMEZONE));
-	
-	$db = JFactory::getDBO();
-	$db->setQuery("select * from #__pbbooking_slots where id = ".$db->escape($timeslot));
-	$slot = $db->loadObject();
-	
-	$eventstart->setTime($slot->start_hour,$slot->start_min);
-	$eventend->setTime($slot->end_hour,$slot->end_min,1);
-	
-		
-	$free = true;
-	$bookedEvent = null;
-	
-	foreach($this->events as $event) {
-		
-		$event->dtend->modify("-1 second");
-		
-		if ($event->dtend >= $eventstart && $event->dtend <= $eventend) {
-			$free = false;
-			$bookedEvent = date_create($event->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-		}
-		
-		//check for multi day events
-		if ($event->dtstart <= $eventstart && $event->dtend >= $eventend) {
-			$free = false;
-			$bookedEvent = date_create($event->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-		}
-		
-		//check for recurrance
+    $db = JFactory::getDBO();
+    $db->setQuery("select * from #__pbbooking_slots where id = ".$db->escape($timeslot));
+    $slot = $db->loadObject();
+
+    $eventstart->setTime($slot->start_hour,$slot->start_min);
+    $eventend->setTime($slot->end_hour,$slot->end_min,1);
+
+    $free = true;
+    $bookedEvent = null;
+    
+    foreach($this->events as $event) {
+	$event->dtend->modify("-1 second");
+	if ($event->dtend >= $eventstart && $event->dtend <= $eventend) {
+            $free = false;
+            $bookedEvent = date_create($event->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+        }
+        
+        //check for multi day events
+        if ($event->dtstart <= $eventstart && $event->dtend >= $eventend) {
+            $free = false;
+            $bookedEvent = date_create($event->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+        }
+    	
+        //check for recurrance
 		if (isset($event->r_int)) {
 			//we have a recurring event...
 			$dt_until = date_create($event->r_end,new DateTimeZone(PBBOOKING_TIMEZONE));
@@ -245,24 +235,25 @@ function writeEventToDatabase($event,$cal_id)
 
 function isOpen($date)
 {
-
 	//is the date a block day?
 	$db=JFactory::getDBO();
 	$db->setQuery("select * from #__pbbooking_block_days");
 	$blocked_days = $db->loadObjectList();
 	$config = JFactory::getConfig();
-	$offset = $config->get('offset');
-	
+	$offset = $config->get('offset');        
 	if (count($blocked_days)>0) {
 		foreach ($blocked_days as $blocked_day) {
 			$block_from = date_create($blocked_day->block_start_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-			$block_from->setTime(00,00,00);
+                        $block_from_hour_arr = explode('=',$blocked_day->block_start_hour);
+                        $block_from_hour_arr_split = str_split($block_from_hour_arr[0],2);
+			$block_from->setTime($block_from_hour_arr_split[0],$block_from_hour_arr_split[1],00);
 			$block_from->setTimezone(new DateTimezone($offset));
 			
 			$block_to = date_create($blocked_day->block_end_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-			$block_to->setTime(23,59,59);
-			$block_to->setTimezone(new DateTimezone($offset));
-			
+			$block_to_hour_arr = explode('=',$blocked_day->block_end_hour);
+                        $block_to_hour_arr_split = str_split($block_to_hour_arr[0],2);
+                        $block_to->setTime($block_to_hour_arr_split[0],$block_to_hour_arr_split[1],00);                        
+			$block_to->setTimezone(new DateTimezone($offset));                                                
 			if ($date>=$block_from && $date<=$block_to && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {
 				Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');
 				return false;
@@ -273,7 +264,7 @@ function isOpen($date)
 				while (($block_from<=$date && $block_to <= $date) || ($block_from<=$blocked_day->r_dtend && $block_to <= $blocked_day->r_dtend)) {
 					$block_from->modify('+ '.$blocked_day->r_int.' '.$blocked_day->r_freq);
 					$block_to->modify('+ '.$blocked_day->r_int.' '.$blocked_day->r_freq);
-					if ($date>=$block_from && $date<=$block_to && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {
+					if ($date>=$block_from && $date<=$block_to && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {                                            
 						Pbdebug::log_msg('Calendar model found recurrant block with id '.$blocked_day->id.' at '.$date->format(DATE_ATOM),'com_pbbooking');
 						return false;
 					}
@@ -285,7 +276,10 @@ function isOpen($date)
 }
 
 /**
-* is_free_from_to() - returns either an event or false (ie false = available) to indicate whether the nominated calendar is free from from date to to date used for newer views based on times
+* is_free_from_to() - 
+ * returns either an event or false (ie false = available) 
+ * to indicate whether the nominated calendar is free from from date to to date 
+ * used for newer views based on times
 *
 * @param datetime from_date - the datetime to check from
 * @param datetime to_date - the datetime to check to
@@ -295,43 +289,44 @@ function isOpen($date)
 */	
 public function is_free_from_to($from_date,$to_date,$is_admin=false) {
 
-
 	$free = true;
 	$bookedEvent = null;
 	
-	//can we bail early due to being outside trading hours?  There are a couple of test cases
-	//		1. the time is outside the trading hours
-	//		2. the day it not a trading day
+	//can we bail early due to being outside trading hours?  
+        //There are a couple of test cases
+	//1. the time is outside the trading hours
+	//2. the day it not a trading day
 	$db = JFactory::getDbo();
-	$db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape((int)$this->cal_id));
-	$cal = $db->loadObject();
 	$pbb_config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
 
 	//get global config
 	$config =JFactory::getConfig();
-    date_default_timezone_set($config->get('offset'));	
+        date_default_timezone_set($config->get('offset'));	
 	
-	$trading_hours = ($this->cal_id != 0 && $cal->hours > '') ? json_decode($cal->hours,true) : json_decode($pbb_config->trading_hours,true);
+	$trading_hours = ($this->cal_id != 0 && $cal->hours > '') ? json_decode($this->hours,true) : json_decode($pbb_config->trading_hours,true);
+        	
+        //if (!$is_admin) {
+            if ($trading_hours[$from_date->format('w')]['status'] == 'open') {
+                //catches for outside trading times.
+		$str_opening_time = $trading_hours[$from_date->format('w')]['open_time'];
+		$str_closing_time = $trading_hours[$from_date->format('w')]['close_time'];
+		$opening_time_arr = str_split($str_opening_time,2);
+		$closing_time_arr = str_split($str_closing_time,2);
+		$opening_date = date_create($from_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+		$closing_date = date_create($from_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+		$opening_date->setTime($opening_time_arr[0],$opening_time_arr[1]);                
+		$closing_date->setTime($closing_time_arr[0],$closing_time_arr[1]);
+                if ($from_date < $opening_date || $from_date >= $closing_date){
+                    return true;
+                }              
+                
+            } else {
+                //catches for non-trading day
+		return true;
+            }
+	//}
 	
-	if (!$is_admin) {
-		if ($trading_hours[$from_date->format('w')]['status'] == 'open') {
-			//catches for outside trading times.
-			$str_opening_time = $trading_hours[$from_date->format('w')]['open_time'];
-			$str_closing_time = $trading_hours[$from_date->format('w')]['close_time'];
-			$opening_time_arr = str_split($str_opening_time,2);
-			$closing_time_arr = str_split($str_closing_time,2);
-			$opening_date = date_create($from_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-			$closing_date = date_create($from_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-			$opening_date->setTime((int)ltrim($opening_time_arr[0],'0'),(int)ltrim($opening_time_arr[1],'0'));
-			$closing_date->setTime((int)ltrim($closing_time_arr[0],'0'),(int)ltrim($closing_time_arr[1],'0'));
-			if ($from_date < $opening_date || $from_date > $closing_date) return true;
-		} else {
-			//catches for non-trading day
-			return true;
-		}
-	}
-	
-	//check to see if it's in a block date range.
+	//check to see if it's in a block date range.        
 	if (!$this->isOpen($from_date)) {
 		return true;
 	}

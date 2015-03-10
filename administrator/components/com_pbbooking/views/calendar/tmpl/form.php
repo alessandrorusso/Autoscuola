@@ -31,7 +31,7 @@ JHtml::_('behavior.formvalidation');
                 else{
                     
                 }
-	}
+	};
         
         window.addEvent('domready',function(){            
             jQuery('#license').change(function(){
@@ -146,9 +146,6 @@ JHtml::_('behavior.formvalidation');
 							<th><?php echo JText::_('COM_PBBOOKING_DAY_IS_OPEN');?></th>
 							<th><?php echo JText::_('COM_PBBOOKING_DAY_OPENING_TIME');?></th>
 							<th><?php echo JText::_('COM_PBBOOKING_DAY_CLOSING_TIME');?></th>
-                                                        <th><?php echo JText::_('COM_PBBOOKING_DAY_PAUSE_TIME');?></th>
-                                                        <th><?php echo JText::_('COM_PBBOOKING_DAY_PAUSE_START_TIME');?></th>
-                                                        <th><?php echo JText::_('COM_PBBOOKING_DAY_PAUSE_END_TIME');?></th>
 						</tr>
 						<?php $i = 0;?>
 						<?php foreach ($days_of_week as $day):?>
@@ -156,10 +153,7 @@ JHtml::_('behavior.formvalidation');
 								<th><?php echo $day;?></th>
                                                                 <td style="text-align: center; vertical-align: middle;"><input type="checkbox" name="is-open[]" value="<?php echo $i;?>" <?php echo ($this->trading_hours[$i]['status'] == 'open') ? 'checked=true' : '';?>/></td>
 								<td><input type="text" name="open-time-<?php echo $i;?>" class="time-input" value="<?php echo (isset($this->trading_hours[$i]['open_time'])) ? $this->trading_hours[$i]['open_time'] : '';?>"/></td>
-								<td><input type="text" name="close-time-<?php echo $i;?>" class="time-input" value="<?php echo (isset($this->trading_hours[$i]['close_time'])) ? $this->trading_hours[$i]['close_time'] : '';?>"/></td>
-                                                                <td style="text-align: center; vertical-align: middle;"><input type="checkbox" name="has-pause[]" value="<?php echo $i;?>" <?php echo ($this->trading_hours[$i]['pause'] == 'yes') ? 'checked=true' : '';?>/></td>
-                                                                <td><input type="text" name="pause-start-time-<?php echo $i;?>" class="time-input" value="<?php echo (isset($this->trading_hours[$i]['pause_start_time'])) ? $this->trading_hours[$i]['pause_start_time'] : '';?>"/></td>
-								<td><input type="text" name="pause-end-time-<?php echo $i;?>" class="time-input" value="<?php echo (isset($this->trading_hours[$i]['pause_end_time'])) ? $this->trading_hours[$i]['pause_end_time'] : '';?>"/></td>
+								<td><input type="text" name="close-time-<?php echo $i;?>" class="time-input" value="<?php echo (isset($this->trading_hours[$i]['close_time'])) ? $this->trading_hours[$i]['close_time'] : '';?>"/></td>                                                                
 							</tr>
 							<?php $i++;?>
 						<?php endforeach;?>

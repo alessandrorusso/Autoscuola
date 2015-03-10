@@ -23,10 +23,9 @@
 	
 	$version = new JVersion;
         JHTML::_('behavior.modal');
+        
+        $addNote = true ;
 ?>
-
-
-
 
 <style>
 
@@ -71,70 +70,7 @@ td.bookings a {
 </style>
 <link href="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/css/jquery-ui.css" rel="stylesheet" type="text/css">
 <script src="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/scripts/jquery-ui.min.js"></script>
-<script>
-    jQuery(document).ready(function() {
-    
-    var width = jQuery(window).width();
-    var height = jQuery(window).height();
-    
-    function addNote() {
-        jQuery('#text').removeClass("ui-state-error");
-        if(jQuery('#text').val() == ""){
-            jQuery('#text').addClass("ui-state-error");
-            return false;
-        }
-        var id ='';
-        if(jQuery('.post-it').length > 0){
-            id =jQuery('.post-it')[0].id.substring(5);            
-        }
-         
-        var date ="<?php echo $this->date->format('Y-m-d');?>";
-        var url = 'index.php?option=com_pbbooking&controller=manage&task=add_note&noteDate='+date+'&noteText='+jQuery('#text').val()+'&nodeId='+id;
-        jQuery.getJSON( url, function( data ) {
-           if(jQuery('.post-it').length > 0){
-               jQuery('.post-it')[0].id='note_'+data.id;
-               jQuery('.post-it')[0].text=data.text;
-            }
-            else{
-              jQuery('p').attr('class', 'post-it').attr('id', 'note_'+data.id).text(data.text).insertBefore('.openModal');  
-            }
-            jQuery('.openModal')[0].text='Modifica Nota';
-            jQuery('#dialog-form').dialog( "close" );
-        }).fail(function() {
-            alert('Errore nel salvataggio della Nota. Si prega di riprovare.'); // or whatever
-        });
-    }
-    
-    jQuery('#dialog-form').dialog({
-      autoOpen: false,
-      height: (height-(height*0.40)),
-      width: (width-(width*0.40)),
-      modal: true,
-      buttons: {
-        "Salva Nota": addNote,
-        Cancel: function() {
-          jQuery('#dialog-form').dialog( "close" );
-        }
-      },
-      close: function() {
-        jQuery('#dialog-form').find( "form" )[0].reset();        
-      }
-    });
-        
-    jQuery('#modalForm').on('submit', function( event ) {
-        event.preventDefault();
-        addNote();
-    });
-    
-    jQuery('.openModal').click(function() {        
-        if(jQuery('.post-it').length > 0){
-            jQuery('#text').val(jQuery('.post-it').text());            
-        }
-        jQuery('#dialog-form').dialog('open');
-    });  
-    
-});
-</script>
+<script src="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/scripts/pbbooking_manage_days.js"></script>
 
 <div id="dialog-form" title="Inserisci Nota">
     <form id="modalForm" class="adminForm">
@@ -147,25 +83,22 @@ td.bookings a {
 </div>
 
 <div class="bootstrap-wrap">
-<div class="row-fluid">
-
-
-	<div class="span4">
-
-		<table class="calendar-table">
-			<tr>
-				<th colspan=2>
-					<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $prev_month->format('Y-m-d');?>">
-						<<
-					</a>
-				</th>
-				<th colspan=3><?php echo JHtml::_('date',$bom->format(DATE_ATOM),'F Y');?></th>
-				<th colspan=2>
-					<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $eom->format('Y-m-d');?>">
-						>>
-					</a>
-				</th>
-			</tr>
+    <div class="row-fluid">
+        <div class="span4">
+            <table class="calendar-table">
+                <tr>
+                    <th colspan=2>
+                        <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $prev_month->format('Y-m-d');?>">
+                            <<
+                        </a>
+                    </th>
+                    <th colspan=3><?php echo JHtml::_('date',$bom->format(DATE_ATOM),'F');?></th>
+                    <th colspan=2>
+			<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $eom->format('Y-m-d');?>">
+                            >>
+			</a>
+                    </th>
+                </tr>
 			<tr>
 				<th><?php echo Jtext::_('COM_PBBOOKING_SUNDAY_ABBR');?></th>
 				<th><?php echo Jtext::_('COM_PBBOOKING_MONDAY_ABBR');?></th>
@@ -205,26 +138,18 @@ td.bookings a {
 			<!-- end draw date rows -->
 		
 		</table>
-            <div style="margin-top: 15px;">
-            <select name="office" id="office">
-                <option value="">Seleziona un Calendario</option>
-                <?php foreach ($this->cal_objs as $cal) :?>
-                <option value="<?php echo $cal->cal_id ;?>"><?php echo $cal->name ;?></option>                
-                <?php endforeach;?>
-            </select>
-            </div>
-            <div style="margin-top: 15px;" id="noteContainer">
+            <div style="margin-top: 15px;" id="noteContainer">                
                 <?php if ($this->day_notes):?>
                     <?php foreach ($this->day_notes as $day_note) :?>                
-                        <?php if ($day_note->date == $this->date->format('Y-m-d')):?>                            
+                        <?php if ($day_note->date == $this->date->format('Y-m-d')):?>
+                            <?php $addNote = false; ?>
                             <p id="note_<?php echo $day_note->id; ?>" class="post-it"><?php echo $day_note->text; ?></p>
-                            <a href="#" class="openModal">Modifica nota</a>
-                        <?php else:?>
-                            <a href="#" class="openModal">Aggiungi Nota</a>
+                            <a href="#" class="openModal">Modifica nota</a>                                                    
                         <?php endif;?>
                     <?php endforeach;?>			
-		<?php else:?>
-                            <a href="#" class="openModal">Aggiungi una Nota</a>
+                <?php endif;?>            
+		<?php if ($addNote) :?>
+                            <a href="#" class="openModal">Aggiungi nota</a>
 		<?php endif;?>
             </div>
 	</div>       

@@ -33,7 +33,7 @@ class PbbookingsControllercalendar extends JControllerLegacy
             $cals = $db->loadObjectList();
             if (!isset($cals) || count($cals) == 0) {
                 $app = JFactory::getApplication();
-                $app->enqueueMessage('You are running consolidated views but don\'t have an out_cal defined.  Please either convert to individual views or define an out_cal.');
+                $app->enqueueMessage('Non ci sono Calendari configurati. Per proseguire occorre crearne almeno uno.');
             }
         }
     }
@@ -45,6 +45,7 @@ class PbbookingsControllercalendar extends JControllerLegacy
      */
     function display($cacheable=false,$options=array())
     {	
+        //Select all calendar even closed.
         $sql = "select * from #__pbbooking_cals";
         $db =JFactory::getDBO();
         $db->setQuery( $sql );
@@ -104,8 +105,7 @@ class PbbookingsControllercalendar extends JControllerLegacy
         $id = JRequest::getVar('id');
         $is_open_arr = JRequest::getVar('is-open');
         $email = JRequest::getVar('email');
-        $status = JRequest::getVar('status');
-        $has_pause_arr = JRequest::getVar('has-pause');
+        $status = JRequest::getVar('status');       
 
         //retreive opening hours
         $opening_hours = array();                
@@ -114,14 +114,7 @@ class PbbookingsControllercalendar extends JControllerLegacy
             if (in_array($i,$is_open_arr)) {
                 $open_time = JRequest::getVar('open-time-'.$i);
                 $close_time = JRequest::getVar('close-time-'.$i);
-                if(in_array($i, $has_pause_arr)){
-                    $pause_star_time = JRequest::getVar('pause-start-time-'.$i);
-                    $pause_end_time = JRequest::getVar('pause-end-time-'.$i);
-                    $opening_hours[$i] = array('status'=>'open','open_time'=>$open_time,'close_time'=>$close_time,'pause'=>'yes', 'pause_start_time'=>$pause_star_time,'pause_end_time'=>$pause_end_time);
-                }
-                else{
-                    $opening_hours[$i] = array('status'=>'open','open_time'=>$open_time,'close_time'=>$close_time);
-                }				
+                $opening_hours[$i] = array('status'=>'open','open_time'=>$open_time,'close_time'=>$close_time);                
             } else {
                 $opening_hours[$i] = array('status'=>'closed');
             }

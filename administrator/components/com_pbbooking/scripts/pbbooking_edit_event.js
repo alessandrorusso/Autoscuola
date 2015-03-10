@@ -1,4 +1,4 @@
-window.addEvent('domready',function(){
+/*window.addEvent('domready',function(){
 	$('select-shift').addEvent('change',function(){
 		
 		this.setProperty('disabled',true);
@@ -30,5 +30,5 @@ window.addEvent('domready',function(){
 		}
 		
 		this.setProperty('disabled',false);	
-	})
-})
+	}) 
+})*/

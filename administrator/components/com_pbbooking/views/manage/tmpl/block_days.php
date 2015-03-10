@@ -14,8 +14,9 @@
 						'wednesday'=>JTEXT::_('COM_PBBOOKING_DAYS_WEDNESDAY'),'thursday'=>JTEXT::_('COM_PBBOOKING_DAYS_THURSDAY'),'friday'=>JTEXT::_('COM_PBBOOKING_DAYS_FRIDAY'),
 						'saturday'=>JTEXT::_('COM_PBBOOKING_DAYS_SATURDAY'));
 	$just_days = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
-	
-	
+	        
+        $shifts = json_decode($this->config->time_groupings);
+        
 	$doc = JFactory::getDocument();
 	$doc->addStyleDeclaration(".icon-32-add_shift {background:url('/administrator/components/com_pbbooking/images/button_purple_add.png');}");
 	$doc->addStyleDeclaration(".icon-32-delete_shift {background:url('/administrator/components/com_pbbooking/images/button_purple_delete.png');}");
@@ -69,11 +70,13 @@
 					<div class="span12">
 						<table class="adminlist" style="width:100%;" class="table-striped">
 							<thead>
-								<tr>
-									<th><?php echo JText::_('COM_PBBOOKING_BLOCK_NOTE');?></th>
-									<th><?php echo JText::_('COM_PBBOOKING_BLOCK_START');?></th>
-									<th><?php echo JText::_('COM_PBBOOKING_BLOCK_END');?></th>
+								<tr>									
 									<th><?php echo JText::_('COM_PBBOOKING_BLOCK_CALENDAR');?></th>
+									<th><?php echo JText::_('COM_PBBOOKING_BLOCK_START');?></th>
+                                                                        <th><?php echo JText::_('COM_PBBOOKING_BLOCK_END');?></th>
+                                                                        <th><?php echo JText::_('COM_PBBOOKING_BLOCK_START_HOUR');?></th>
+                                                                        <th><?php echo JText::_('COM_PBBOOKING_BLOCK_END_HOUR');?></th>
+									<th><?php echo JText::_('COM_PBBOOKING_BLOCK_NOTE');?></th>    
 									<th>Delete</th>
 								</tr>
 							</thead>
@@ -81,15 +84,17 @@
 								<?php if (count($this->blocked_days)>0) :?>
 									<?php foreach ($this->blocked_days as $blocked_day) :?>
 									<tr id = "pbbooking-blocked-day-id-<?php echo $blocked_day->id;?>">
-										<td><?php echo $blocked_day->block_note;?></td>
-										<td><?php echo $blocked_day->block_start_date;?></td>
-										<td><?php echo $blocked_day->block_end_date;?></td>
-										<td>
-											<?php foreach (explode(',',$blocked_day->calendars) as $cal_id) :?>
-												<?php echo (isset($cal_id) && $cal_id != null) ? Pbbookinghelper::get_calendar_name_for_id($cal_id) : null;?>
-												<br/>
-											<?php endforeach;?>
-										</td>
+                                                                            <td align="center">
+                                                                                    <?php foreach (explode(',',$blocked_day->calendars) as $cal_id) :?>
+                                                                                        <?php echo (isset($cal_id) && $cal_id != null) ? Pbbookinghelper::get_calendar_name_for_id($cal_id) : null;?>
+                                                                                        <br/>
+                                                                                    <?php endforeach;?>
+										</td>										
+										<td align="center"><?php echo $blocked_day->block_start_date;?></td>
+										<td align="center"><?php echo $blocked_day->block_end_date;?></td>
+                                                                                <td align="center"><?php echo $blocked_day->block_start_hour;?></td>
+										<td align="center"><?php echo $blocked_day->block_end_hour;?></td>
+										<td align="center"><?php echo $blocked_day->block_note;?></td>
 										<td align="center">
 											<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=delete_blocked_day&id=<?php echo $blocked_day->id;?>">
 												<img src="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/images/delete.png"/>
@@ -141,6 +146,33 @@
 								</div>
 
 								<div class="span6">
+                                                                        <?php if(count($shifts) > 0) : ?>
+                                                                        <div class="control-group">
+										<label class="control-label"><?php echo JText::_('COM_PBBOOKING_BLOCK_SLOT');?></label>
+										<div class="controls">                                                                                    
+                                                                                    <select name="block-slot" id="block-slot">
+                                                                                        <option value=""><?php echo JText::_('COM_PBBOOKING_BLOCK_SLOT_DROPDOWN');?></option>
+                                                                                    <?php foreach ($shifts as $slot) : ?>
+                                                                                       <option value="<?php echo $slot->shift_start.'-'.$slot->shift_end;?>"><?php echo $slot->display_label;?></option>
+					                                            <?php endforeach;?>                                                                                    
+                                                                                    </select>
+                                                                                </div>
+									</div>
+                                                                        <?php endif; ?>
+                                                                        <div class="control-group">
+										<label class="control-label"><?php echo JText::_('COM_PBBOOKING_BLOCK_START_HOUR');?></label>
+										<div class="controls">
+                                                                                    <input type="text" name="block-start-hour" id="block-start-hour" class="time-input" value=""/>
+                                                                                </div>
+									</div>
+
+									<div class="control-group">
+										<label class="control-label"><?php echo JText::_('COM_PBBOOKING_BLOCK_END_HOUR');?></label>
+										<div class="controls">
+                                                                                    <input type="text" name="block-end-hour" id="block-end-hour" class="time-input" value=""/>
+                                                                                </div>
+									</div>
+                                                                    
 									<div class="control-group">
 										<label class="control-label"><?php echo JText::_('COM_PBBOOKING_EVENT_MAKE_RECUR');?></label>
 										<div class="controls"><input type="checkbox" name="reccur" value="1"/></div>
