@@ -88,6 +88,10 @@ if($task =="subscribe") {
 if($task=='load_slots_for_day') {
 	$controller->load_slots_for_day();
 }
+
+if($task =="recap") {
+    $controller->recap();
+}
  
 // Perform the Request task
 //$controller->execute( JRequest::getWord( 'task' ) );

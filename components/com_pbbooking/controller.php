@@ -140,12 +140,27 @@ class PbbookingController extends JControllerLegacy
     }
     
     function recap() {
+        
+        Pbdebug::log_msg('Calling recap method in front end','com_pbbooking'); 
+
         $user = JFactory::getUser();
         $db =JFactory::getDBO();
-        $db->setQuery("select * from #__pbbooking_events where uid = ".(int)$user->id)->loadObject();
-        $user_events = $db->loadObjectList();
-        var_dump($user_events);
+        $view = $this->getView('pbbooking','html');
+        //retrieve booking events for logged user
+        $db->setQuery("SELECT ev.dtstart, of.desc as office, tr.desc as transport
+                        FROM `e3xea_pbbooking_events` as ev
+                            JOIN (`e3xea_pbbooking_cals` as cl)
+                                ON (cl.id = ev.cal_id)   
+                            JOIN (`e3xea_pbbooking_lov_office` as of)
+                                ON (of.id = cl.office)
+                            JOIN (`e3xea_pbbooking_lov_transport` as tr)
+                                ON (tr.id = cl.transport)
+                        WHERE ev.dtstart >= now() and ev.uid = ".(int)$user->id)->loadObject();
         
+        $user_events = $db->loadObjectList();        
+        $view->events = $user_events;        
+        $view->setLayout('recap');
+        $view->display();
     }
 	
     function validate() {
