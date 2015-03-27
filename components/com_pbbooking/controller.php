@@ -139,6 +139,51 @@ class PbbookingController extends JControllerLegacy
         }       
     }
     
+    /**
+     * 
+     * deletes the appointment 
+     * 
+     */
+    function delete()
+    {
+        $db =JFactory::getDBO();
+        $db->setQuery('select * from #__pbbooking_config');
+        $config = $db->loadObject();
+    	
+        //load up the appointment data in an array.
+        $data = array();        
+        	
+        $data['treatment_id'] = JRequest::getInt('treatment_id',0);
+        $data['date'] = JRequest::getVar('date',"");
+        $data['treatment-time'] = JRequest::getVar('treatment_time');
+        $data['cal_id'] = JRequest::getInt('cal_id');
+        
+        $user = JFactory::getUser();
+        $data['calendar-user'] = $user->id;                
+        $pending_id = Pbbookinghelper::save_pending_event($data);                    
+        if(is_int($pending_id)){
+            $valid = Pbbookinghelper::validate_pending($pending_id, null);
+            if ($valid) {
+                $data['pending_id'] = $pending_id;
+                $view = $this->getView('PBBooking','html');
+                $view->setLayout('success');
+                //populate needed data into the view.
+                $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($data['treatment_id']));
+                $view->service = $db->loadObject();
+                $view->config = $config;
+                $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($pending_id));
+                $view->pending = $db->loadObject();
+
+                //display the view
+                $view->display();
+            } else {
+                $this->setRedirect('index.php/option=com_pbbooking',JText::_('COM_PBBOOKING_BOOKING_PROBLEM'));
+            }
+        } else {
+            $this->setRedirect('index.php/option=com_pbbooking',JText::_('COM_PBBOOKING_BOOKING_PROBLEM'));				
+        }       
+    }
+    
     function recap() {
         
         Pbdebug::log_msg('Calling recap method in front end','com_pbbooking'); 

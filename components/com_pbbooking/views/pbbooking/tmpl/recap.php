@@ -44,26 +44,38 @@ img.printer {
 </h1>
 <table id="pbbooking" style="width: 100%;"> 
 <?php if($this->events) : ?>
+    <tr>
+        <th><?php echo JText::_('COM_PBBOOKING_RECAP_DATE');?></th>
+        <th><?php echo JText::_('COM_PBBOOKING_RECAP_HOUR');?></th>
+        <th><?php echo JText::_('COM_PBBOOKING_RECAP_OFFICE');?></th>
+        <th><?php echo JText::_('COM_PBBOOKING_RECAP_TRANSPORT');?></th>
+        <th><?php echo JText::_('COM_PBBOOKING_RECAP_DELETE');?></th>
+    </tr>
     <!-- draw table data rows -->
     <?php foreach ($this->events as $event) :?>
     <tr>
-        <th style="text-align: right;"><?php echo JText::_('COM_PBBOOKING_RECAP_DATE');?></th>
         <td class="pbbooking-free-cell">                     
             <?php echo date_create($event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('d-m-Y') ;?>						
         </td>
-        <th style="text-align: right;"><?php echo JText::_('COM_PBBOOKING_RECAP_HOUR');?></th>
+        
         <td class="pbbooking-free-cell">                     
             <?php echo date_create($event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('H:i');?>   
         </td>
         
-        <th style="text-align: right;"><?php echo JText::_('COM_PBBOOKING_RECAP_OFFICE');?></th>
         <td class="pbbooking-free-cell">
             <?php echo $event->office ;?>						
         </td>
-        <th style="text-align: right;"><?php echo JText::_('COM_PBBOOKING_RECAP_TRANSPORT');?></th>
+        
         <td class="pbbooking-free-cell">
             <?php echo $event->transport ;?>						
         </td>
+        <td class="pbbooking-free-cell">
+            <a href="<?php echo JRoute::_('index.php?option=com_pbbooking&task=delete&eventId='.$event->id);?>">
+                <img src="<?php echo JURI::root(true);?>/administrator/components/com_pbbooking/images/delete.png" alt="Cancella Prenotazione">
+            </a>
+            
+        </td>
+        
     </tr>
     <?php endforeach;?>
     <!-- end draw table data rows-->    
