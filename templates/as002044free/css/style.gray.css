@@ -775,7 +775,7 @@ f
 #content-row-2 .moduletable-wrapper,
 #content-row-3 .moduletable-wrapper
 {
-	border: 1px solid #eee;
+	border: 0px solid #eee;
         margin-top: -289px;
 }
 

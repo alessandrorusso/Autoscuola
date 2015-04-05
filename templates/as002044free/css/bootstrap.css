@@ -811,10 +811,11 @@ cite
 { clear: left;
   float: right;
   text-align: right; 
-  width: 400px;  
+  width: 350px;  
   height: 20px;  
   background-image: url('../images/freccia-login.png');    
-  background-position: 37px;
+  background-position: 51px;
+  background-repeat:no-repeat;
 }
 
 h1,
@@ -836,6 +837,7 @@ h7
 {  
   font-size: 140%;
   font-weight: normal;
+    color: white;
 }
 
 h1 small,
