@@ -119,7 +119,7 @@ include ('includes/includes.php');
  <?php if ($user->get('guest')) { ?>   
                             
   <?php }else{  //echo 'You are logged in as: '. $user->username; ?>
-                            
+                               
     
                             <div class="loginaccess">                                
                                 <h7>Benvenuto <?php print ($user->get('name')); ?></h7></div>
