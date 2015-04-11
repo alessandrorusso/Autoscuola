@@ -92,6 +92,10 @@ if($task=='load_slots_for_day') {
 if($task =="recap") {
     $controller->recap();
 }
+
+if($task =="deleteReservation") {
+    $controller->deleteReservation();
+}
  
 // Perform the Request task
 //$controller->execute( JRequest::getWord( 'task' ) );

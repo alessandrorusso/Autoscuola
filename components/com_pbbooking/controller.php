@@ -144,44 +144,12 @@ class PbbookingController extends JControllerLegacy
      * deletes the appointment 
      * 
      */
-    function delete()
+    function deleteReservation()
     {
-        $db =JFactory::getDBO();
-        $db->setQuery('select * from #__pbbooking_config');
-        $config = $db->loadObject();
-    	
-        //load up the appointment data in an array.
-        $data = array();        
-        	
-        $data['treatment_id'] = JRequest::getInt('treatment_id',0);
-        $data['date'] = JRequest::getVar('date',"");
-        $data['treatment-time'] = JRequest::getVar('treatment_time');
-        $data['cal_id'] = JRequest::getInt('cal_id');
-        
-        $user = JFactory::getUser();
-        $data['calendar-user'] = $user->id;                
-        $pending_id = Pbbookinghelper::save_pending_event($data);                    
-        if(is_int($pending_id)){
-            $valid = Pbbookinghelper::validate_pending($pending_id, null);
-            if ($valid) {
-                $data['pending_id'] = $pending_id;
-                $view = $this->getView('PBBooking','html');
-                $view->setLayout('success');
-                //populate needed data into the view.
-                $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($data['treatment_id']));
-                $view->service = $db->loadObject();
-                $view->config = $config;
-                $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($pending_id));
-                $view->pending = $db->loadObject();
-
-                //display the view
-                $view->display();
-            } else {
-                $this->setRedirect('index.php/option=com_pbbooking',JText::_('COM_PBBOOKING_BOOKING_PROBLEM'));
-            }
-        } else {
-            $this->setRedirect('index.php/option=com_pbbooking',JText::_('COM_PBBOOKING_BOOKING_PROBLEM'));				
-        }       
+        $db = JFactory::getDbo();
+        $db->setQuery('delete from #__pbbooking_events where id = '.$db->escape(JRequest::getVar('eventId')));
+        $db->query();
+        $this->recap();            
     }
     
     function recap() {
@@ -192,7 +160,7 @@ class PbbookingController extends JControllerLegacy
         $db =JFactory::getDBO();
         $view = $this->getView('pbbooking','html');
         //retrieve booking events for logged user
-        $db->setQuery("SELECT ev.dtstart, of.desc as office, tr.desc as transport
+        $db->setQuery("SELECT ev.id, ev.dtstart, of.desc as office, tr.desc as transport
                         FROM `e3xea_pbbooking_events` as ev
                             JOIN (`e3xea_pbbooking_cals` as cl)
                                 ON (cl.id = ev.cal_id)   
