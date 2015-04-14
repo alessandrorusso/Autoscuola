@@ -62,7 +62,10 @@ class Pbbookinghelper
         $user_id = $data['calendar-user'];
         $user = JFactory::getUser($user_id);                
         try {
-            self::validate_event($data['treatment_id'], $dtstart, $user, $data['cal_id']);
+            
+            if ($user->get('Super Users')) { 
+                    self::validate_event($data['treatment_id'], $dtstart, $user, $data['cal_id']);
+            }
             $emailfield = $user->email;
             $sql = sprintf('insert into #__pbbooking_pending (date,dtstart,service,verified,cal_id,user_id,email) values ("%s","%s",%s,0,%s,"%s","%s")',
                     $db->escape(date_create($data['date'],new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d')),$dtstart->format(DATE_ATOM),$db->escape($data['treatment_id']),

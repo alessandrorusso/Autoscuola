@@ -108,6 +108,8 @@ if ($config->allow_publish == 1) {
 	//check if calendar is valid...
 	$db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($calname));
 	$cal = $db->loadObject();
+        
+
 	if ($cal) { 
 		//error_log('cal is valid');
 		foreach ($events as $event) {

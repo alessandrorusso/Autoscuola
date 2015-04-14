@@ -65,7 +65,7 @@
         
         
 </script>
-<div class="calendar-window">
+<div class="calendar-window" style="height: 450px;">
 
 	<div id="calendar">
 		<table id="pbbooking">
