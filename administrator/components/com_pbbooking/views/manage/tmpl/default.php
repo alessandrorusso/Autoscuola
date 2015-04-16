@@ -72,9 +72,23 @@ td.bookings a {
 <link href="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/css/jquery-ui.css" rel="stylesheet" type="text/css">
 <script src="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/scripts/jquery-ui.min.js"></script>
 <script src="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/scripts/pbbooking_manage_days.js"></script>
+<script src="<?php echo JURI::root(true);?>/media/jui/js/jquery.print.js"></script>
+
+
 <script type="text/javascript">
+function printReservation() {
+        
+        jQuery('.printer').click(function(event){
+            jQuery('.hide-summary').toggle();
+            jQuery('.diary-table').print();            
+            jQuery('.hide-summary').toggle();
+        });
+        
+    }    
+    
 jQuery(document).ready(function() 
 {
+    printReservation();
     var width = jQuery(window).width();
     var height = jQuery(window).height();
     
@@ -148,7 +162,7 @@ jQuery(document).ready(function()
 
 <div class="bootstrap-wrap">
     <div class="row-fluid">
-        <div class="span4">
+        <div class="span4 no-print">
             <table class="calendar-table">
                 <tr>
                     <th colspan=2>

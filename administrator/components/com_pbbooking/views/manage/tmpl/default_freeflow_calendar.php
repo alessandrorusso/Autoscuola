@@ -11,7 +11,10 @@
 <table class="diary-table">
 
 	<tr>
-		<th></th><th colspan = "<?php echo count($this->cals);?>"><?php echo JHtml::_('date',$this->date->format(DATE_ATOM),'d F Y');?></th>
+            <th>
+                <img class="printer no-print" src="<?php echo JURI::root(true);?>/administrator/components/com_pbbooking/images/printer.png" border="0" alt="Stampa Prenotazioni">        
+            </th>
+            <th colspan = "<?php echo count($this->cals);?>"><?php echo JHtml::_('date',$this->date->format(DATE_ATOM),'d F Y');?></th>
 	</tr>
 	<tr>
 		<th></th>
@@ -31,9 +34,13 @@
 				<td>
 					<?php $event = $cal->is_free_from_to($this->dt_start,$dt_slot_end,true);?>
 					<?php if ($event && is_bool($event)!= true) :?>
-						<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>">
-							<?php echo $event->admin_summary();?>
-						</a>
+                                    <a class="no-print" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>">
+						<?php echo $event->admin_summary();?>	
+                                            </a>
+                                    <span class="hide-summary" style="display:none">
+                                        <?php echo $event->admin_summary();?>
+                                    </span>
+                                                
 					<?php endif;?>
 				</td>
 			<?php endforeach;?>
