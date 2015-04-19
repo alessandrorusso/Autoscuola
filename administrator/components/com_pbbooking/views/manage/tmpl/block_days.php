@@ -19,7 +19,9 @@ $doc = JFactory::getDocument();
 $doc->addStyleDeclaration(".icon-32-add_shift {background:url('/administrator/components/com_pbbooking/images/button_purple_add.png');}");
 $doc->addStyleDeclaration(".icon-32-delete_shift {background:url('/administrator/components/com_pbbooking/images/button_purple_delete.png');}");
 ?>
+<link rel="stylesheet" type="text/css" href="<?php echo JURI::root(false); ?>administrator/components/com_pbbooking/css/jquery.dataTables.css">
 <script>base_url = "<?php echo JURI::root(false); ?>";</script>
+<script src="<?php echo JURI::root(false); ?>administrator/components/com_pbbooking/scripts/jquery.dataTables.min.js"></script>
 <script src="<?php echo JURI::root(false); ?>administrator/components/com_pbbooking/scripts/pbbooking_block_days.js"></script>
 
 <div class="bootstrap-wrap">
@@ -66,49 +68,23 @@ $doc->addStyleDeclaration(".icon-32-delete_shift {background:url('/administrator
                     <div class="tab-pane" id="block-dates"> <!-- begin block dates pane -->
                         <div class="row-fluid">
                             <div class="span12">
-                                <table class="adminlist" style="width:100%;" class="table-striped">
+                                <table id="blockedDayTable" class="adminlist display" style="width:100%;" class="table-striped">
                                     <thead>
-                                        <tr>									
-                                            <th><?php echo JText::_('COM_PBBOOKING_BLOCK_CALENDAR'); ?></th>
-                                            <th><?php echo JText::_('COM_PBBOOKING_BLOCK_START'); ?></th>
-                                            <th><?php echo JText::_('COM_PBBOOKING_BLOCK_END'); ?></th>
-                                            <th><?php echo JText::_('COM_PBBOOKING_BLOCK_START_HOUR'); ?></th>
-                                            <th><?php echo JText::_('COM_PBBOOKING_BLOCK_END_HOUR'); ?></th>
-                                            <th><?php echo JText::_('COM_PBBOOKING_BLOCK_NOTE'); ?></th>    
-                                            <th>Delete</th>
+                                        <tr>	
+                                            
+                                            <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_CALENDAR'); ?></th>
+                                            <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_START'); ?></th>
+                                            <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_END'); ?></th>
+                                            <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_START_HOUR'); ?></th>
+                                            <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_END_HOUR'); ?></th>
+                                            <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_NOTE'); ?></th> 
+                                            <th align="left">Id</th>
+                                            <th align="left">Delete</th>    
+    
                                         </tr>
-                                    </thead>
-                                    <tbody>
-<?php if (count($this->blocked_days) > 0) : ?>
-                                            <?php foreach ($this->blocked_days as $blocked_day) : ?>
-                                                <tr id = "pbbooking-blocked-day-id-<?php echo $blocked_day->id; ?>">
-                                                    <td align="center">
-        <?php foreach (explode(',', $blocked_day->calendars) as $cal_id) : ?>
-                                                            <?php echo (isset($cal_id) && $cal_id != null) ? Pbbookinghelper::get_calendar_name_for_id($cal_id) : null; ?>
-                                                            <br/>
-                                                        <?php endforeach; ?>
-                                                    </td>										
-                                                    <td align="center"><?php echo $blocked_day->block_start_date; ?></td>
-                                                    <td align="center"><?php echo $blocked_day->block_end_date; ?></td>
-                                                    <td align="center"><?php echo $blocked_day->block_start_hour; ?></td>
-                                                    <td align="center"><?php echo $blocked_day->block_end_hour; ?></td>
-                                                    <td align="center"><?php echo $blocked_day->block_note; ?></td>
-                                                    <td align="center">
-                                                        <a href="<?php echo JURI::root(false); ?>administrator/index.php?option=com_pbbooking&controller=manage&task=delete_blocked_day&id=<?php echo $blocked_day->id; ?>">
-                                                            <img src="<?php echo JURI::root(false); ?>administrator/components/com_pbbooking/images/delete.png"/>
-                                                        </a>
-                                                    </td>
-                                                <tr>
-    <?php endforeach; ?>
-                                            <?php endif; ?>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan=5 align="center"><?php echo count($this->blocked_days); ?> records.</td>
-                                        </tr>
-                                    </tfoot>
+                                    </thead>                                                      
                                 </table>
-
+                                <br/>
                                 <div class="clr"></div>
 
                                 <div class="well well-large">

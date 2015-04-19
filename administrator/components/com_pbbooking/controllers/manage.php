@@ -193,7 +193,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
 
         //load up data in the view
         $db->setQuery('select * from #__pbbooking_block_days');
-        $view->blocked_days = $db->loadObjectList();
+        $view->blocked_days = $this->getBlockedDays();        
         $db->setQuery('select * from #__pbbooking_config');
         $config = $db->loadObject();
         $view->trading_hours = json_decode($config->trading_hours, true);
@@ -205,6 +205,59 @@ class PbbookingsControllermanage extends JControllerLegacy {
         //display the view
         JToolBarHelper::save('save_block_days');
         $view->display();
+    }
+    
+    function reloadBlockdays() {
+        JFactory::getDocument()->setMimeEncoding('application/json');
+        JResponse::setHeader('Content-Disposition', 'attachment;filename="progress-report-results.json"');
+
+        try {
+            
+            $builtBlockedDays = $this->getBlockedDays(JRequest::getVar('iDisplayStart'), (JRequest::getVar('iDisplayStart')+JRequest::getVar('iDisplayLength')));
+            if(count($builtBlockedDays) >0){
+                $ret['aaData'] = $builtBlockedDays;
+                $db = JFactory::getDbo();
+                $db->setQuery('select * from #__pbbooking_block_days');
+                $blocked_days = $db->loadObjectList();
+                $ret['iTotalDisplayRecords'] = count($blocked_days);
+                $ret['iTotalRecords'] = count($blocked_days);                
+                $ret['sEcho'] = JRequest::getVar('sEcho');
+                echo json_encode($ret);
+            }
+            else{
+                throw new Exception('Al momento non sono presenti orari di chiusura.');
+            }                      
+            JFactory::getApplication()->close();
+        } catch (Exception $ex) {
+            echo json_encode(['message' => $ex->getMessage()]);
+            JFactory::getApplication()->close();
+        } 
+    }
+    
+    private function getBlockedDays($from, $to){
+        $db = JFactory::getDbo();
+        $db->setQuery('select * from #__pbbooking_block_days');
+        $blocked_days = $db->loadObjectList();
+        if(count($blocked_days) > 0){  
+            $built_blocked_days = array();
+            $index = 0;
+            foreach ($blocked_days as $blocked_day) {
+                if($index >= $from && $index < $to){
+                    $row = array();
+                    $calName = '';
+                    foreach(explode(',', $blocked_day->calendars) as $cal_id){
+                    if(isset($cal_id) && $cal_id != null){
+                            $calName =  $calName.Pbbookinghelper::get_calendar_name_for_id($cal_id).'<br/>';
+                        }
+                    }
+                    $row = [$calName,$blocked_day->block_start_date,$blocked_day->block_end_date,$blocked_day->block_start_hour,$blocked_day->block_end_hour,$blocked_day->block_note, $blocked_day->id];                         
+                    $built_blocked_days[] = $row;
+                }
+                $index++;
+            }
+            return $built_blocked_days;
+        }
+        return null;
     }
 
     function save_block_days() {
@@ -271,7 +324,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $sql = sprintf('delete from #__pbbooking_block_days where id = %s', $db->escape(JRequest::getVar('id')));
         $db->setQuery($sql);
         $db->query();
-        $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays');
+        $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays', 'Chiusura cancellata correttamente');
     }
 
     /**

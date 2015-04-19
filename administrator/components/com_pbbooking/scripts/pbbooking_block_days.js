@@ -1,4 +1,28 @@
-window.addEvent('domready',function(){
+window.addEvent('domready',function(){    
+    var table = jQuery('#blockedDayTable').dataTable({
+	"bProcessing": true,
+	"bServerSide": true,
+        "bPaginate": true,
+        "bLengthChange": false,
+        "bFilter":false,
+        "bSort": false,
+        "iDisplayLength" : 2,               
+	"sAjaxSource": "index.php?option=com_pbbooking&task=reloadBlockdays&controller=manage",
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<a class =\"delete-reservation\"><img src=\"components/com_pbbooking/images/delete.png\"/></a>"
+            }        
+        ]
+    });
+    
+    jQuery('#blockedDayTable tbody').on( 'click', 'a', function () {
+        var data = jQuery(this).parents('tr').find('td:nth-last-child(2)').text();        
+        window.location.href = 'index.php?option=com_pbbooking&controller=manage&task=delete_blocked_day&id='+data;        
+    } );
+    
+      
+   
 	
 	$$('.time-input').addEvent('blur',function(){
 
@@ -84,3 +108,5 @@ function fillBlockSlot(){
     jQuery('#block-start-hour').attr('readonly', true); 
     jQuery('#block-end-hour').attr('readonly', true); 
 }
+
+
