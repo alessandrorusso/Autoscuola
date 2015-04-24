@@ -883,6 +883,7 @@ f
 #aside-row-1-left .moduletable,
 #aside-row-2-right .moduletable
 {
+        margin-top: -50px;
 	background-color: #e1e1e1;
 	border-radius: 20px;
 	color: #fff;
