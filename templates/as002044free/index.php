@@ -114,7 +114,7 @@ include ('includes/includes.php');
                                 </div>
                                 <?php endif; ?>                            
                             </div>
-                            <?php $user =& JFactory::getUser(); ?>
+                            <?php $user = JFactory::getUser(); ?>
 
  <?php if ($user->get('guest')) { ?>   
                             

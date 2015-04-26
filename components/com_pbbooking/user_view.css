@@ -14,6 +14,7 @@ table#pbbooking th {
 
 table.pbbooking-data-table {
 	border: 0px;
+        margin-bottom: 65px;
 }
 
 table.pbbooking-data-table tr,
