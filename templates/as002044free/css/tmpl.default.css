@@ -2084,12 +2084,11 @@ p .price
 {
 	margin-top: 15px;
         margin-bottom: 0px;
-        width: 1140px;
+        width: 91%;
 }
 
 #featured-row .moduletable .moduletable-wrapper
-{
-	padding: 0 25px 25px; 
+{	
         margin-top: 30px;
 }
 
