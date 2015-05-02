@@ -171,7 +171,7 @@ include ('includes/includes.php');
                     
                 </div>
                 <div style="text-align: center; width: 1200px;margin-left: 20px;">
-                    <span style="font-family:CenturyGothic, AppleGothic, sans-serif; color:graytext;font-size:12px">
+                    <span style="font-family:CenturyGothic, AppleGothic, sans-serif; color:graytext;font-size:14px">
                         <span style="font-family:CenturyGothic, AppleGothic, sans-serif;font-size: 18px;color:#003b7b;">Conti Autoscuole & Delegazione Aci</span></br></br>
                     Il Gruppo “Conti Autoscuole & Delegazione Aci” sin dal 1985 si ispira a migliorare tutti i servizi per Voi clienti</br> 
                     attraverso la formazione di personale giovane e qualificato.</br></br>
@@ -201,7 +201,7 @@ include ('includes/includes.php');
        
         <?php if ($this->countModules('as-position-7')): ?>
         <div id="header-bottom-row">
-            <div class="container">
+            <div class="container" >
                 <div class="row">
                     <jdoc:include type="modules" name="as-position-7" style="themeHtml5" />
                 </div>

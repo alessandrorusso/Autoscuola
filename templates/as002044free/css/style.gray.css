@@ -197,9 +197,14 @@ h2.item_title,
 .category_title h2,
 .item_title
 {
-	color: #fff;
+	color: #808080;
 }
 
+
+.module_title
+{
+	color: #808080;
+}
 
 /**************************************************************************************/
 /*   Images																			  */
@@ -892,7 +897,7 @@ f
 #aside-row-1-left .moduletable a,
 #aside-row-2-right .moduletable a
 {
-	color: #fff;
+	color: #808080;
 }
 
 #aside-row-1-left .moduletable a.btn,
