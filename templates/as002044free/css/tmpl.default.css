@@ -2242,7 +2242,7 @@ p .price
 
 #content-row
 {
-			
+	min-height : 170px;		
 }
 
 #content-row .container
