@@ -18,7 +18,7 @@ include ('includes/includes.php');
 <head>
   
 	<?php
-		$doc->addStyleSheet('templates/'.$this->template.'/css/bootstrap.css'); 
+		$doc->addStyleSheet('templates/'.$this->template.'/css/bootstrap.css');                
 		$doc->addStyleSheet('templates/'.$this->template.'/css/tmpl.default.css');	
 		$doc->addStyleSheet('templates/'.$this->template.'/css/media.1024.css');
 		$doc->addStyleSheet('templates/'.$this->template.'/css/media.980.css');
@@ -96,33 +96,36 @@ include ('includes/includes.php');
         <?php endif; ?>
             
         <div id="header-row">
-        	<div class="wrapper">
+            <div class="wrapper">
                 <div class="container">
                     <div class="row">
                         <header>
-                            <div id="logo" class="span<?php echo $this->params->get('logo_size'); ?>">
-                                <?php if($logo_type): ?>
-                                <a href="<?php echo $this->baseurl; ?>">
-                                    <img src="<?php echo $logo_img;?>" alt="<?php echo $sitename; ?>" />
-                                </a>
-                                <?php else: ?> 
-                                <div class="logo">
-                                    <a href="<?php echo $this->baseurl ?>"><?php echo $logo_txt; ?></a>
-                                    <span class="slogan">
-                                        <?php echo $slogan_txt; ?>
-                                    </span>
+                            
+                                <div id="logo" class="span<?php echo $this->params->get('logo_size'); ?>">
+                                    <?php if($logo_type): ?>
+                                    <a href="<?php echo $this->baseurl; ?>">
+                                        <img src="<?php echo $logo_img;?>" alt="<?php echo $sitename; ?>" />
+                                    </a>
+                                    <?php else: ?> 
+                                    <div class="logo">
+                                        <a href="<?php echo $this->baseurl ?>"><?php echo $logo_txt; ?></a>
+                                        <span class="slogan">
+                                            <?php echo $slogan_txt; ?>
+                                        </span>
+                                    </div>
+                                    <?php endif; ?>                            
                                 </div>
-                                <?php endif; ?>                            
-                            </div>
+                            
                             <?php $user = JFactory::getUser(); ?>
 
  <?php if ($user->get('guest')) { ?>   
                             
   <?php }else{  //echo 'You are logged in as: '. $user->username; ?>
                                
-    
-                            <div class="loginaccess">                                
-                                <h7>Benvenuto <?php print ($user->get('name')); ?></h7></div>
+   
+        <div class="loginaccess">                                
+                                <h7>Benvenuto <?php print ($user->get('name')); ?> </h7></div>
+   
     
   <?php }?>
                             
@@ -167,10 +170,9 @@ include ('includes/includes.php');
                 <div class="container">
                     <div class="row">
                         <jdoc:include type="modules" name="as-position-6" style="themeHtml5" />
-                    </div>
-                    
+                    </div>                    
                 </div>
-                <div style="text-align: center; width: 1200px;margin-left: 20px;">
+                <div style="text-align: center; width: 94%;">
                     <span style="font-family:CenturyGothic, AppleGothic, sans-serif; color:graytext;font-size:14px">
                         <span style="font-family:CenturyGothic, AppleGothic, sans-serif;font-size: 18px;color:#003b7b;">Conti Autoscuole & Delegazione Aci</span></br></br>
                     Il Gruppo “Conti Autoscuole & Delegazione Aci” sin dal 1985 si ispira a migliorare tutti i servizi per Voi clienti</br> 
@@ -185,30 +187,28 @@ include ('includes/includes.php');
 
                     Vi aspettiamo presso le nostre sedi di <span style="font-family:CenturyGothic, AppleGothic, sans-serif;font-size: 15px;color:#003b7b;">Colleferro, Palestrina e Paliano.</span></br></br>
                     </span>
-                    
-                    
-                   
-                    
-                </div> 
-                
+                </div>
             </div>
             <div class="wrapper-featured-bottom">
             </div>          
         <?php endif; ?>
-        
-       
        	<!-- End off Featured - Row  Wrapper ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  -->
-       
-        <?php if ($this->countModules('as-position-7')): ?>
-        <div id="header-bottom-row">
+        <div id="header-bottom-row" style="width: 91%;">
             <div class="container" >
-                <div class="row">
-                    <jdoc:include type="modules" name="as-position-7" style="themeHtml5" />
+                <div class="row" style="margin-top: 5%; margin-bottom: 5%">
+                    <div class="col-xs-6 col-md-5">
+                    <?php if ($this->countModules('as-position-7')): ?>
+                        <jdoc:include type="modules" name="as-position-7" style="themeHtml5" />
+                    <?php endif; ?>
+                    </div>
+                    <div class="col-xs-6 col-md-7">
+                    <?php if ($this->countModules('as-position-23')): ?>
+                        <jdoc:include type="modules" name="as-position-23" style="themeHtml5" />
+                    <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
-        <?php endif; ?>
-        
 		<!-- END OF HEADER ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->        
     
 	    <!-- CONTENT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -242,16 +242,17 @@ include ('includes/includes.php');
                             
                     <!-- COLUMN MAIN ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->                
                     <div id="component" class="span<?php echo $mainContentWidth; ?>">
-                
                         <?php if ($this->countModules('as-position-20')): ?>
-                        <div  id="content-row-1" class="row">
-                            <div class="content-row-1">
-                                <jdoc:include type="modules" name="as-position-20" style="themeHtml5" />
+                            <div  id="content-row-1" class="row"> 
+                                <div class="content-row-1">                
+                                    <jdoc:include type="modules" name="as-position-20" style="themeHtml5" />
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                         <?php if ($this->countModules('as-position-21')): ?>
-                        <div   style="width: 600px" id="content-row-2" >
+                        <div class="col-xs-3 col-md-6">
+                        </div>
+                        <div class="col-xs-9 col-md-6" id="content-row-2" style="margin-top: 20%;" >
                             <div class="content-row-2">
                                 <jdoc:include type="modules" name="as-position-21" style="themeHtml5" />
                             </div>
@@ -295,15 +296,7 @@ include ('includes/includes.php');
             </div>
         </div>
                 
-        <?php if ($this->countModules('as-position-23')): ?>
-        <div id="content-row-4">
-            <div class="container">
-                <div class="row">
-                    <jdoc:include type="modules" name="as-position-23" style="themeHtml5" />
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
+        
         
                 
         <?php if ($this->countModules('as-position-24')): ?>
