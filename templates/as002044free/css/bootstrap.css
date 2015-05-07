@@ -6584,11 +6584,16 @@ button.close {
 .loginaccess
 { clear: left;
   float: right;
-  text-align: right; 
-  width: 20%;
-  min-height: 20px;  
-  background-image: url('../images/freccia-login.png');      
-  background-repeat:no-repeat;
+  text-align: right;   
+  min-height: 20px; 
+  background-image: url('../images/freccia-login.png');     
+  background-repeat: no-repeat;  
   margin-right: 6%;
-  padding-right: 1px;
+  padding-right: 1%;
+}
+
+@media all and (min-width: 900px) {
+  .loginaccess {
+    background-position: 100% 100%;
+  }
 }
