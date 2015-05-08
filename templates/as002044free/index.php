@@ -190,12 +190,12 @@ include ('includes/includes.php');
             <div id="header-bottom-row" style="width: 91%;">
                 <div class="container" >
                     <div class="row" style="margin-top: 5%; margin-bottom: 5%">
-                        <div class="col-xs-6 col-md-5">
+                        <div class="col-xs-4 col-md-5">
 <?php if ($this->countModules('as-position-7')): ?>
                                 <jdoc:include type="modules" name="as-position-7" style="themeHtml5" />
 <?php endif; ?>
                         </div>
-                        <div class="col-xs-6 col-md-7">
+                        <div class="col-xs-8 col-md-7">
                             <?php if ($this->countModules('as-position-23')): ?>
                                 <jdoc:include type="modules" name="as-position-23" style="themeHtml5" />
 <?php endif; ?>
