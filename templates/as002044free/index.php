@@ -191,7 +191,7 @@ include ('includes/includes.php');
                             ?>
         <div id="header-bottom-row" style="width: 91%;">
             <div class="container" >
-                <div class="row" style="margin-top: 5%; margin-bottom: 5%; margin-left: 2%;">
+                <div class="row" style="margin-top: 5%; margin-bottom: 5%;">
                     <div class="col-xs-4 col-md-5">
                         <?php if ($this->countModules('as-position-7')): ?>
                             <jdoc:include type="modules" name="as-position-7" style="themeHtml5" />

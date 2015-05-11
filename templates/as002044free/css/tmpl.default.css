@@ -3366,3 +3366,8 @@ aside .moduletable ul.nav ul li:last-child
     float: right;
 }
 
+.latestnews
+{
+    margin-left: 10% !important;
+}
+
