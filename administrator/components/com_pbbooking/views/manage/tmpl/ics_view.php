@@ -6,19 +6,17 @@
  */
 
 $cal= "BEGIN:VCALENDAR
-CALSCALE:GREGORIAN
 VERSION:2.0
-X-WR-CALNAME:".$this->event->summary."
-METHOD:PUBLISH
-PRODID:-//PBBooking//PBBooking 2.2//EN
-BEGIN:VTIMEZONE
-END:VTIMEZONE
+CALSCALE:GREGORIAN
+METHOD:REQUEST
 BEGIN:VEVENT
 UID:".$this->event->id."@".JURI::root(false)."
-DTEND;VALUE=DATE-TIME:".date_create($this->event->dtend,new DateTimeZone(PBBOOKING_TIMEZONE))->format('Ymd')."T".date_create($this->event->dtend,new DateTimeZone(PBBOOKING_TIMEZONE))->format('His')."
-DTSTART;VALUE=DATE-TIME:".date_create($this->event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('Ymd')."T".date_create($this->event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('His')."
+PRIORITY:1
+DTSTART:".date_create($this->event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('Ymd')."T".date_create($this->event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('His')."
+DTEND:".date_create($this->event->dtend,new DateTimeZone(PBBOOKING_TIMEZONE))->format('Ymd')."T".date_create($this->event->dtend,new DateTimeZone(PBBOOKING_TIMEZONE))->format('His')."
+DESCRIPTION:".$this->event->description."
+ORGANIZER:CN=ORGANIZER:mailto:prova@prova.it
 SUMMARY:".$this->event->summary."
-SEQUENCE:0
 END:VEVENT
 END:VCALENDAR";
 
@@ -26,6 +24,8 @@ header('HTTP/1.1 200 OK');
 header('Accept-Ranges: bytes');
 header('Content-Length: '.strlen($cal));
 header('Content-Type: text/calendar');
-header("Content-Disposition: attachment; filename=\"event.ics\""); 
+header("Content-Disposition: attachment; filename=\"prenotazione.ics\""); 
+
+
 ?>
 <?php echo $cal;?>

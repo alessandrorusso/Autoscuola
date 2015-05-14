@@ -234,7 +234,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
         } 
     }
     
-    private function getBlockedDays($from, $to){
+    private function getBlockedDays($from= 0, $to = 999999){
         $db = JFactory::getDbo();
         $db->setQuery('select * from #__pbbooking_block_days');
         $blocked_days = $db->loadObjectList();

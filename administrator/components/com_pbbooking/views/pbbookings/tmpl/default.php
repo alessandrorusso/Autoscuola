@@ -42,13 +42,12 @@ defined('_JEXEC') or die('Restricted access');
 
 		<div class="span6">
 			<div class="well well-small">
-				<div class="module-title nav-header"><?php echo JText::_('COM_PBBOOKING_DASHBOARD_LATEST_PENDING_BOOKINGS');?></div>
+                            <div class="module-title nav-header"><?php echo JText::_('COM_PBBOOKING_DASHBOARD_CALENDAR_UTILIZATION_CURRENT_WEEK');?></div>
 				<div class="row-striped">
-					<?php foreach ($this->pending_events as $event):?>
+					<?php foreach ($this->cals as $cal) :?>
 						<div class="row-fluid">
-							<div class="span5"><?php echo $event->email;?> - <?php echo JText::_('COM_PBBOOKING_PENDING_EVENT_ID');?> <?php echo $event->id;?></div>
-							<div class="span3"><i class="icon-calendar"></i> <?php echo JHtml::_('date',date_create($event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),JText::_('COM_PBBOOKING_DASHBOARD_DTFORMAT'));?></div>
-							<div class="span4"><?php echo $event->name;?></div>
+							<div class="span9"><?php echo $cal->name;?></div>
+							<div class="span3"><?php echo sprintf('%0.2f',$cal->get_calendar_utilization($this->dtstart,$this->dtend));?>%</div>
 						</div>
 					<?php endforeach;?>
 				</div>
@@ -62,23 +61,22 @@ defined('_JEXEC') or die('Restricted access');
 
 
 
-	<div class="row-fluid">
+	<!--div class="row-fluid">
 		<div class="span6">
 			<div class="well well-small">
-				<div class="module-title nav-header"><?php echo JText::_('COM_PBBOOKING_DASHBOARD_CALENDAR_UTILIZATION_CURRENT_WEEK');?></div>
-
+                            <div class="module-title nav-header"><?php echo JText::_('COM_PBBOOKING_DASHBOARD_LATEST_PENDING_BOOKINGS');?></div>
 				<div class="row-striped">
-					<?php foreach ($this->cals as $cal) :?>
+					<?php foreach ($this->pending_events as $event):?>
 						<div class="row-fluid">
-							<div class="span9"><?php echo $cal->name;?></div>
-							<div class="span3"><?php echo sprintf('%0.2f',$cal->get_calendar_utilization($this->dtstart,$this->dtend));?>%
-</div>
+							<div class="span5"><?php echo $event->email;?> - <?php echo JText::_('COM_PBBOOKING_PENDING_EVENT_ID');?> <?php echo $event->id;?></div>
+							<div class="span3"><i class="icon-calendar"></i> <?php echo JHtml::_('date',date_create($event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),JText::_('COM_PBBOOKING_DASHBOARD_DTFORMAT'));?></div>
+							<div class="span4"><?php echo $event->name;?></div>
 						</div>
 					<?php endforeach;?>
-				</div>
+				</div>				
 			</div>
 		</div>
-	</div>
+	</div -->
 
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="0" />

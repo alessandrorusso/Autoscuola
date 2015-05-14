@@ -31,15 +31,14 @@ class PbbookingsController extends JControllerLegacy
         $query = $db->getQuery(true);
         $query->select('#__pbbooking_events.*,#__pbbooking_treatments.name')
               ->from('#__pbbooking_events')
-              ->join('inner','#__pbbooking_treatments on #__pbbooking_events.service_id = #__pbbooking_treatments.id')
-              ->order('#__pbbooking_events.dtstart DESC')
-              ->where('#__pbbooking_events.dtstart = "'.date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM).'"');
+              ->join('inner','#__pbbooking_treatments on #__pbbooking_events.service_id = #__pbbooking_treatments.id')              
+              ->where('#__pbbooking_events.dtstart >= sysdate()')
+              ->order('#__pbbooking_events.dtstart DESC');
         $query->setLimit(10,0);
-        $view->upcoming_events = $db->setQuery($query)->loadObjectList();
-
+        $view->upcoming_events = $db->setQuery($query)->loadObjectList();        
         $query = $db->getQuery(true);
-        $query->select('#__pbbooking_pending.*,#__pbbooking_treatments.name')->from('#__pbbooking_pending')->join('inner','#__pbbooking_treatments on #__pbbooking_pending.service = #__pbbooking_treatments.id')->order('#__pbbooking_pending.dtstart DESC')->where('#__pbbooking_pending.verified != 1')->setLimit(10,0);
-        $view->pending_events = $db->setQuery($query)->loadObjectList();
+        /*$query->select('#__pbbooking_pending.*,#__pbbooking_treatments.name')->from('#__pbbooking_pending')->join('inner','#__pbbooking_treatments on #__pbbooking_pending.service = #__pbbooking_treatments.id')->order('#__pbbooking_pending.dtstart DESC')->where('#__pbbooking_pending.verified != 1')->setLimit(10,0);
+        $view->pending_events = $db->setQuery($query)->loadObjectList();*/
 
         //get teh current php version
         $version_info = explode('.',phpversion());
