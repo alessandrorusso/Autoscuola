@@ -743,9 +743,9 @@ f
     width: 100%;
 }
 
-@media all and (max-width: 350px) {
+@media all and (max-width: 690px) {
   #header-bottom-row h3 {
-    font-size: 12px;
+    font-size: 12px;    
   }
   #header-bottom-row .moduletable-wrapper {
       margin-left: 0px;
@@ -756,6 +756,15 @@ f
   }
   
 }
+
+@media all and (min-width: 690px) {
+  a{
+      font-size: 15px;
+  }
+  
+}
+
+
 
 
 /**************************************************************************************/
@@ -1111,6 +1120,29 @@ f
 }
 
 
-
+@media all and (max-width: 500px) {
+  #fb_img{
+      margin-left: 0;
+      width: 20px !important;
+  }
+  
+  #in_img{
+      margin-left: 0;
+      width: 20px !important;
+  }  
+  
+  #fb_link{
+      float : none !important;
+      padding-top: 0 !important;      
+      margin-left: 0 !important;
+      
+  }
+  
+  #in_link{
+      float : none !important;
+      padding-top: 0 !important;      
+      margin-left: 0 !important;
+  }  
+}
 
 
