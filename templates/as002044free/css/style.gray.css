@@ -740,7 +740,21 @@ f
     background-color: #ffffff;
     color: red;
     /*margin-left: -34px;*/
-    width: 40%;
+    width: 100%;
+}
+
+@media all and (max-width: 350px) {
+  #header-bottom-row h3 {
+    font-size: 12px;
+  }
+  #header-bottom-row .moduletable-wrapper {
+      margin-left: 0px;
+  }
+  
+  a{
+      font-size: 10px;
+  }
+  
 }
 
 
@@ -1095,6 +1109,8 @@ f
 {
 	border-color: #888 !important;
 }
+
+
 
 
 
