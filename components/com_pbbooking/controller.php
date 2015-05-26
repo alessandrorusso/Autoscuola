@@ -160,7 +160,7 @@ class PbbookingController extends JControllerLegacy
         $db =JFactory::getDBO();
         $view = $this->getView('pbbooking','html');
         //retrieve booking events for logged user
-        $db->setQuery("SELECT ev.id, ev.dtstart, of.desc as office, tr.desc as transport
+        $db->setQuery("SELECT ev.id, ev.dtstart,ev.dtend, of.desc as office, tr.desc as transport
                         FROM `e3xea_pbbooking_events` as ev
                             JOIN (`e3xea_pbbooking_cals` as cl)
                                 ON (cl.id = ev.cal_id)   

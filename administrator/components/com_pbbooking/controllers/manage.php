@@ -56,7 +56,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $view->dt_end->setTime((int) $closing_time_arr[0], (int) $closing_time_arr[1]);
 
         //display the view.
-        JToolbarHelper::addNew('create');
+        //JToolbarHelper::addNew('create');
         $view->display();
     }
 
@@ -123,28 +123,40 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $db = JFactory::getDbo();
 
         if ($_SERVER['REQUEST_METHOD'] == "GET") {
+            $input = JFactory::getApplication()->input;
             //render the create form
             $view = $this->getView('manage', 'html');
 
             //load data
+            $config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
+            $dateparam = $input->get('dtstart',date_create('now',new DateTimeZone(PBBOOKING_TIMEZONE))->format('YmdHi'),'string');
+            $cal_id = $input->get('cal_id',0,'integer');       
+            $opening_hours = json_decode($config->trading_hours,true);
+            $closing_time_arr = str_split( $opening_hours[date_create($dateparam,new DateTimezone(PBBOOKING_TIMEZONE))->format('w')]['close_time'],2 );
+            
+            $view->dateparam = date_create($dateparam,new DateTimeZone(PBBOOKING_TIMEZONE));
             $db->setQuery('select * from #__pbbooking_customfields');
             $view->customfields = $db->loadObjectList();
             $db->setQuery('select* from #__pbbooking_treatments');
-            $view->services = $db->loadObjectList();
-            $db->setQuery('select * from #__pbbooking_config');
-            $view->config = $db->loadObject();
-            $view->date = date_create(JRequest::getVar('date'), new DateTimeZone(PBBOOKING_TIMEZONE));
-            $db->setQuery('select * from #__pbbooking_cals where status=1');
-            $view->cals = $db->loadObjectList();
+            $view->services = $db->loadObjectList();            
+            $view->config = $config;
+            $view->cal = new Calendar();
+            $view->cal->loadCalendarFromDbase(array((int)$cal_id));            
+            $view->users = Pbbookinghelper::get_calendar_users($view->cal);
+            $view->closing_time = clone $view->dateparam;
+            $view->closing_time->setTime((int)$closing_time_arr[0],(int)$closing_time_arr[1],0);
+            //$view->date = date_create(JRequest::getVar('date'), new DateTimeZone(PBBOOKING_TIMEZONE));
+            //$db->setQuery('select * from #__pbbooking_cals where status=1');
+            //$view->cals = $db->loadObjectList();
 
             //sort out openign and closing times
-            $opening_hours = json_decode($view->config->trading_hours, true);
+            /*$opening_hours = json_decode($view->config->trading_hours, true);
             $opening_time_arr = str_split($opening_hours[$view->date->format('w')]['open_time'], 2);
             $closing_time_arr = str_split($opening_hours[$view->date->format('w')]['close_time'], 2);
             $view->dt_start = date_create($view->date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
             $view->dt_end = date_create($view->date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
             $view->dt_start->setTime($opening_time_arr[0], $opening_time_arr[1]);
-            $view->dt_end->setTime($closing_time_arr[0], $closing_time_arr[1]);
+            $view->dt_end->setTime($closing_time_arr[0], $closing_time_arr[1]);*/
 
             //display the view
             $view->setLayout('create_event');
@@ -153,10 +165,9 @@ class PbbookingsControllermanage extends JControllerLegacy {
         }
 
         if ($_SERVER['REQUEST_METHOD'] == "POST") {
-            $event_id = Pbbookinghelper::save_pending_event($_POST);
-
+            $event_id = Pbbookinghelper::save_pending_event($_POST);            
             if (is_int($event_id)) {
-                $validated_id = Pbbookinghelper::validate_pending($event_id, null);
+                $validated_id = Pbbookinghelper::validate_pending($event_id);                
                 if ($validated_id) {
                     $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date'), "Prenotazione salvata correttamente.");
                 } else {

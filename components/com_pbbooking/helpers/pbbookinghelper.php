@@ -169,8 +169,7 @@ class Pbbookinghelper
         date_default_timezone_set($joom_config->get('offset'));
 	
         $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($pending_id));
-        $pending = $db->loadObject();
-            
+        $pending = $db->loadObject();            
         $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($pending->service));
         $treatment = $db->loadObject();
             

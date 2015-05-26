@@ -61,6 +61,8 @@ img.printer {
         
         <td class="pbbooking-free-cell">                     
             <?php echo date_create($event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('H:i');?>   
+            -
+            <?php echo date_create($event->dtend,new DateTimeZone(PBBOOKING_TIMEZONE))->format('H:i');?>   
         </td>
         
         <td class="pbbooking-free-cell">

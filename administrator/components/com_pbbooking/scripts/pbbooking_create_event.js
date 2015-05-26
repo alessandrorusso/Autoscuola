@@ -1,7 +1,7 @@
 window.addEvent('domready',function(){
     
     
-        jQuery('#cal_id').change(function(){
+        /*jQuery('#cal_id').change(function(){
             var url = 'index.php?option=com_pbbooking&controller=manage&task=loadCalendarRelatedInfo&cal_id='+jQuery('#cal_id').val()+'&date_sel='+jQuery('#date').val();
             var userItems = [];
             userItems.push("<option value =''> --- Seleziona un utente --- </option>");
@@ -28,7 +28,7 @@ window.addEvent('domready',function(){
                 alert('Indicare il calendario e data della prenotazione!');
             }
             
-        });
+        });*/
     
 	/*$('select-shift').addEvent('change',function(){
 		

@@ -19,10 +19,10 @@ JHtml::_('behavior.formvalidation');
         }
     }
 
-    times_array = <?php echo json_encode($this->shift_times); ?>;
+    /*times_array = <?php echo json_encode($this->shift_times); ?>;
     time_increment = <?php echo $this->config->time_increment; ?>;
     time_prompt = "<?php echo JText::_('COM_PBBOOKING_SELECT_TIME'); ?>";
-    services_array = <?php echo json_encode($this->services); ?>;
+    services_array = <?php echo json_encode($this->services); ?>;*/
 </script>
 
 <style>
@@ -81,52 +81,53 @@ JHtml::_('behavior.formvalidation');
                     <legend><?php echo JText::_('COM_PBBOOKING_CREATE_SUBHEADING'); ?></legend>
                     <table>
                         <tr>
-                            <th><label for="treatment_id"><?php echo JText::_('COM_PBBOOKING_SERVICE_LABEL'); ?></label></th>
+                            <td style="width:200px;"><?php echo JText::_('COM_PBBOOKING_BOOKING_DATE');?></td>
+                            <td><?php echo JHtml::_('date',$this->dateparam->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_DATE_FORMAT'));?></td>
+                        </tr>
+                        
+                        <tr>
+                            <td><?php echo JText::_('COM_PBBOOKING_SUCCESS_TIME');?></td>
+                            <td><?php echo JHtml::_('date',$this->dateparam->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></td>
+                        </tr>
+		
+                        
+                        <tr>
+                            <td><?php echo JText::_('COM_PBBOOKING_SUCCESS_CALENDAR');?></td>
+                            <td><?php echo $this->cal->name;?></td>
+                        </tr>
+                        
+                        <tr>
+                            <td><?php echo JText::_('COM_PBBOOKING_BOOKINGTYPE');?></td>
                             <td>
-                                <select name="treatment_id" class="required">								
-                                    <?php foreach ($this->services as $service) : ?>
-                                        <option value="<?php echo $service->id; ?>"><?php echo $service->name; ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+				<select name="treatment_id">					
+					<?php foreach($this->services as $treatment) : ?>
+						<option value="<?php echo $treatment->id;?>" 
+							<?php echo ($this->cal->can_book_treatment_at_time($treatment->id,$this->dateparam,$this->closing_time)) ? null : 'disabled';?>
+							>
+							<?php echo $treatment->name;?>
+							<?php if ($this->config->show_prices) :?>
+								<?php if ($this->config->currency_symbol_before) :?>
+									<?php echo JText::_('COM_PBBOOKING_CURRENCYSYMBOL').$treatment->price;?>
+								<?php else:?>
+									<?php echo $treatment->price.JText::_('COM_PBBOOKING_CURRENCYSYMBOL');?>
+								<?php endif;?>
+							<?php endif;?>
+						</option>
+					<?php endforeach;?>
+				</select>                                
                             </td>
                         </tr>
-
+                        
                         <tr>
-                            <th><label for="date"><?php echo JText::_('COM_PBBOOKING_BOOKING_DATE'); ?></label></th>
-                            <td>
-                                <?php echo JHTML::_('calendar', $this->date->format('Y-m-d'), 'date', 'date'); ?>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th><label for="treatment-time"><?php echo JText::_('COM_PBBOOKING_SLOT_LABEL'); ?></label></th>
-                            <td>
-                                <select name="treatment-time" id="treatment-time" class="required">
-                                    <?php while ($this->dt_start <= $this->dt_end) : ?>
-                                        <option value="<?php echo $this->dt_start->format('Hi'); ?>"><?php echo JHtml::_('date', $this->dt_start->format(DATE_ATOM), JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT')); ?></option>
-                                        <?php $this->dt_start->modify('+ ' . $this->config->time_increment . ' minutes'); ?>
-                                    <?php endwhile; ?>
-                                </select>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th><label for="cal_id"><?php echo JText::_('COM_PBBOOKING_CAL_LABEL'); ?></label></th>
-                            <td>
-                                <select name="cal_id" id="cal_id" class="required">
-                                    <option value=""><?php echo Jtext::_('COM_PBBOOKING_CAL_DROPDOWN'); ?></option>
-                                    <?php foreach ($this->cals as $cal) : ?>
-                                        <option value="<?php echo $cal->id; ?>"><?php echo $cal->name; ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th><label for="calendar-user"><?php echo JText::_('COM_PBBOOKING_USER_LABEL'); ?></label></th>
+                            <td><?php echo JText::_('COM_PBBOOKING_USER_LABEL'); ?></label></td>
                             <td>
                                 <select name="calendar-user" id="calendar-user" class="required">
                                     <option value=""/><?php echo JText::_('COM_PBBOOKING_USER_DROPDOWN'); ?></option>								
+                                    <?php foreach($this->users as $user) : ?>
+                                        <option value="<?php echo $user->id;?>" >
+                                            <?php echo $user->name;?>
+                                        </option>                                        
+                                    <?php endforeach;?>                                    
                                 </select>
                             </td>
                         </tr>
@@ -137,6 +138,9 @@ JHtml::_('behavior.formvalidation');
                 <?php if ($this->config->consolidated_view == 1) : ?>
                     <input type="hidden" name="cal_id" value="<?php echo $this->outcal->id; ?>"/>
                 <?php endif; ?>
+                <input type="hidden" name="cal_id" id="text-cal-id" value="<?php echo $this->cal->cal_id;?>"/> 
+                <input type="hidden" name="date" value="<?php echo $this->dateparam->format('Ymd');?>"/>
+                <input type="hidden" name="treatment-time" value="<?php echo $this->dateparam->format('Hi');?>"/>
                 <input type="hidden" name="option" value="com_pbbooking"/>
                 <input type="hidden" name="controller" value="manage"/>
                 <input type="hidden" name="task" value=""/>

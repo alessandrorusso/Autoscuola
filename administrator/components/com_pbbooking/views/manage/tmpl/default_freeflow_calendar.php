@@ -30,18 +30,30 @@
 		<?php $dt_slot_end->modify('+ '.$this->config->time_increment.' minutes');?>
 		<tr>
 			<th><?php echo Jhtml::_('date',$this->dt_start->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></th>
-			<?php foreach ($this->cal_objs as $cal) :?>
-				<td>
+			<?php foreach ($this->cal_objs as $key => $cal) :?>                        
 					<?php $event = $cal->is_free_from_to($this->dt_start,$dt_slot_end,true);?>
-					<?php if ($event && is_bool($event)!= true) :?>
-                                    <a class="no-print" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>">
+                                        <?php $open = $cal->isOpen($this->dt_start);?>
+                                        <?php if ($open && !$event) :?>
+                                        <td>
+                                            <a class="no-print" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=create&cal_id=<?php echo $key;?>&dtstart=<?php echo $this->dt_start->format('YmdHi');?>">
+						<?php echo JText::_('COM_PBBOOKING_FREE'); ?>
+                                            </a>
+                                        </td>    
+					<?php elseif (!$open) :?>
+                                        <td class="busy-cell">    
+                                            <?php echo JText::_('COM_PBBOOKING_BUSY'); ?>
+                                        </td>    
+                                        <?php elseif ($event && is_bool($event)!=true) :?>
+                                        <td>
+                                            <a class="no-print" style="font-weight:bold;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>">
 						<?php echo $event->admin_summary();?>	
                                             </a>
-                                    <span class="hide-summary" style="display:none">
-                                        <?php echo $event->admin_summary();?>
-                                    </span>
-                                                
+                                            <span class="hide-summary" style="display:none; font-weight:bold;">
+                                                <?php echo $event->admin_summary();?>
+                                            </span>
+                                        </td>
 					<?php endif;?>
+                                        
 				</td>
 			<?php endforeach;?>
 		</tr>

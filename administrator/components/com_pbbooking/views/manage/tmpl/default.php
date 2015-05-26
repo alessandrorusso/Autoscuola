@@ -67,6 +67,11 @@ td.bookings a {
 	background:url('components/com_pbbooking/images/printer.png');
 }
 
+td.busy-cell {
+    background-color:red;
+    color:white;
+}
+
 
 </style>
 <link href="<?php echo JURI::root(false);?>administrator/components/com_pbbooking/css/jquery-ui.css" rel="stylesheet" type="text/css">
@@ -159,7 +164,6 @@ jQuery(document).ready(function()
     </fieldset>
   </form>
 </div>
-
 <div class="bootstrap-wrap">
     <div class="row-fluid">
         <div class="span4 no-print">
