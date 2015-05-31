@@ -24,7 +24,8 @@ class PbbookingsControllermanage extends JControllerLegacy {
     }
 
     /**
-     * Method to display the view
+     * Mostra la pagina di gestione delle 
+     * prenotazioni lato amministratore 
      *
      * @access    public
      */
@@ -32,21 +33,25 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $db = JFactory::getDbo();
         $view = $this->getView('manage', 'html');
 
-        //stuff params
+        //Recupero la data selezionata
         $view->dateString = JRequest::getVar('date') ? JRequest::getVar('date') : '';
         $view->date = (JRequest::getVar('date')) ? date_create(JRequest::getVar('date'), new DateTimeZone(PBBOOKING_TIMEZONE)) : date_create("now", new DateTimeZone(PBBOOKING_TIMEZONE));
+        
+        //Recupero la configurazione generale, i calendari attivi e le note
         $db->setQuery('select * from #__pbbooking_config');
         $view->config = $db->loadObject();
         $db->setQuery('select * from #__pbbooking_day_note');
         $view->day_notes = $db->loadObjectList();
-        $db->setQuery('select * from #__pbbooking_cals where status=1');
+        $db->setQuery('select * from #__pbbooking_cals where status=1 order by office, license');
         $view->cals = $db->loadObjectList();
+        
+        //Popolo l'oggetto calendario da utilizzare in pagina
         foreach ($view->cals as $cal) {
             $view->cal_objs[$cal->id] = new calendar;
             $view->cal_objs[$cal->id]->loadCalendarFromDbase(array($cal->id));
         }
 
-        //sort out openign and closing times
+        //Imposto gli orari di apertura e chiusura
         $opening_hours = json_decode($view->config->trading_hours, true);
         $opening_time_arr = str_split($opening_hours[$view->date->format('w')]['open_time'], 2);
         $closing_time_arr = str_split($opening_hours[$view->date->format('w')]['close_time'], 2);
@@ -55,25 +60,24 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $view->dt_start->setTime((int) $opening_time_arr[0], (int) $opening_time_arr[1]);
         $view->dt_end->setTime((int) $closing_time_arr[0], (int) $closing_time_arr[1]);
 
-        //display the view.
-        //JToolbarHelper::addNew('create');
         $view->display();
     }
 
     /**
-     * edit - a method to edit an existing event in the database
+     * Consente di modificare una prenotazione
+     * aggiungendo una descrizione
      *
-     * @param int the event id
+     * @param int id, l'identificativo della prenotazione
      */
     function edit() {
         $db = JFactory::getDbo();
 
         if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
-            //render the edit form
+            //Imposto il form della modifica
             $view = $this->getView('manage', 'html');
 
-            //load data
+            //Recupero i dati generali e della prenotazione da modificare
             $db->setQuery('select * from #__pbbooking_config');
             $view->config = $db->loadObject();
             $db->setQuery('select * from #__pbbooking_events where id = ' . $db->escape(JRequest::getInt('id')));
@@ -83,8 +87,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $db->setQuery('select * from #__pbbooking_cals where id = ' . $view->event->cal_id);
             $view->cal = $db->loadObject();
 
-            //sort out openign and closing times
-
+            //Imposto gli orari di apertura e chiusura
             $opening_hours = ($view->cal->hours > '') ? json_decode($view->cal->hours, true) : json_decode($config->trading_hours, true);
             $opening_time_arr = str_split($opening_hours[date_create($view->event->dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format('w')]['open_time'], 2);
             $closing_time_arr = str_split($opening_hours[date_create($view->event->dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format('w')]['close_time'], 2);
@@ -93,7 +96,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $view->dt_start->setTime($opening_time_arr[0], $opening_time_arr[1]);
             $view->dt_end->setTime($closing_time_arr[0], $closing_time_arr[1]);
 
-            //display the view
+            //Imposto i pulsanti di Modifica, Salva, Cancella, EsportaCalendario, Annulla
             $view->setLayout('edit_event');
             JToolbarHelper::save('edit', Jtext::_('COM_PBBOOKING_SAVE_CHANGES'));
             JToolbarHelper::trash('delete', Jtext::_('COM_PBBOOKING_DELETE_EVENT'), false);
@@ -116,7 +119,8 @@ class PbbookingsControllermanage extends JControllerLegacy {
     }
 
     /**
-     * create - a method to insert a new record into the database
+     * Consente di creare una nuova 
+     * prenotazione lato amministrazione
      *
      */
     function create() {
@@ -124,40 +128,29 @@ class PbbookingsControllermanage extends JControllerLegacy {
 
         if ($_SERVER['REQUEST_METHOD'] == "GET") {
             $input = JFactory::getApplication()->input;
-            //render the create form
+            
+            //Imposto il form di creazione
             $view = $this->getView('manage', 'html');
 
-            //load data
+            //carico i dati generali
             $config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
-            $dateparam = $input->get('dtstart',date_create('now',new DateTimeZone(PBBOOKING_TIMEZONE))->format('YmdHi'),'string');
-            $cal_id = $input->get('cal_id',0,'integer');       
-            $opening_hours = json_decode($config->trading_hours,true);
-            $closing_time_arr = str_split( $opening_hours[date_create($dateparam,new DateTimezone(PBBOOKING_TIMEZONE))->format('w')]['close_time'],2 );
-            
-            $view->dateparam = date_create($dateparam,new DateTimeZone(PBBOOKING_TIMEZONE));
+            $dateparam = $input->get('dtstart', date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE))->format('YmdHi'), 'string');
+            $cal_id = $input->get('cal_id', 0, 'integer');
+            $opening_hours = json_decode($config->trading_hours, true);
+            $closing_time_arr = str_split($opening_hours[date_create($dateparam, new DateTimezone(PBBOOKING_TIMEZONE))->format('w')]['close_time'], 2);
+
+            $view->dateparam = date_create($dateparam, new DateTimeZone(PBBOOKING_TIMEZONE));
             $db->setQuery('select * from #__pbbooking_customfields');
             $view->customfields = $db->loadObjectList();
             $db->setQuery('select* from #__pbbooking_treatments');
-            $view->services = $db->loadObjectList();            
+            $view->services = $db->loadObjectList();
             $view->config = $config;
             $view->cal = new Calendar();
-            $view->cal->loadCalendarFromDbase(array((int)$cal_id));            
+            $view->cal->loadCalendarFromDbase(array((int) $cal_id));
             $view->users = Pbbookinghelper::get_calendar_users($view->cal);
             $view->closing_time = clone $view->dateparam;
-            $view->closing_time->setTime((int)$closing_time_arr[0],(int)$closing_time_arr[1],0);
-            //$view->date = date_create(JRequest::getVar('date'), new DateTimeZone(PBBOOKING_TIMEZONE));
-            //$db->setQuery('select * from #__pbbooking_cals where status=1');
-            //$view->cals = $db->loadObjectList();
-
-            //sort out openign and closing times
-            /*$opening_hours = json_decode($view->config->trading_hours, true);
-            $opening_time_arr = str_split($opening_hours[$view->date->format('w')]['open_time'], 2);
-            $closing_time_arr = str_split($opening_hours[$view->date->format('w')]['close_time'], 2);
-            $view->dt_start = date_create($view->date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
-            $view->dt_end = date_create($view->date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
-            $view->dt_start->setTime($opening_time_arr[0], $opening_time_arr[1]);
-            $view->dt_end->setTime($closing_time_arr[0], $closing_time_arr[1]);*/
-
+            $view->closing_time->setTime((int) $closing_time_arr[0], (int) $closing_time_arr[1], 0);
+            
             //display the view
             $view->setLayout('create_event');
             JToolbarHelper::save('create');
@@ -165,9 +158,9 @@ class PbbookingsControllermanage extends JControllerLegacy {
         }
 
         if ($_SERVER['REQUEST_METHOD'] == "POST") {
-            $event_id = Pbbookinghelper::save_pending_event($_POST);            
+            $event_id = Pbbookinghelper::save_pending_event($_POST);
             if (is_int($event_id)) {
-                $validated_id = Pbbookinghelper::validate_pending($event_id);                
+                $validated_id = Pbbookinghelper::validate_pending($event_id);
                 if ($validated_id) {
                     $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date'), "Prenotazione salvata correttamente.");
                 } else {
@@ -180,7 +173,8 @@ class PbbookingsControllermanage extends JControllerLegacy {
     }
 
     /**
-     * delete - a method to delete an existing event in the database 
+     * Consente di cancellare una prenotazione
+     * lato amministratore
      * 
      * @param int the event id
      */
@@ -195,6 +189,10 @@ class PbbookingsControllermanage extends JControllerLegacy {
         }
     }
 
+    /**
+     * Visualizza tutte le date bloccate 
+     * sia interi giorni che blocchi parziali
+     */
     function blockdays() {
         $db = JFactory::getDbo();
 
@@ -204,7 +202,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
 
         //load up data in the view
         $db->setQuery('select * from #__pbbooking_block_days');
-        $view->blocked_days = $this->getBlockedDays();        
+        $view->blocked_days = $this->getBlockedDays();
         $db->setQuery('select * from #__pbbooking_config');
         $config = $db->loadObject();
         $view->trading_hours = json_decode($config->trading_hours, true);
@@ -217,51 +215,54 @@ class PbbookingsControllermanage extends JControllerLegacy {
         JToolBarHelper::save('save_block_days');
         $view->display();
     }
-    
+
+    /**
+     * Ricarica le date bloccate (metodo usato da dataTable)
+     * @throws Exception
+     */
     function reloadBlockdays() {
         JFactory::getDocument()->setMimeEncoding('application/json');
         JResponse::setHeader('Content-Disposition', 'attachment;filename="progress-report-results.json"');
 
         try {
-            
-            $builtBlockedDays = $this->getBlockedDays(JRequest::getVar('iDisplayStart'), (JRequest::getVar('iDisplayStart')+JRequest::getVar('iDisplayLength')));
-            if(count($builtBlockedDays) >0){
+
+            $builtBlockedDays = $this->getBlockedDays(JRequest::getVar('iDisplayStart'), (JRequest::getVar('iDisplayStart') + JRequest::getVar('iDisplayLength')));
+            if (count($builtBlockedDays) > 0) {
                 $ret['aaData'] = $builtBlockedDays;
                 $db = JFactory::getDbo();
                 $db->setQuery('select * from #__pbbooking_block_days');
                 $blocked_days = $db->loadObjectList();
                 $ret['iTotalDisplayRecords'] = count($blocked_days);
-                $ret['iTotalRecords'] = count($blocked_days);                
+                $ret['iTotalRecords'] = count($blocked_days);
                 $ret['sEcho'] = JRequest::getVar('sEcho');
                 echo json_encode($ret);
-            }
-            else{
+            } else {
                 throw new Exception('Al momento non sono presenti orari di chiusura.');
-            }                      
+            }
             JFactory::getApplication()->close();
         } catch (Exception $ex) {
             echo json_encode(['message' => $ex->getMessage()]);
             JFactory::getApplication()->close();
-        } 
+        }
     }
-    
-    private function getBlockedDays($from= 0, $to = 999999){
+
+    private function getBlockedDays($from = 0, $to = 999999) {
         $db = JFactory::getDbo();
         $db->setQuery('select * from #__pbbooking_block_days');
         $blocked_days = $db->loadObjectList();
-        if(count($blocked_days) > 0){  
+        if (count($blocked_days) > 0) {
             $built_blocked_days = array();
             $index = 0;
             foreach ($blocked_days as $blocked_day) {
-                if($index >= $from && $index < $to){
+                if ($index >= $from && $index < $to) {
                     $row = array();
                     $calName = '';
-                    foreach(explode(',', $blocked_day->calendars) as $cal_id){
-                    if(isset($cal_id) && $cal_id != null){
-                            $calName =  $calName.Pbbookinghelper::get_calendar_name_for_id($cal_id).'<br/>';
+                    foreach (explode(',', $blocked_day->calendars) as $cal_id) {
+                        if (isset($cal_id) && $cal_id != null) {
+                            $calName = $calName . Pbbookinghelper::get_calendar_name_for_id($cal_id) . '<br/>';
                         }
                     }
-                    $row = [$calName,$blocked_day->block_start_date,$blocked_day->block_end_date,$blocked_day->block_start_hour,$blocked_day->block_end_hour,$blocked_day->block_note, $blocked_day->id];                         
+                    $row = [$calName, $blocked_day->block_start_date, $blocked_day->block_end_date, $blocked_day->block_start_hour, $blocked_day->block_end_hour, $blocked_day->block_note, $blocked_day->id];
                     $built_blocked_days[] = $row;
                 }
                 $index++;
@@ -412,5 +413,4 @@ class PbbookingsControllermanage extends JControllerLegacy {
             JFactory::getApplication()->close();
         }
     }
-
 }

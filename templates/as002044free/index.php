@@ -1,13 +1,4 @@
 <?php
-/* * **************************************************************************************** */
-/*
-  /*		Designed by 'AS Designing'
-  /*		Web: http://www.asdesigning.com
-  /*		Web: http://www.astemplates.com
-  /*		License: GNU/GPL
-  /*
-  /****************************************************************************************** */
-
 defined('_JEXEC') or die;
 include ('includes/includes.php');
 ?>
@@ -24,7 +15,6 @@ include ('includes/includes.php');
         $doc->addStyleSheet('templates/' . $this->template . '/css/media.768.css');
         $doc->addStyleSheet('templates/' . $this->template . '/css/media.480.css');
         ?>
-
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
         <jdoc:include type="head" />
@@ -117,7 +107,7 @@ include ('includes/includes.php');
                             <?php } else {  //echo 'You are logged in as: '. $user->username; ?>
                                 <div class="row">
                                     <div class="loginaccess col-xs-9 col-md-5">                                
-                                        <h7>Benvenuto <?php print ($user->get('name')); ?> </h7>
+                                        <h7>Benvenuto <?php print ($user->get('username')); ?> </h7>
                                     </div>
                                 </div>
                             <?php } ?>

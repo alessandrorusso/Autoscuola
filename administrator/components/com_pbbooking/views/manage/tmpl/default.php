@@ -204,15 +204,11 @@ jQuery(document).ready(function()
 					<?php else:?>
 						<td <?php echo (PbbookingHelper::booking_for_day($curr_day)) ? 'class="bookings"' : '';?>  >
 					<?php endif;?>
-					<?php if (!Pbbookinghelper::is_blocked_date($curr_day)) :?>
-						<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
-							<?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></td>
-						</a>				
-					<?php else :?>
-						<?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></td>
-					<?php endif;?>
+					<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
+                                            <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></td>
+					</a>	
 					<?php if ($curr_day->format('w') == 6) :?>
-						</tr><tr>
+                                            </tr><tr>
 					<?php endif;?>
 					<?php $curr_day->modify('+1 day');?>
 				<?php endwhile;?>

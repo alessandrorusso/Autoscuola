@@ -55,12 +55,8 @@ class plgUserProfileautoscuola extends JPlugin
 
         // Add the profile fields to the form.
         JForm::addFormPath(dirname(__FILE__).'/profiles');
-        $form->loadFile('profile', false);
+        $form->loadFile('profile', false);	
 		
-		$form->setFieldAttribute('address', 'required', 'required', 'profileautoscuola');
-		$form->setFieldAttribute('city', 'required', 'required', 'profileautoscuola');		
-		$form->setFieldAttribute('region', 'required', 'required', 'profileautoscuola');		
-		$form->setFieldAttribute('postal_code', 'required', 'required', 'profileautoscuola');
 		$form->setFieldAttribute('phone', 'required', 'required', 'profileautoscuola');
 		$form->setFieldAttribute('office', 'required', 'required', 'profileautoscuola');
                 $form->setFieldAttribute('license', 'required', 'required', 'profileautoscuola');   

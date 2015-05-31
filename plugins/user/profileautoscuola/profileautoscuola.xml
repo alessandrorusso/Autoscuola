@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.1" type="plugin" group="user">
     <name>plg_user_profileautoscuola</name>
-    <author>Alessandro Russo</author>
+    <author>Alessandro</author>
     <creationDate>Dicember 2014</creationDate>
-    <authorEmail>alessandro.russo80@gmail.com</authorEmail>
     <authorUrl>www.joomla.org</authorUrl>
     <version>1.0.0</version>
     <description>PLG_USER_PROFILEAUTOSCUOLA_XML_DESCRIPTION</description>
