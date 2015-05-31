@@ -52,9 +52,7 @@
                                                 <?php echo $event->admin_summary();?>
                                             </span>
                                         </td>
-					<?php endif;?>
-                                        
-				</td>
+					<?php endif;?>			
 			<?php endforeach;?>
 		</tr>
 		<?php $this->dt_start->modify('+ '.$this->config->time_increment.' minutes');?>
