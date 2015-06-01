@@ -184,7 +184,7 @@ class Pbbookinghelper
             //create the new appt
             $dtend = date_create($dtstart->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
             $dtend->modify('+ '.$treatment->duration.' minutes');
-            $summary = $user->name;
+            $summary = $user->username;
             $description  = "";
             $appt = new JObject;
             $appt->setProperties(array('summary'=>$summary,'dtend'=>$dtend->format(DATE_ATOM),'dtstart'=>$dtstart->format(DATE_ATOM),'description'=>$description,'uid'=>$pending->user_id,'service_id'=>$pending->service,'email'=>$pending->email,

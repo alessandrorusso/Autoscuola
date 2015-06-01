@@ -125,7 +125,7 @@ JHtml::_('behavior.formvalidation');
                                     <option value=""/><?php echo JText::_('COM_PBBOOKING_USER_DROPDOWN'); ?></option>								
                                     <?php foreach($this->users as $user) : ?>
                                         <option value="<?php echo $user->id;?>" >
-                                            <?php echo $user->name;?>
+                                            <?php echo $user->username;?>
                                         </option>                                        
                                     <?php endforeach;?>                                    
                                 </select>

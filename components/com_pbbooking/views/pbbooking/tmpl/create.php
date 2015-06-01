@@ -29,7 +29,7 @@
 	<table class="pbbooking-data-table">
             <tr>
                 <td style="width:200px;">Nome</td>
-                <td><?php echo $user->name; ?></td>
+                <td><?php echo $user->username; ?></td>
             </tr>
             <tr>
                 <td>Telefono</td>

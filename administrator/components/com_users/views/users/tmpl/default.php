@@ -111,10 +111,10 @@ $sortFields = $this->getSortFields();
 				</td>
 				<td>
 					<?php if ($canEdit) : ?>
-						<a href="<?php echo JRoute::_('index.php?option=com_users&task=user.edit&id='.(int) $item->id); ?>" title="<?php echo JText::sprintf('COM_USERS_EDIT_USER', $this->escape($item->name)); ?>">
-							<?php echo $this->escape($item->name); ?></a>
+						<a href="<?php echo JRoute::_('index.php?option=com_users&task=user.edit&id='.(int) $item->id); ?>" title="<?php echo JText::sprintf('COM_USERS_EDIT_USER', $this->escape($item->username)); ?>">
+							<?php echo $this->escape($item->username); ?></a>
 					<?php else : ?>
-						<?php echo $this->escape($item->name); ?>
+						<?php echo $this->escape($item->username); ?>
 					<?php endif; ?>
 					<div>
 						<?php echo JHtml::_('users.filterNotes', $item->note_count, $item->id); ?>
