@@ -242,23 +242,35 @@ function isOpen($date)
 	$db->setQuery("select * from #__pbbooking_block_days");
 	$blocked_days = $db->loadObjectList();
 	$config = JFactory::getConfig();
-	$offset = $config->get('offset');        
-	if (count($blocked_days)>0) {
+	$offset = $config->get('offset');      
+        $date_compare = clone $date;
+        $date_compare->setTime(00, 00);        
+	if (count($blocked_days)>0) {            
 		foreach ($blocked_days as $blocked_day) {
 			$block_from = date_create($blocked_day->block_start_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-                        $block_from_hour_arr = explode('=',$blocked_day->block_start_hour);
-                        $block_from_hour_arr_split = str_split($block_from_hour_arr[0],2);
-			$block_from->setTime($block_from_hour_arr_split[0],$block_from_hour_arr_split[1],00);
-			$block_from->setTimezone(new DateTimezone($offset));
+                        //$block_from_hour_arr = explode('',$blocked_day->block_start_hour);
+                        //$block_from_hour_arr_split = str_split($block_from_hour_arr[0],2);
+                        
+			//$block_from->setTime(substr($blocked_day->block_start_hour, 0,2),substr($blocked_day->block_start_hour, 2),00);
+			//$block_from->setTimezone(new DateTimezone($offset));
 			
 			$block_to = date_create($blocked_day->block_end_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-			$block_to_hour_arr = explode('=',$blocked_day->block_end_hour);
-                        $block_to_hour_arr_split = str_split($block_to_hour_arr[0],2);
-                        $block_to->setTime($block_to_hour_arr_split[0],$block_to_hour_arr_split[1],00);                        
-			$block_to->setTimezone(new DateTimezone($offset));                                                
-			if ($date>=$block_from && $date<=$block_to && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {
-				Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');
-				return false;
+			//$block_to_hour_arr = explode('=',$blocked_day->block_end_hour);
+                        //$block_to_hour_arr_split = str_split($block_to_hour_arr[0],2);
+                        
+                        //$block_to->setTime(substr($blocked_day->block_end_hour, 0,2),substr($blocked_day->block_end_hour, 2),00);                        
+			//$block_to->setTimezone(new DateTimezone($offset));                         
+			if (($date_compare>=$block_from && $date_compare<=$block_to) && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {
+                            $date_compare_from = clone $date_compare;
+                            $date_compare_from->setTime(substr($blocked_day->block_start_hour, 0,2),substr($blocked_day->block_start_hour, 2),00);
+                            $date_compare_from->setTimezone(new DateTimezone($offset));
+                            $date_compare_to = clone $date_compare;
+                            $date_compare_to->setTime(substr($blocked_day->block_end_hour, 0,2),substr($blocked_day->block_end_hour, 2),00);                        
+                            $date_compare_to->setTimezone(new DateTimezone($offset));  
+                            if($date>=$date_compare_from && $date<=$date_compare_to){
+                                Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');
+                                return false;
+                            }
 			}
 			$blocked_day->r_dtend = date_create($blocked_day->r_end,new DateTimeZone(PBBOOKING_TIMEZONE));
 			$blocked_day->r_dtend->setTimezone(new DateTimeZone($offset));
