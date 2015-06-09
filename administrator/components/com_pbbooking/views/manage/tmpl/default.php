@@ -202,11 +202,12 @@ jQuery(document).ready(function()
 					<?php if ($curr_day >= $start_selected_day && $curr_day <= $end_selected_day) :?>
 						<td class="selected-date">
 					<?php else:?>
-						<td <?php echo (PbbookingHelper::booking_for_day($curr_day)) ? 'class="bookings"' : '';?>  >
+						<td <?php echo (PbbookingHelper::booking_for_day($curr_day)) ? 'class="bookings"' : '';?>>
 					<?php endif;?>
 					<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
-                                            <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></td>
-					</a>	
+                                            <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></a>
+                                                </td>
+						
 					<?php if ($curr_day->format('w') == 6) :?>
                                             </tr><tr>
 					<?php endif;?>
