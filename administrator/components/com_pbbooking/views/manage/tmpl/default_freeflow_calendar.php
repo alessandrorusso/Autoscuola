@@ -19,7 +19,7 @@
 	<tr>
 		<th></th>
 		<?php foreach ($this->cals as $cal):?>
-			<th><?php echo $cal->name;?></th>
+                <th style="background-color: <?php echo $cal->color;?>"><?php echo $cal->name;?></th>
 		<?php endforeach;?>
 	</tr>
 

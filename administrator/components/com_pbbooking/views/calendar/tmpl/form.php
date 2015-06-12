@@ -131,6 +131,17 @@ JHtml::_('behavior.formvalidation');
                                     </select>				                
                                 </td>
                             </tr>
+                            
+                            <tr>
+                                <td align="left" class="key" width="200">
+                                    <label for="name">
+<?php echo JText::_('COM_PBBOOKING_CAL_OVERRIDE_COLOR'); ?>
+                                    </label>
+                                </td>
+                                <td>
+                                    <input type="color" name="color" id="color" size="64" maxlength="250" value="<?php echo $this->calendar['color']; ?>" required="required"/>
+                                </td>
+                            </tr>
 
                         </table>	
                     </div> <!-- end calendar details tab -->
@@ -151,8 +162,10 @@ JHtml::_('behavior.formvalidation');
                                     <td><input type="text" name="open-time-<?php echo $i; ?>" class="time-input" value="<?php echo (isset($this->trading_hours[$i]['open_time'])) ? $this->trading_hours[$i]['open_time'] : ''; ?>"/></td>
                                     <td><input type="text" name="close-time-<?php echo $i; ?>" class="time-input" value="<?php echo (isset($this->trading_hours[$i]['close_time'])) ? $this->trading_hours[$i]['close_time'] : ''; ?>"/></td>                                                                
                                 </tr>
+                                
     <?php $i++; ?>
 <?php endforeach; ?>
+                                
                         </table>
                     </div>
                 </div> <!-- uses tab-content-->

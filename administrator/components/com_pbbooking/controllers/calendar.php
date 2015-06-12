@@ -82,7 +82,7 @@ class PbbookingsControllercalendar extends JControllerLegacy {
             $view->trading_hours = ($cals[0]['hours'] > '') ? json_decode($cals[0]['hours'], true) : json_decode($config->trading_hours, true);
         } else {
             $this->setupLov($db, $view);
-            $view->calendar = Array("in_cal" => 1, "out_cal" => 0, "id" => 0, "name" => "", 'office' => '1', 'transport' => '1', 'email' => '', 'status' => 1);
+            $view->calendar = Array("in_cal" => 1, "out_cal" => 0, "id" => 0, "name" => "", 'office' => '1', 'transport' => '1', 'email' => '', 'status' => 1, 'color'=>'#FFFFFF');
         }
 
         $view->display();
@@ -101,6 +101,7 @@ class PbbookingsControllercalendar extends JControllerLegacy {
         $is_open_arr = JRequest::getVar('is-open');
         $email = JRequest::getVar('email');
         $status = JRequest::getVar('status');
+        $color = JRequest::getVar('color');
 
         //retreive opening hours
         $opening_hours = array();
@@ -120,9 +121,9 @@ class PbbookingsControllercalendar extends JControllerLegacy {
         $opening_hours_string = (count($opening_hours) > 0) ? json_encode($opening_hours) : '';
 
         if ($id != 0) {
-            $sql = sprintf("update #__pbbooking_cals set in_cal=%s,out_cal=%s,name='%s', hours = '%s', email = '%s', office = '%s', transport = '%s', status = '%s', license = '%s' where id = %s", $in_cal, $out_cal, $db->escape($name), $db->escape($opening_hours_string), $db->escape($email), $db->escape($office), $db->escape($transport), $db->escape($status), $db->escape($license), $id);
+            $sql = sprintf("update #__pbbooking_cals set in_cal=%s,out_cal=%s,name='%s', hours = '%s', email = '%s', office = '%s', transport = '%s', status = '%s', license = '%s', color= '%s' where id = %s", $in_cal, $out_cal, $db->escape($name), $db->escape($opening_hours_string), $db->escape($email), $db->escape($office), $db->escape($transport), $db->escape($status), $db->escape($license), $db->escape($color), $id);
         } else {
-            $sql = sprintf("insert into #__pbbooking_cals (in_cal,out_cal,name,hours,email, office, transport, status, license) values (%s,%s,'%s','%s','%s','%s','%s','%s','%s')", $in_cal, $out_cal, $db->escape($name), $db->escape($opening_hours_string), $db->escape($email), $db->escape($office), $db->escape($transport), $db->escape($status), $db->escape($license));
+            $sql = sprintf("insert into #__pbbooking_cals (in_cal,out_cal,name,hours,email, office, transport, status, license, color) values (%s,%s,'%s','%s','%s','%s','%s','%s','%s','%s')", $in_cal, $out_cal, $db->escape($name), $db->escape($opening_hours_string), $db->escape($email), $db->escape($office), $db->escape($transport), $db->escape($status), $db->escape($license), $db->escape($color));
         }
 
         $db->setQuery($sql);

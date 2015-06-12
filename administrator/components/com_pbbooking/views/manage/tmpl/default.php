@@ -31,13 +31,17 @@
 <style>
 
 table.calendar-table {
-	border:1px solid black;
+        border-style: solid;
+        border-width: 2px;
+        border-color: black;
 	border-collapse:collapse;
 }
 
 
-table.calendar-table > tr,td,th{
-	border:1px solid black;
+table.calendar-table tr,td,th{
+        border-style: solid;
+        border-width: 2px;	    
+        border-color: black;
 	padding: 5px;
 	width:45px;
 	height:45px;

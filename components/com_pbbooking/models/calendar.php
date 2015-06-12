@@ -53,6 +53,7 @@ function loadCalendarFromDbase($cals)
         $this->office = $cal->office;
         $this->license = $cal->license;
         $this->transport = $cal->transport;
+        $this->color = $cal->color;
     }
 
     $events = array();
