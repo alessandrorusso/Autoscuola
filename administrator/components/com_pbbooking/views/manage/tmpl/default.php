@@ -32,15 +32,15 @@
 
 table.calendar-table {
         border-style: solid;
-        border-width: 2px;
+        border-width: 1px;
         border-color: black;
 	border-collapse:collapse;
 }
 
 
-table.calendar-table tr,td,th{
+table.calendar-table tr,td,th{        
         border-style: solid;
-        border-width: 2px;	    
+        border-width: 1px;	    
         border-color: black;
 	padding: 5px;
 	width:45px;
@@ -55,6 +55,9 @@ td.selected-date {
 
 table.diary-table {
 	width:100%;
+        border-style: solid;
+        border-width: 1px;
+        border-color: black;
 	border-collapse: collapse;
 }
 
