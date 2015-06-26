@@ -20,11 +20,20 @@
 
 	$start_selected_day->setTime(0,0,0);
 	$end_selected_day->setTime(23,59,59);
-	
+        
+        //Calendario in italiano (parte dal lunedì)
+        $m = $this->date->format('m');
+        $y = $this->date->format('Y');
+        $cols = 7;
+        $days = date("t",mktime(0, 0, 0, $m, 1, $y)); 
+        $lunedi= date("w",mktime(0, 0, 0, $m, 1, $y));
+        if($lunedi==0) $lunedi = 7;
+	//FINE Calendario in italiano (parte dal lunedì)
 	$version = new JVersion;
         JHTML::_('behavior.modal');
         
         $addNote = true ;
+               
         
 ?>
 
@@ -188,39 +197,43 @@ jQuery(document).ready(function()
 			</a>
                     </th>
                 </tr>
-			<tr>
-				<th><?php echo Jtext::_('COM_PBBOOKING_SUNDAY_ABBR');?></th>
-				<th><?php echo Jtext::_('COM_PBBOOKING_MONDAY_ABBR');?></th>
+			<tr>	
+                                <th><?php echo Jtext::_('COM_PBBOOKING_MONDAY_ABBR');?></th>
 				<th><?php echo Jtext::_('COM_PBBOOKING_TUESDAY_ABBR');?></th>
 				<th><?php echo Jtext::_('COM_PBBOOKING_WEDNESDAY_ABBR');?></th>
 				<th><?php echo Jtext::_('COM_PBBOOKING_THURSDAY_ABBR');?></th>
 				<th><?php echo Jtext::_('COM_PBBOOKING_FRIDAY_ABBR');?></th>
-				<th><?php echo Jtext::_('COM_PBBOOKING_SATURDAY_ABBR');?></th>
+				<th><?php echo Jtext::_('COM_PBBOOKING_SATURDAY_ABBR');?></th>                                
+                                <th><?php echo Jtext::_('COM_PBBOOKING_SUNDAY_ABBR');?></th>
 			</tr>
 			<!-- draw date rows -->
-			<tr>
-						
-				<!-- calc padding -->
-				<?php for ($i=0;$i<$bom->format('w');$i++): ?>
-					<td></td>
-				<?php endfor;?>
-				
-				<?php while ($curr_day < $eom) :?>
-					<?php if ($curr_day >= $start_selected_day && $curr_day <= $end_selected_day) :?>
-						<td class="selected-date">
-					<?php else:?>
-						<td <?php echo (PbbookingHelper::booking_for_day($curr_day)) ? 'class="bookings"' : '';?>>
-					<?php endif;?>
-					<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
+			<?php for($j = 1; $j<$days+$lunedi; $j++): ?>
+                            <?php if($j%$cols+1==0) :?>
+                            <tr>
+                            <?php endif;?>                                    
+                            <?php if($j<$lunedi) :?>
+                                <td> </td>
+                            <?php else:?>
+                                <?php 
+                                    $day= $j-($lunedi-1);
+                                    $data = strtotime(date($y."-".$m."-".$day));
+                                    $oggi = strtotime(date("Y-m-d"));
+                                ?>
+                                <?php if($data != $oggi) :?>
+                                <td <?php echo (PbbookingHelper::booking_for_day($curr_day)) ? 'class="bookings"' : '';?>>                                                               
+                                <?php else:?>
+                                    <td class="selected-date">
+                                <?php endif;?>
+                                <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
                                             <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></a>
-                                                </td>
-						
-					<?php if ($curr_day->format('w') == 6) :?>
-                                            </tr><tr>
-					<?php endif;?>
-					<?php $curr_day->modify('+1 day');?>
-				<?php endwhile;?>
-			</tr>
+                                                </td>        
+                            <?php endif;?>
+                            <?php if($j%$cols==0) :?>
+                                </tr>
+                            <?php endif;?> 
+                            <?php $curr_day->modify('+1 day');?>
+                        <?php endfor;?>
+                        <!-- calc padding -->                                
 			<!-- end draw date rows -->
 		
 		</table>

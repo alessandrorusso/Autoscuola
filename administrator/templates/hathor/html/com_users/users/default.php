@@ -73,7 +73,7 @@ $loggeduser = JFactory::getUser();
 				<option value=""><?php echo JText::_('COM_USERS_OPTION_FILTER_DATE');?></option>
 				<?php echo JHtml::_('select.options', Usershelper::getRangeOptions(), 'value', 'text', $this->state->get('filter.range'));?>
 			</select>
-
+                        
 			<button type="submit" id="filter-go">
 				<?php echo JText::_('JSUBMIT'); ?></button>
 		</div>
@@ -88,7 +88,7 @@ $loggeduser = JFactory::getUser();
 				</th>
 				<th class="title">
 					<?php echo JHtml::_('grid.sort', 'COM_USERS_HEADING_NAME', 'a.name', $listDirn, $listOrder); ?>
-				</th>
+				</th>                                
 				<th class="nowrap width-10">
 					<?php echo JHtml::_('grid.sort', 'JGLOBAL_USERNAME', 'a.username', $listDirn, $listOrder); ?>
 				</th>

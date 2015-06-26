@@ -44,6 +44,7 @@ class UsersModelUsers extends JModelList
 				'group_id',
 				'range',
 				'state',
+                                'user_office',
 			);
 		}
 
@@ -87,6 +88,9 @@ class UsersModelUsers extends JModelList
 
 		$range = $this->getUserStateFromRequest($this->context . '.filter.range', 'filter_range');
 		$this->setState('filter.range', $range);
+                
+                $user_office = $this->getUserStateFromRequest($this->context . '.filter.user_office', 'filter.user_office');
+		$this->setState('filter.user_office', $user_office);
 
 		$groups = json_decode(base64_decode($app->input->get('groups', '', 'BASE64')));
 
@@ -135,6 +139,7 @@ class UsersModelUsers extends JModelList
 		$id .= ':' . $this->getState('filter.state');
 		$id .= ':' . $this->getState('filter.group_id');
 		$id .= ':' . $this->getState('filter.range');
+                $id .= ':' . $this->getState('filter.user_office');
 
 		return parent::getStoreId($id);
 	}
@@ -250,6 +255,13 @@ class UsersModelUsers extends JModelList
 				{
 					$item->note_count = $userNotes[$item->id]->note_count;
 				}
+                                $license = $this->_getUserDisplayedLicense($item->id);                                
+                                if($license){                                    
+                                        $item->license = $license;
+                                }
+                                else{
+                                    $item->license = 'Vuota';
+                                }
 			}
 
 			// Add the items to the internal cache.
@@ -403,6 +415,20 @@ class UsersModelUsers extends JModelList
 				);
 			}
 		}
+                
+                // Add filter for registration ranges select list
+		$user_office = $this->getState('filter.user_office');
+                if ($user_office){
+                    
+                    $subQuery = $db->getQuery(true)
+			->select('user_id')			
+			->from('#__user_profiles')
+			->where('profile_key =' .$db->quote('profileautoscuola.office').' and profile_value = '.$user_office);
+
+                    $query->where('a.id IN (' . $subQuery->__toString() . ')'
+                            );
+                    $db->setQuery($query);                    
+                }
 
 		// Filter by excluded users
 		$excluded = $this->getState('filter.excluded');
@@ -436,5 +462,36 @@ class UsersModelUsers extends JModelList
 		$result = $db->loadColumn();
 
 		return implode("\n", $result);
+	}
+        
+        
+        /**
+	 * SQL server change
+	 *
+	 * @param   integer  $user_id  User identifier
+	 *
+	 * @return  string   the license description :$
+	 */
+	function _getUserDisplayedLicense($user_id)
+	{
+		$db = JFactory::getDbo();
+                
+                $query = $db->getQuery(true)
+                        ->select('l.desc')
+                        ->from('#__pbbooking_lov_license'. ' as l');
+                
+                        
+                $subQuery = $db->getQuery(true)
+                            ->select('profile_value')			
+                            ->from('#__user_profiles')
+                            ->where('profile_key =' .$db->quote('profileautoscuola.license').' and user_id = '.$user_id);
+
+                        
+                $query->where('id IN (' . $subQuery->__toString() . ')');
+            
+		$db->setQuery($query);
+		$result = $db->loadColumn();
+
+		return implode("\n", $result);		
 	}
 }

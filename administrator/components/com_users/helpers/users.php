@@ -220,5 +220,5 @@ class UsersHelper
 		}
 
 		return $options;
-	}
+	}       
 }

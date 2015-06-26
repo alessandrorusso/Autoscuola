@@ -8,7 +8,6 @@
  */
 
 defined('_JEXEC') or die;
-
 JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('formbehavior.chosen', 'select');
@@ -57,9 +56,12 @@ $sortFields = $this->getSortFields();
 				</th>
 				<th class="left">
 					<?php echo JHtml::_('searchtools.sort', 'COM_USERS_HEADING_NAME', 'a.name', $listDirn, $listOrder); ?>
-				</th>
+				</th>                                
 				<th width="10%" class="nowrap center">
 					<?php echo JHtml::_('searchtools.sort', 'JGLOBAL_USERNAME', 'a.username', $listDirn, $listOrder); ?>
+				</th>
+                                <th width="5%" class="nowrap center">
+					<?php echo JText::_('COM_USERS_HEADING_LICENSE'); ?>
 				</th>
 				<th width="5%" class="nowrap center">
 					<?php echo JHtml::_('searchtools.sort', 'COM_USERS_HEADING_ENABLED', 'a.block', $listDirn, $listOrder); ?>
@@ -94,7 +96,7 @@ $sortFields = $this->getSortFields();
 		<tbody>
 		<?php foreach ($this->items as $i => $item) :
 			$canEdit   = $this->canDo->get('core.edit');
-			$canChange = $loggeduser->authorise('core.edit.state',	'com_users');
+			$canChange = $loggeduser->authorise('core.edit.state',	'com_users');                        
 
 			// If this group is super admin and this user is not super admin, $canEdit is false
 			if ((!$loggeduser->authorise('core.admin')) && JAccess::check($item->id, 'core.admin'))
@@ -131,7 +133,10 @@ $sortFields = $this->getSortFields();
 				</td>
 				<td class="center">
 					<?php echo $this->escape($item->username); ?>
-				</td>
+				</td>    
+                                <td class="center">
+					<?php echo $this->escape($item->license); ?>
+				</td>  
 				<td class="center">
 					<?php if ($canChange) : ?>
 						<?php

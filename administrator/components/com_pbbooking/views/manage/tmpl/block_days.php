@@ -94,12 +94,12 @@ $doc->addStyleDeclaration(".icon-32-delete_shift {background:url('/administrator
                                         <div class="span6">
                                             <div class="control-group">
                                                 <label class="control-label"><?php echo JText::_('COM_PBBOOKING_BLOCK_START'); ?></label>
-                                                <div class="controls"><?php echo JHTML::_('calendar', '', 'block-from-date', 'block-from-date'); ?></div>
+                                                <div class="controls"><?php echo JHTML::_('calendar', '', 'block-from-date', 'block-from-date', '%d-%m-%Y'); ?></div>
                                             </div>
 
                                             <div class="control-group">
                                                 <label class="control-label"><?php echo JText::_('COM_PBBOOKING_BLOCK_END'); ?></label>
-                                                <div class="controls"><?php echo JHTML::_('calendar', '', 'block-end-date', 'block-end-date'); ?></div>
+                                                <div class="controls"><?php echo JHTML::_('calendar', '', 'block-end-date', 'block-end-date', '%d-%m-%Y'); ?></div>
                                             </div>
 
                                             <div class="control-group">

@@ -313,10 +313,10 @@ class PbbookingsControllermanage extends JControllerLegacy {
                 $r_freq = $input->get('frequency', null, 'string');
                 $r_end = $input->get('recur_end', null, 'string');
 
-                $block = new JObject(array('block_start_date' => date_create($block_start_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM), 'block_end_date' => date_create($block_end_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),
+                $block = new JObject(array('block_start_date' => date_create($block_start_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format('d-m-Y'), 'block_end_date' => date_create($block_end_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format('d-m-Y'),
                     'block_start_hour' => $block_start_hour, 'block_end_hour' => $block_end_hour, 'block_note' => $block_note, 'calendars' => $block_calendars));
                 if ($make_recurring == 1) {
-                    $block->setProperties(array('r_int' => $r_int, 'r_freq' => $r_freq, 'r_end' => date_create($r_end, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM)));
+                    $block->setProperties(array('r_int' => $r_int, 'r_freq' => $r_freq, 'r_end' => date_create($r_end, new DateTimeZone(PBBOOKING_TIMEZONE))->format('d-m-Y')));
                 }
                 $db->insertObject('#__pbbooking_block_days', $block);
 
