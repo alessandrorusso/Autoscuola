@@ -85,7 +85,13 @@
 		</tr>
 		<tr>
 			<td><?php echo JText::_('COM_PBBOOKING_SUCCESS_TIME');?></td>
-			<td><?php echo JHtml::_('date',$this->dateparam->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></td>
+                        <?php                        
+                              $date_end = clone $this->dateparam;
+                              $date_end = $date_end->modify('+ '.$this->config->time_increment.' minutes');
+                        ?>
+			<td><?php echo JHtml::_('date',$this->dateparam->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT')).'- '.
+                            JHtml::_('date',$date_end->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?>
+                        </td>
 		</tr>
 		<tr>
 			<td><?php echo JText::_('COM_PBBOOKING_SUCCESS_CALENDAR');?></td>
@@ -121,9 +127,11 @@
 	<!-- begin render service types -->
 	<?php $i=0;?>
 	<div id="service-error-msg"></div>
-	<!-- end render service types -->
-	<div style="text-align:center;">
-		<p></p><input type="submit" value="<?php echo JText::_('COM_PBBOOKING_SUBMIT_BUTTON');?>" id="pbbooking-submit"></p>
+	<!-- end render service types -->        
+	<div style="text-align:center; margin-bottom: 17%;">
+            <p>
+                <input class ="booking-button" type="button" value="<?php echo JText::_('COM_PBBOOKING_BACK_BUTTON');?>" onclick="javascript:history.back()">
+                <input class ="booking-button" type="submit" value="<?php echo JText::_('COM_PBBOOKING_SUBMIT_BUTTON');?>" id="pbbooking-submit">
+            </p>
 	</div>
 </form>
-

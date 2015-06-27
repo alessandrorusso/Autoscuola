@@ -31,7 +31,11 @@ defined('_JEXEC') or die('Restricted access');
                 <?php echo JTEXT::_('COM_PBBOOKING_SUCCESS_TIME');?>
             </th>
             <td style="padding-left: 3px;">
-                <?php echo Jhtml::_('date',date_create($this->pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?>
+                <?php $date_start = date_create($this->pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE));
+                      $date_end = date_create($this->pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->modify('+ '.$this->config->time_increment.' minutes')
+                ?>
+                <?php echo Jhtml::_('date',$date_start->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT')).'- '.
+                Jhtml::_('date',$date_end->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?>
             </td>
         </tr>
 	<tr>

@@ -33,19 +33,19 @@
 			<?php foreach ($this->cal_objs as $key => $cal) :?>                        
 					<?php $event = $cal->is_free_from_to($this->dt_start,$dt_slot_end,true);?>
                                         <?php $open = $cal->isOpen($this->dt_start);?>
-                                        <?php if ($open && !$event) :?>
+                                        <?php if ($open  && is_bool($open) && !$event) :?>
                                         <td style="background-color: <?php echo $cal->color;?>">
                                             <a class="no-print" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=create&cal_id=<?php echo $key;?>&dtstart=<?php echo $this->dt_start->format('YmdHi');?>">
 						<?php echo JText::_('COM_PBBOOKING_FREE'); ?>
                                             </a>
                                         </td>    
-					<?php elseif (!$open) :?>
+					<?php elseif (!is_bool($open)) :?>
                                         <td class="busy-cell">    
-                                            <?php echo JText::_('COM_PBBOOKING_BUSY'); ?>
+                                            <?php echo $open; ?>
                                         </td>    
                                         <?php elseif ($event && is_bool($event)!=true) :?>
                                         <td style="background-color: <?php echo $cal->color;?>">
-                                            <a class="no-print" style="font-weight:bold;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>">
+                                            <a class="no-print" style="font-weight:bold; color: black;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>">
 						<?php echo $event->admin_summary();?>	
                                             </a>
                                             <span class="hide-summary" style="display:none; font-weight:bold;">

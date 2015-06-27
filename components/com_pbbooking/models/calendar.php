@@ -249,18 +249,7 @@ function isOpen($date)
 	if (count($blocked_days)>0) {            
 		foreach ($blocked_days as $blocked_day) {
 			$block_from = date_create($blocked_day->block_start_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-                        //$block_from_hour_arr = explode('',$blocked_day->block_start_hour);
-                        //$block_from_hour_arr_split = str_split($block_from_hour_arr[0],2);
-                        
-			//$block_from->setTime(substr($blocked_day->block_start_hour, 0,2),substr($blocked_day->block_start_hour, 2),00);
-			//$block_from->setTimezone(new DateTimezone($offset));
-			
-			$block_to = date_create($blocked_day->block_end_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-			//$block_to_hour_arr = explode('=',$blocked_day->block_end_hour);
-                        //$block_to_hour_arr_split = str_split($block_to_hour_arr[0],2);
-                        
-                        //$block_to->setTime(substr($blocked_day->block_end_hour, 0,2),substr($blocked_day->block_end_hour, 2),00);                        
-			//$block_to->setTimezone(new DateTimezone($offset));                         
+        		$block_to = date_create($blocked_day->block_end_date,new DateTimeZone(PBBOOKING_TIMEZONE));
 			if (($date_compare>=$block_from && $date_compare<=$block_to) && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {
                             $date_compare_from = clone $date_compare;
                             $date_compare_from->setTime(substr($blocked_day->block_start_hour, 0,2),substr($blocked_day->block_start_hour, 2),00);
@@ -270,7 +259,7 @@ function isOpen($date)
                             $date_compare_to->setTimezone(new DateTimezone($offset));  
                             if($date>=$date_compare_from && $date<=$date_compare_to){
                                 Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');
-                                return false;
+                                return $blocked_day->block_note != '' ?  $blocked_day->block_note : 'Non disponibile';
                             }
 			}
 			$blocked_day->r_dtend = date_create($blocked_day->r_end,new DateTimeZone(PBBOOKING_TIMEZONE));

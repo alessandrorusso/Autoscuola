@@ -5,3 +5,4 @@
 
 #Fields: datetime	priority clientip	category	message
 2015-04-12T11:01:37+00:00	INFO ::1	joomlafailure	Username e Password non coincidono o non hai ancora un account
+2015-06-27T15:13:32+00:00	INFO ::1	joomlafailure	Username e Password non coincidono o non hai ancora un account

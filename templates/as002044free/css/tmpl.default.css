@@ -3372,3 +3372,9 @@ aside .moduletable ul.nav ul li:last-child
     margin-left: 10% !important;
 }
 
+.booking-button
+{    
+    padding: 1%;
+    border-radius: 20px 20px 20px 20px;
+}
+
