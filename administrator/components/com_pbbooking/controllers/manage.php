@@ -200,8 +200,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $view = $this->getView('manage', 'html');
         $view->setLayout('block_days');
 
-        //load up data in the view
-        $db->setQuery('select * from #__pbbooking_block_days');
+        //load up data in the view        
         $view->blocked_days = $this->getBlockedDays();
         $db->setQuery('select * from #__pbbooking_config');
         $config = $db->loadObject();
@@ -230,7 +229,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
             if (count($builtBlockedDays) > 0) {
                 $ret['aaData'] = $builtBlockedDays;
                 $db = JFactory::getDbo();
-                $db->setQuery('select * from #__pbbooking_block_days');
+                $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, r_end FROM #__pbbooking_block_days");
                 $blocked_days = $db->loadObjectList();
                 $ret['iTotalDisplayRecords'] = count($blocked_days);
                 $ret['iTotalRecords'] = count($blocked_days);
@@ -248,7 +247,8 @@ class PbbookingsControllermanage extends JControllerLegacy {
 
     private function getBlockedDays($from = 0, $to = 999999) {
         $db = JFactory::getDbo();
-        $db->setQuery('select * from #__pbbooking_block_days');
+        $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, r_end FROM #__pbbooking_block_days");
+
         $blocked_days = $db->loadObjectList();
         if (count($blocked_days) > 0) {
             $built_blocked_days = array();
@@ -303,7 +303,13 @@ class PbbookingsControllermanage extends JControllerLegacy {
                 $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays', $return['message'], $return['type']);
             } else {
                 $block_start_date = $input->get('block-from-date', null, 'string');
+                $array_start_date = explode("-", $block_start_date);
+                $block_start_date = $array_start_date[2]."-".$array_start_date[1]."-".$array_start_date[0]; 
+                
                 $block_end_date = $input->get('block-end-date', null, 'string');
+                $array_end_date = explode("-", $block_end_date);
+                $block_end_date = $array_end_date[2]."-".$array_end_date[1]."-".$array_end_date[0];
+                
                 $block_start_hour = $input->get('block-start-hour', null, 'string');
                 $block_end_hour = $input->get('block-end-hour', null, 'string');
                 $block_note = $input->get('block-comment', "No Comment", 'string');
@@ -312,8 +318,10 @@ class PbbookingsControllermanage extends JControllerLegacy {
                 $r_int = $input->get('interval', 0, 'integer');
                 $r_freq = $input->get('frequency', null, 'string');
                 $r_end = $input->get('recur_end', null, 'string');
+                $array_r_end = explode("-", $r_end);
+                $r_end = $array_r_end[2]."-".$array_r_end[1]."-".$array_r_end[0]; 
 
-                $block = new JObject(array('block_start_date' => date_create($block_start_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format('d-m-Y'), 'block_end_date' => date_create($block_end_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format('d-m-Y'),
+                $block = new JObject(array('block_start_date' => date_create($block_start_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM), 'block_end_date' => date_create($block_end_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),
                     'block_start_hour' => $block_start_hour, 'block_end_hour' => $block_end_hour, 'block_note' => $block_note, 'calendars' => $block_calendars));
                 if ($make_recurring == 1) {
                     $block->setProperties(array('r_int' => $r_int, 'r_freq' => $r_freq, 'r_end' => date_create($r_end, new DateTimeZone(PBBOOKING_TIMEZONE))->format('d-m-Y')));

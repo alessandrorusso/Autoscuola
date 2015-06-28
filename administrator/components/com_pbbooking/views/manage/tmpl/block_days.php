@@ -171,7 +171,7 @@ $doc->addStyleDeclaration(".icon-32-delete_shift {background:url('/administrator
                                             <div class="control-group">
                                                 <label class="control-label"><?php echo JText::_('COM_PBBOOKING_EVENT_RECUR_END'); ?></label>
                                                 <div class="controls">
-<?php echo JHTML::_('calendar', $this->date->format('Y-m-d'), 'recur_end', 'recur_end'); ?>
+<?php echo JHTML::_('calendar', $this->date->format('Y-m-d'), 'recur_end', 'recur_end', '%d-%m-%Y'); ?>
                                                 </div>
                                             </div>
                                         </div>

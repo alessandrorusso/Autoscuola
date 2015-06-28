@@ -1,40 +1,26 @@
 <?php 
-
-	/**
-	* @package		PurpleBeanie.PBBooking
-	* @license		GNU General Public License version 2 or later; see LICENSE.txt
-	* @link		http://www.purplebeanie.com
-	*/
-
-	$bom = date_create($this->date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-	$bom->setDate($this->date->format('Y'),$this->date->format('m'),1);
-
-	$start_selected_day = date_create($this->date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-	$end_selected_day = clone $this->date;	
-	$eom = date_create($bom->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-	$curr_day = date_create($bom->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-	$prev_month = date_create($bom->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-
-	$eom->modify('+1 month');
-	$prev_month->modify('-1 day');
-
-	$start_selected_day->setTime(0,0,0);
-	$end_selected_day->setTime(23,59,59);
         
-        //Calendario in italiano (parte dal lunedì)
-        $m = $this->date->format('m');
-        $y = $this->date->format('Y');
-        $cols = 7;
-        $days = date("t",mktime(0, 0, 0, $m, 1, $y)); 
-        $lunedi= date("w",mktime(0, 0, 0, $m, 1, $y));
-        if($lunedi==0) $lunedi = 7;
-	//FINE Calendario in italiano (parte dal lunedì)
-	$version = new JVersion;
+        $version = new JVersion;
         JHTML::_('behavior.modal');
         
-        $addNote = true ;
-               
+        //draw current month - get some relevant dates for drawing
+	$this->dateparamArr = date_parse(date_format($this->date,"Y-m-d"));
+
+        $bom = date_create(sprintf("%s-%s-%s 00:00",$this->dateparamArr["year"],$this->dateparamArr['month'],"1"),new DateTimeZone(PBBOOKING_TIMEZONE));
+	$eom = date_create($bom->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+        $curr_day = date_create($bom->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
         
+	$eom->modify("+1 month");
+	$eom->modify("-1 day");
+	$num_days = $eom->format("j")-1;
+		
+	$next_month = date_create($bom->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+	$next_month->modify("+1 month");
+	
+	$last_month = date_create($bom->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+	$last_month->modify("-1 month");
+              
+        $addNote = true ;        
 ?>
 
 <style>
@@ -186,56 +172,77 @@ jQuery(document).ready(function()
             <table class="calendar-table">
                 <tr>
                     <th colspan=2>
-                        <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $prev_month->format('Y-m-d');?>">
+                        <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $last_month->format('Y-m-d');?>">
                             <<
                         </a>
                     </th>
                     <th colspan=3><?php echo JHtml::_('date',$bom->format(DATE_ATOM),'F');?></th>
                     <th colspan=2>
-			<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $eom->format('Y-m-d');?>">
+			<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $next_month->format('Y-m-d');?>">
                             >>
 			</a>
                     </th>
                 </tr>
-			<tr>	
-                                <th><?php echo Jtext::_('COM_PBBOOKING_MONDAY_ABBR');?></th>
-				<th><?php echo Jtext::_('COM_PBBOOKING_TUESDAY_ABBR');?></th>
-				<th><?php echo Jtext::_('COM_PBBOOKING_WEDNESDAY_ABBR');?></th>
-				<th><?php echo Jtext::_('COM_PBBOOKING_THURSDAY_ABBR');?></th>
-				<th><?php echo Jtext::_('COM_PBBOOKING_FRIDAY_ABBR');?></th>
-				<th><?php echo Jtext::_('COM_PBBOOKING_SATURDAY_ABBR');?></th>                                
-                                <th><?php echo Jtext::_('COM_PBBOOKING_SUNDAY_ABBR');?></th>
-			</tr>
-			<!-- draw date rows -->
-			<?php for($j = 1; $j<$days+$lunedi; $j++): ?>
-                            <?php if($j%$cols+1==0) :?>
-                            <tr>
-                            <?php endif;?>                                    
-                            <?php if($j<$lunedi) :?>
-                                <td> </td>
-                            <?php else:?>
-                                <?php 
-                                    $day= $j-($lunedi-1);
-                                    $data = strtotime(date($y."-".$m."-".$day));
-                                    $oggi = strtotime(date("Y-m-d"));
-                                ?>
-                                <?php if($data != $oggi) :?>
-                                <td <?php echo (PbbookingHelper::booking_for_day($curr_day)) ? 'class="bookings"' : '';?>>                                                               
-                                <?php else:?>
-                                    <td class="selected-date">
-                                <?php endif;?>
-                                <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
-                                            <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></a>
-                                                </td>        
-                            <?php endif;?>
-                            <?php if($j%$cols==0) :?>
-                                </tr>
-                            <?php endif;?> 
-                            <?php $curr_day->modify('+1 day');?>
+                <tr>
+                    <!-- begin header row-->
+                    <?php $bow = date_create('last Sunday',new DateTimeZone(PBBOOKING_TIMEZONE));?>
+			<?php for ($i=0;$i<$this->config->calendar_start_day;$i++) :?>
+				<?php $bow->modify('+1 day');?>
+			<?php endfor;?>
+			
+			<?php $eow = clone $bow;?>
+			<?php $eow->modify('+6 days');?>
+			
+			<?php for ($i=0;$i<=6;$i++) :?>
+				<th><?php echo Jhtml::_('date',$bow->format(DATE_ATOM),'D');?></th>
+				<?php $bow->modify("+1 day");?>	
+			<?php endfor;?>
+                    <!-- end header row-->
+                    <?php
+                        $curr_day = $bom;
+                        if ($this->config->block_same_day==1) :
+                            $curr_day->setTime(0,0,0);
+                        else:
+                            $curr_day->setTime(23,59,59);
+                        endif;
+                    ?>
+                </tr>
+                <tr>
+                    <!-- calc cal padding -->
+                    <?php if ($curr_day->format('w') < $this->config->calendar_start_day) :?>
+			<?php for ($i=0;$i< 7 - ($this->config->calendar_start_day-$curr_day->format('w'));$i++) :?>
+                            <td></td>
                         <?php endfor;?>
-                        <!-- calc padding -->                                
-			<!-- end draw date rows -->
-		
+                    <?php endif;?>
+			
+                    <?php if ($curr_day->format('w') > $this->config->calendar_start_day) :?>
+                        <?php for ($i=0;$i<($curr_day->format('w') - $this->config->calendar_start_day);$i++) :?>
+                            <td></td>
+                        <?php endfor;?>
+                    <?php endif;?>
+                    <!-- end cal padding -->
+                    <?php for ($i=0;$i<=$num_days;$i++) :?>                        
+                        <td
+                            <?php $class = "";?>
+                            
+                            <?php if ($curr_day->format("z") == $this->date->format("z")) :?>
+                                <?php $class .= "selected-date";?>
+                            <?php endif;?>
+                            <?php $isReserved = Pbbookinghelper::booking_for_day($curr_day);?>
+                            <?php $class .= ($isReserved) ? 'bookings' : '';?>
+                            <?php echo ($class !="") ? 'class = "'.$class.'"' : "";?>>	
+                            <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
+                                    <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></a>
+                        </td>
+                        
+                        <!-- break if needed -->
+                        <?php if (($curr_day->format('w') == $eow->format('w'))) :?>
+                            </tr><tr>
+                        <?php endif;?>
+                        <!-- finish line break -->		    	
+                        <?php $curr_day->modify("+1 day");?>
+                    <?php endfor;?>
+                </tr>	
 		</table>
             <div style="margin-top: 15px;" id="noteContainer">                
                 <?php if ($this->day_notes):?>
