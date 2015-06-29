@@ -198,14 +198,6 @@ jQuery(document).ready(function()
 				<?php $bow->modify("+1 day");?>	
 			<?php endfor;?>
                     <!-- end header row-->
-                    <?php
-                        $curr_day = $bom;
-                        if ($this->config->block_same_day==1) :
-                            $curr_day->setTime(0,0,0);
-                        else:
-                            $curr_day->setTime(23,59,59);
-                        endif;
-                    ?>
                 </tr>
                 <tr>
                     <!-- calc cal padding -->
@@ -232,7 +224,7 @@ jQuery(document).ready(function()
                             <?php $class .= ($isReserved) ? 'bookings' : '';?>
                             <?php echo ($class !="") ? 'class = "'.$class.'"' : "";?>>	
                             <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
-                                    <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),$this->config->date_format_cell);?></a>
+                                    <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),'j');?></a>
                         </td>
                         
                         <!-- break if needed -->

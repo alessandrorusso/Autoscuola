@@ -115,6 +115,7 @@
 							<?php endif;?>
 						</option>
 					<?php endforeach;?>
+                                                <a href="create.php"></a>
 				</select>
                                 <input type="hidden" name="cal_id" id="text-cal-id" value="<?php echo $this->cal->cal_id;?>"/> 
                                 <input type="hidden" name="date" value="<?php echo $this->dateparam->format('Ymd');?>"/>
@@ -127,11 +128,12 @@
 	<!-- begin render service types -->
 	<?php $i=0;?>
 	<div id="service-error-msg"></div>
-	<!-- end render service types -->        
-	<div style="text-align:center; margin-bottom: 17%;">
-            <p>
-                <input class ="booking-button" type="button" value="<?php echo JText::_('COM_PBBOOKING_BACK_BUTTON');?>" onclick="javascript:history.back()">
-                <input class ="booking-button" type="submit" value="<?php echo JText::_('COM_PBBOOKING_SUBMIT_BUTTON');?>" id="pbbooking-submit">
-            </p>
-	</div>
+	<!-- end render service types -->
+        <div class="form-actions" style="margin-bottom: 17%;">            
+            <a href="index.php/prenotazioni-online/dayview?dateparam=<?php echo $this->dateparamback ?>" class="btn" role="button">Indietro</a>
+            <div class="pull-right">
+                <button class ="btn" type="submit" id="pbbooking-submit"><?php echo JText::_('COM_PBBOOKING_SUBMIT_BUTTON');?></button>
+            </div>
+        </div>
+	
 </form>

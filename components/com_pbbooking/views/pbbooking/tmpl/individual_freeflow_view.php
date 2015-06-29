@@ -65,7 +65,7 @@
         
         
 </script>
-<div class="calendar-window" style="height: 450px;">
+<div class="calendar-window">
 
 	<div id="calendar">
 		<table id="pbbooking">
@@ -101,16 +101,7 @@
 		
 			<?php endfor;?>
 			
-			<!-- end header row-->
-		
-			<?php
-				$curr_day = $bom;
-				if ($this->config->block_same_day==1) :
-					$curr_day->setTime(0,0,0);
-				else:
-					$curr_day->setTime(23,59,59);
-				endif;
-			?>
+			<!-- end header row-->		
 		
 			</tr>
 		
@@ -129,17 +120,14 @@
 				<?php endfor;?>
 			<?php endif;?>
 			
-			<!-- end cal padding -->
-		
-			<?php for ($i=0;$i<=$num_days;$i++) :?>
-				
-		
+			<!-- end cal padding -->                        
+			<?php for ($i=0;$i<=$num_days;$i++) :?>                                                                                     
 				<?php if ($curr_day > date_create()) :?>
 					<td
 						<?php $class = "";?>
-						<?php if ($curr_day->format("z") == $this->dateparam->format("z")) :?>
-							<?php $class .= "selected_day";?>
-						<?php endif;?>
+                                                <?php if ($curr_day->format("z") == date_create()->modify("+2 day")->format("z")) :?>                                            
+                                                    <?php $class .= "selectionable";?>
+                                                <?php endif;?>                                                    
 						<?php $free = Pbbookinghelper::free_appointments_for_day($curr_day);?>
 						<?php $class .= ($free) ? '' : ' fully-booked ';?>
 						<?php echo ($class !="") ? 'class = "'.$class.'"' : "";?>>	
@@ -152,7 +140,11 @@
 						<?php endif;?>
 					</td>
 				<?php else:?>
-					<td><?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),'j');?></td>
+                                        <?php $class = "";?>
+                                        <?php if ($curr_day->format("z") == $this->now->format("z")) :?>                                            
+                                            <?php $class .= "selected_day";?>
+                                        <?php endif;?>    
+					<td <?php echo ($class !="") ? 'class = "'.$class.'"' : "";?>><?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),'j');?></td>
 				<?php endif;?>
 				
 				<!-- break if needed -->
@@ -164,12 +156,20 @@
 				<?php $curr_day->modify("+1 day");?>
 			<?php endfor;?>
 			</tr>
-		</table>
-	</div>
-
+		</table>            
+	</div> 
+    <div class="pull-right" style="margin-top: 2%;">
+            <h4>Legenda:</h4>
+            <ul class="legend">
+                <li><span class="yellow-square"></span> Data corrente</li>
+                <li><span class="green-square"></span> Prima data prenotabile</li>
+                <li><span class="red-square"></span> Data non disponibile</li>
+            </ul>                                
+        </div>
+    <div class="form-actions" style="clear: both;">            
+            <a href="<?php echo $this->baseurl;?>" class="btn" role="button">Indietro</a>                
+        </div>
 </div>
-
-
 
 
 <div style="clear:both;"></div>

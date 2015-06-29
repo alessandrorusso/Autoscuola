@@ -58,9 +58,9 @@ class PbbookingController extends JControllerLegacy
 	    	
     	//am I passing a selected date from the view, either in the heading or in the body?
         if (JRequest::getVar('dateparam')) {
-            $view->dateparam = date_create(JRequest::getVar('dateparam'),new DateTimeZone(PBBOOKING_TIMEZONE));
+            $view->dateparam = date_create(JRequest::getVar('dateparam'),new DateTimeZone(PBBOOKING_TIMEZONE));            
         } else {
-            $view->dateparam = date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE));
+            $view->dateparam = date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE));            
         }
 
         $config =JFactory::getConfig();
@@ -315,11 +315,13 @@ class PbbookingController extends JControllerLegacy
         $config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
 	
         $dateparam = $input->get('dtstart',date_create('now',new DateTimeZone(PBBOOKING_TIMEZONE))->format('YmdHi'),'string');
+        $dateparamback = $input->get('dtstart',date_create('now',new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),'string');
         $cal_id = $input->get('cal_id',0,'integer');
         $opening_hours = json_decode($config->trading_hours,true);
         $closing_time_arr = str_split( $opening_hours[date_create($dateparam,new DateTimezone(PBBOOKING_TIMEZONE))->format('w')]['close_time'],2 );
 	
         $view->dateparam = date_create($dateparam,new DateTimeZone(PBBOOKING_TIMEZONE));
+        $view->dateparamback = date_create($dateparamback,new DateTimeZone(PBBOOKING_TIMEZONE))->format("Ymd");
         $view->customfields = $db->setQuery('select * from #__pbbooking_customfields')->loadObjectList();
         $view->treatments = $db->setQuery('select * from #__pbbooking_treatments')->loadObjectList();
         $view->cal = new Calendar();

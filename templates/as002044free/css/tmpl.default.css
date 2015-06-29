@@ -746,13 +746,12 @@ a.readmore,
 .contentpane .button
 {
 	padding: 7px 25px;
-	font-size: 13px;
+	font-size: 14px;
 	line-height: 17px;
 	border-radius: 20px;
 	color: #fff ;
-	background-color: #2594BA;
-	text-transform: lowercase;
-	float: right;
+	background-color: #2594BA;	
+        font-family: Tahoma, Geneva, sans-serif, Arial;
 }
 
 .readmore a

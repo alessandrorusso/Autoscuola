@@ -51,5 +51,11 @@ defined('_JEXEC') or die('Restricted access');
 	<?php
 	}?>                    
 </table>
-<br>
-<br>
+<div class="form-actions" style="margin-bottom: 17%;">                
+    <a href="<?php echo $this->baseurl;?>" class="btn" role="button">Home</a>                
+    <div class="pull-right">
+        <a href="index.php/prenotazioni-online" class="btn" role="button">Nuova Prenotazione</a>
+        <a href="index.php?option=com_pbbooking&task=recap" class="btn" role="button">Resoconto Prenotazioni</a>
+        
+    </div>
+</div>

@@ -8,6 +8,7 @@
 
 
 <h1><?php echo JText::_('COM_PBBOOKING_DAY_VIEW_HEADING').' '.Jhtml::_('date',$this->dateparam->format(DATE_ATOM),JText::_('COM_PBBOOKING_DAY_VIEW_DATE_FORMAT'));?></h1>
+<div class="calendar-window">
 <table id="pbbooking">
 <!-- Draw header row showing calendars across the top....-->
 	<tr>
@@ -43,3 +44,7 @@
 	<!-- end draw table data rows-->
 
 </table>
+    <div class="form-actions">        
+        <a href="index.php/prenotazioni-online" class="btn" role="button">Indietro</a>                
+    </div>
+</div>

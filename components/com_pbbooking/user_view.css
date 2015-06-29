@@ -1,6 +1,9 @@
+.calendar-window{
+    margin-bottom: 17%;
+}
+
 table#pbbooking {
-	width:80%;
-        margin-bottom: 100px;
+	width:100%;        
 }
 
 table#pbbooking td,
@@ -43,6 +46,10 @@ td.selected_day {
 	background-color:yellow;
 }
 
+td.selectionable {
+	background-color:green;
+}
+
 /* new classes in 2.2 */
 
 .error-label {
@@ -79,3 +86,14 @@ input.error-field {
 	border: 2px solid red;
 	background-color: #ffff66;
 }
+
+/* basic positioning */
+.legend { list-style: none; }
+.legend li { float: left; margin-right: 10px; }
+.legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
+/* your colors */
+.legend .yellow-square { background-color: yellow; }
+.legend .green-square { background-color: green; }
+.legend .red-square { background-color: red; }
+
+       
