@@ -2,7 +2,7 @@
 	
 	$doc = JFactory::getDocument();
 	$doc->addStyleSheet(JURI::root(false)."components/com_pbbooking/user_view.css");
-        $user =& JFactory::getUser();
+        $user = JFactory::getUser();
         $userProfile = JUserHelper::getProfile($user->id);
 ?>
 
