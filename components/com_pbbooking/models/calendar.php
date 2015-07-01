@@ -331,7 +331,8 @@ public function is_free_from_to($from_date,$to_date,$is_admin=false) {
 	//}
 	
 	//check to see if it's in a block date range.        
-	if (!$this->isOpen($from_date)) {
+        $open = $this->isOpen($from_date);        
+	if (!$open || !is_bool($open)) {
 		return true;
 	}
 	
