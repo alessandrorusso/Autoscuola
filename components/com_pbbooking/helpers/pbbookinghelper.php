@@ -540,13 +540,13 @@ class Pbbookinghelper
     }
         
     public static function validate_block($input)
-    {
+    {         
         $block_start_hour = $input->get('block-start-hour', null, 'string');
         $block_end_hour = $input->get('block-end-hour', null, 'string');
-        if($block_start_hour!='' && $block_end_hour==''){                
+        if((isset($block_start_hour) && trim($block_start_hour)!='') && (!isset($block_end_hour) && trim($block_end_hour)==='')){                
             return ['type'=> 'error', 'message'=>'Indicare Ora fine del nuovo blocco'];
         }
-        if($block_start_hour=='' && $block_end_hour!=''){                
+        if((!isset($block_start_hour) && trim($block_start_hour)==='') && (isset($block_end_hour) && trim($block_end_hour)!='')){        
             return ['type'=> 'error', 'message'=>'Indicare Ora inizio del nuovo blocco'];
         }
         $block_calendars = implode(',',$input->get('block_calendars',null,'array'));

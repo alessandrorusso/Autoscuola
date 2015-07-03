@@ -85,9 +85,12 @@ td.busy-cell {
 <script type="text/javascript">
 function printReservation() {
         
-        jQuery('.printer').click(function(event){
+        jQuery('.printer').click(function(event){ 
+            jQuery('<br><br><span>NOTA: </span><br>').appendTo('#hide-note');
+            jQuery('.post-it').clone().appendTo('#hide-note');
             jQuery('.hide-summary').toggle();
-            jQuery('.diary-table').print();            
+            jQuery('.diary-table').print(); 
+            jQuery('#hide-note').empty();
             jQuery('.hide-summary').toggle();
         });
         
@@ -154,6 +157,8 @@ jQuery(document).ready(function()
             alert('Errore nel salvataggio della Nota. Si prega di riprovare.'); // or whatever
         });
     }
+    
+    
     
 });
 </script>

@@ -209,6 +209,16 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $view->cals = $db->loadObjectList();
         $db->setQuery('select * from #__pbbooking_config');
         $view->config = $db->loadObject();
+        
+        $view->dt_start = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
+        $view->dt_end = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
+        $view->dt_start->setTime("09", "00");
+        $view->dt_end->setTime("20", "00");
+        
+        $view->dt_start_2 = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
+        $view->dt_end_2 = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
+        $view->dt_start_2->setTime("09", "00");
+        $view->dt_end_2->setTime("20", "00");
 
         //display the view
         JToolBarHelper::save('save_block_days');
@@ -247,7 +257,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
 
     private function getBlockedDays($from = 0, $to = 999999) {
         $db = JFactory::getDbo();
-        $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, r_end FROM #__pbbooking_block_days");
+        $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, r_end FROM #__pbbooking_block_days where block_end_date >= CURDATE() order by block_end_date asc");
 
         $blocked_days = $db->loadObjectList();
         if (count($blocked_days) > 0) {
@@ -331,7 +341,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
                 $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays', 'Blocco salvato correttamente');
             }
         } else {
-            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays', 'Settings Saved');
+            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays', 'Indicare Dati di Inizio e Data di Fine del nuovo blocco', 'error');
         }
     }
 

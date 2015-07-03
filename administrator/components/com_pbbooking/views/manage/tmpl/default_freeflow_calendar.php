@@ -7,8 +7,8 @@
 */
 
 ?>
-
-<table class="diary-table">
+<div class="diary-table">
+<table>
 
 	<tr>
             <th>
@@ -58,6 +58,8 @@
 		<?php $this->dt_start->modify('+ '.$this->config->time_increment.' minutes');?>
 	<!-- end table content-->
 
-	<?php endwhile;?>
-
+	<?php endwhile;?>        
 </table>
+<span id="hide-note" class="hide-summary" style="display:none;"></span>
+
+</div>

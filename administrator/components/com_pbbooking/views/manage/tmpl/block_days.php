@@ -136,14 +136,24 @@ $doc->addStyleDeclaration(".icon-32-delete_shift {background:url('/administrator
                                             <div class="control-group">
                                                 <label class="control-label"><?php echo JText::_('COM_PBBOOKING_BLOCK_START_HOUR'); ?></label>
                                                 <div class="controls">
-                                                    <input type="text" name="block-start-hour" id="block-start-hour" class="time-input" value=""/>
+                                                     <select name="block-start-hour" id="block-start-hour" class="time-input required">
+                                                        <?php while($this->dt_start<= $this->dt_end) :?>
+                                                            <option value="<?php echo $this->dt_start->format('Hi');?>"><?php echo JHtml::_('date',$this->dt_start->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></option>
+                                                                <?php $this->dt_start->modify('+ '.$this->config->time_increment.' minutes');?>
+                                                        <?php endwhile;?>
+                                                    </select>                                                    
                                                 </div>
                                             </div>
 
                                             <div class="control-group">
                                                 <label class="control-label"><?php echo JText::_('COM_PBBOOKING_BLOCK_END_HOUR'); ?></label>
                                                 <div class="controls">
-                                                    <input type="text" name="block-end-hour" id="block-end-hour" class="time-input" value=""/>
+                                                    <select name="block-end-hour" id="block-end-hour" class="time-input required">
+                                                        <?php while($this->dt_start_2<= $this->dt_end_2) :?>
+                                                        <option selected="selected" value="<?php echo $this->dt_start_2->format('Hi');?>"><?php echo JHtml::_('date',$this->dt_start_2->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></option>
+                                                                <?php $this->dt_start_2->modify('+ '.$this->config->time_increment.' minutes');?>
+                                                        <?php endwhile;?>
+                                                    </select>                                                         
                                                 </div>
                                             </div>
 
