@@ -144,14 +144,17 @@ jQuery(document).ready(function()
         var date ="<?php echo $this->date->format('Y-m-d');?>";
         var url = 'index.php?option=com_pbbooking&controller=manage&task=add_note&noteDate='+date+'&noteText='+jQuery('#text').val()+'&noteId='+id;
         jQuery.getJSON( url, function( data ) {
-            
-           if(jQuery('.post-it').length > 0){               
+            var deleteUrl = encodeURI('<?php echo JURI::root(false);?>'+'administrator/index.php?option=com_pbbooking&controller=manage&task=delete_note&noteId='+data.id+'&noteDate='+date);
+            jQuery('#delButt').show();
+            jQuery('#modButt').show();
+            jQuery('#addButt').hide();
+            if(jQuery('.post-it').length > 0){               
                jQuery('.post-it').html(data.text);
             }
             else{
-              jQuery('p').attr('class', 'post-it').attr('id', 'note_'+data.id).text(data.text).insertBefore('.openModal');  
-            }
-            jQuery('.openModal:eq(0)').html('Modifica Nota');
+              jQuery('p').attr('class', 'post-it').attr('id', 'note_'+data.id).text(data.text).insertBefore('#delButt');  
+            }            
+            jQuery('#delButt').attr('href', deleteUrl)
             jQuery('#dialog-form').dialog( "close" );
         }).fail(function() {
             alert('Errore nel salvataggio della Nota. Si prega di riprovare.'); // or whatever
@@ -246,13 +249,21 @@ jQuery(document).ready(function()
                     <?php foreach ($this->day_notes as $day_note) :?>                
                         <?php if ($day_note->date == $this->date->format('Y-m-d')):?>
                             <?php $addNote = false; ?>
-                            <p id="note_<?php echo $day_note->id; ?>" class="post-it"><?php echo $day_note->text; ?></p>
-                            <a href="#" class="openModal">Modifica nota</a>                                                    
+                                <p id="note_<?php echo $day_note->id; ?>" class="post-it"><?php echo $day_note->text; ?></p>
+                                <div class="row-fluid">
+                                    <a id="delButt" style="display: block;" class="btn btn-small span4" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=delete_note&noteId=<?php echo $day_note->id;?>&noteDate=&noteDate=<?php echo $day_note->date;?>" >Cancella nota</a>
+                                    <a id="modButt" style="display: block;" class="openModal btn btn-small span4" href="#">Modifica nota</a> 
+                                    <a id="addButt" style="display: none;" class="openModal btn btn-small span4" href="#">Aggiungi nota</a>
+                                </div>
                         <?php endif;?>
                     <?php endforeach;?>			
                 <?php endif;?>            
 		<?php if ($addNote) :?>
-                            <a href="#" class="openModal">Aggiungi nota</a>
+                                <div class="row-fluid">
+                                    <a id="delButt" style="display: none;" class="btn btn-small span4" href="#">Cancella nota</a>
+                                    <a id="modButt" style="display: none;" class="openModal btn btn-small span4" href="#">Modifica nota</a> 
+                                    <a id="addButt" style="display: block;" class="openModal btn btn-small span4" href="#">Aggiungi nota</a>                            
+                                </div>
 		<?php endif;?>
             </div>
 	</div>       

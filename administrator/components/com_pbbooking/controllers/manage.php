@@ -404,6 +404,20 @@ class PbbookingsControllermanage extends JControllerLegacy {
             JFactory::getApplication()->close();
         }
     }
+    
+    function delete_note() {        
+        $noteId = JRequest::getVar('noteId');
+        $date = (JRequest::getVar('noteDate'));
+        $db = JFactory::getDbo();
+        if ($noteId) {
+            $db->setQuery('delete from #__pbbooking_day_note where id = ' . $db->escape(JRequest::getVar('noteId')));
+            if ($db->query()) {
+                $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $date);
+            } else {
+                $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $date, $db->getErrorMsg());
+            }            
+        } 
+    }
 
     function loadCalendarRelatedInfo() {
         JFactory::getDocument()->setMimeEncoding('application/json');
