@@ -239,7 +239,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
             if (count($builtBlockedDays) > 0) {
                 $ret['aaData'] = $builtBlockedDays;
                 $db = JFactory::getDbo();
-                $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, r_end FROM #__pbbooking_block_days");
+                $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, r_end FROM #__pbbooking_block_days where block_end_date >= CURDATE() order by block_end_date asc");
                 $blocked_days = $db->loadObjectList();
                 $ret['iTotalDisplayRecords'] = count($blocked_days);
                 $ret['iTotalRecords'] = count($blocked_days);
