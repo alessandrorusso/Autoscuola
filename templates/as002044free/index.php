@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 defined('_JEXEC') or die;
 include ('includes/includes.php');
 ?>
@@ -157,8 +157,8 @@ include ('includes/includes.php');
                     </div>                    
                 </div>
                 <div style="text-align: center; width: 94%;">
-                    <span style="font-family:CenturyGothic, AppleGothic, sans-serif; color:graytext;font-size:14px">
-                        <span style="font-family:CenturyGothic, AppleGothic, sans-serif;font-size: 18px;color:#003b7b;">Conti Autoscuole & Delegazione Aci</span></br></br>
+                    <span style="font-family:Verdana; color:graytext;font-size:18px">
+                        <span style="font-family:Verdana;font-size: 24px;color:#003b7b;"><b>Conti Autoscuole & Delegazione Aci</b></span></br></br>
                         Il Gruppo “Conti Autoscuole & Delegazione Aci” sin dal 1985 si ispira a migliorare tutti i servizi per Voi clienti</br> 
                         attraverso la formazione di personale giovane e qualificato.</br></br>
 
@@ -169,7 +169,7 @@ include ('includes/includes.php');
                         Le nostre agenzie di pratiche auto e delegazione ACI sono gestite da consulenti automobilistici </br>
                         in grado offrire un servizio sempre efficiente e professionale al fine di soddisfare ogni Vostra richiesta. </br></br>
 
-                        Vi aspettiamo presso le nostre sedi di <span style="font-family:CenturyGothic, AppleGothic, sans-serif;font-size: 15px;color:#003b7b;">Colleferro, Palestrina e Paliano.</span></br></br>
+                        Vi aspettiamo presso le nostre sedi di <span style="font-family:Verdana;font-size: 18px;color:#003b7b;">Colleferro, Palestrina e Paliano.</span></br></br>
                     </span>
                 </div>
             </div>
