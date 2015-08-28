@@ -578,6 +578,9 @@ class Pbbookinghelper
                 if($today >= $end_date){
                     return ['type'=> 'error', 'message'=>'La Data fine del blocco deve essere posteriore alla data odierna'];
                 }
+                if($start_date >= $end_date){
+                  return ['type'=> 'error', 'message'=>'La Data fine deve essere posteriore alla Data del blocco'];  
+                }
             }
             
         }
