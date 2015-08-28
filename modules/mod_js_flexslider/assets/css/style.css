@@ -191,9 +191,9 @@ right: -2px;
 .flex-slide-theme-vertical {
 margin-left:25px;
 margin-right:25px;
-border-top:1px solid #555;
+/*border-top:1px solid #555;
 border-bottom:1px solid #555;
-border-color:rgba(0,0,0,0.6);
+border-color:rgba(0,0,0,0.6);*/
 }
 
 .flex-slide-theme-vertical .slide-theme {
@@ -208,7 +208,7 @@ z-index:-1;
 
 
 .flex-slide-theme-vertical .slide-theme-side {
-background: transparent url(images/slide-border.png) left top no-repeat;
+//background: transparent url(images/slide-border.png) left top no-repeat;
 display: block;
 height: 40px;
 position: absolute;

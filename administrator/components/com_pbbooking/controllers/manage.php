@@ -282,6 +282,10 @@ class PbbookingsControllermanage extends JControllerLegacy {
         return null;
     }
 
+    /**
+     * Aggiorna i giorni di apertura con i relativi orari di Apertura e Chiusura
+     * Inserisce un nuovo Blocco che può riferirsi ad uno o più calendari
+     */
     function save_block_days() {
         $db = JFactory::getDBO();
         $is_open_arr = JRequest::getVar('is-open');
@@ -292,7 +296,12 @@ class PbbookingsControllermanage extends JControllerLegacy {
             if (in_array($i, $is_open_arr)) {
                 $open_time = JRequest::getVar('open-time-' . $i);
                 $close_time = JRequest::getVar('close-time-' . $i);
-                $opening_hours[$i] = array('status' => 'open', 'open_time' => $open_time, 'close_time' => $close_time);
+                if($open_time && $close_time){
+                    $opening_hours[$i] = array('status' => 'open', 'open_time' => $open_time, 'close_time' => $close_time);
+                }
+                else{
+                    $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays', 'Indicare Orario di apertura e chiusura per i Giorni lavorativi', 'error');
+                }
             } else {
                 $opening_hours[$i] = array('status' => 'closed');
             }
@@ -311,22 +320,28 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $return = Pbbookinghelper::validate_block($input);
             if ($return['type'] == 'error') {
                 $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays', $return['message'], $return['type']);
-            } else {
+            }
+            else {
+                //riporto la data inizio in formato inglese (aaaa-mm-gg)
                 $block_start_date = $input->get('block-from-date', null, 'string');
                 $array_start_date = explode("-", $block_start_date);
                 $block_start_date = $array_start_date[2]."-".$array_start_date[1]."-".$array_start_date[0]; 
                 
+                //riporto la data fine in formato inglese (aaaa-mm-gg)
                 $block_end_date = $input->get('block-end-date', null, 'string');
                 $array_end_date = explode("-", $block_end_date);
                 $block_end_date = $array_end_date[2]."-".$array_end_date[1]."-".$array_end_date[0];
                 
+                //estraggo le ore di chiusura, le note ed i calendari associati
                 $block_start_hour = $input->get('block-start-hour', null, 'string');
                 $block_end_hour = $input->get('block-end-hour', null, 'string');
                 $block_note = $input->get('block-comment', "No Comment", 'string');
                 $block_calendars = implode(',', $input->get('block_calendars', null, 'array'));
+                
+                //verifico se è stata creato un blocco ricorsivo
                 $make_recurring = $input->get('reccur', 0, 'integer');
                 $r_int = $input->get('interval', 0, 'integer');
-                $r_freq = $input->get('frequency', null, 'string');
+                $r_freq = $input->get('frequency', null, 'string');                
                 $r_end = $input->get('recur_end', null, 'string');
                 $array_r_end = explode("-", $r_end);
                 $r_end = $array_r_end[2]."-".$array_r_end[1]."-".$array_r_end[0]; 
@@ -334,10 +349,13 @@ class PbbookingsControllermanage extends JControllerLegacy {
                 $block = new JObject(array('block_start_date' => date_create($block_start_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM), 'block_end_date' => date_create($block_end_date, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),
                     'block_start_hour' => $block_start_hour, 'block_end_hour' => $block_end_hour, 'block_note' => $block_note, 'calendars' => $block_calendars));
                 if ($make_recurring == 1) {
-                    $block->setProperties(array('r_int' => $r_int, 'r_freq' => $r_freq, 'r_end' => date_create($r_end, new DateTimeZone(PBBOOKING_TIMEZONE))->format('d-m-Y')));
+                    $block->setProperties(array('r_int' => $r_int, 'r_freq' => $r_freq, 'r_end' => date_create($r_end, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM)));                    
+                    if($r_freq == 'custom'){
+                         $check_day = implode(',',JRequest::getVar('check_day'));                         
+                         $block->setProperties(array('custom_recurrence' => $check_day));                        
+                    }
                 }
                 $db->insertObject('#__pbbooking_block_days', $block);
-
                 $this->setRedirect('index.php?option=com_pbbooking&controller=manage&task=blockdays', 'Blocco salvato correttamente');
             }
         } else {

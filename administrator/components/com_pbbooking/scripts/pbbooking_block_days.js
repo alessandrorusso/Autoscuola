@@ -20,7 +20,22 @@ window.addEvent('domready',function(){
         var data = jQuery(this).parents('tr').find('td:nth-last-child(2)').text();        
         window.location.href = 'index.php?option=com_pbbooking&controller=manage&task=delete_blocked_day&id='+data;        
     } );
-        
+    
+    jQuery('#frequency').attr('disabled', true);
+    jQuery('#recur_end').attr('disabled', true);
+    
+    jQuery('#reccur').change(function(){
+        if(jQuery('#reccur').attr('checked')){
+            jQuery('#frequency').attr('disabled', false);
+            jQuery('#recur_end').attr('disabled', false);
+        }
+        else{
+            jQuery('#frequency').attr('disabled', true);
+            jQuery('#recur_end').attr('disabled', true);
+            jQuery('.check-day').hide();            
+        }
+    });
+    
     jQuery('#block-slot').change(function(){
         jQuery('#block-start-hour').val('');
         jQuery('#block-end-hour').val('');
@@ -31,28 +46,33 @@ window.addEvent('domready',function(){
             jQuery('#block-end-hour').attr('readonly', false); 
         }            
     });
+    
+    jQuery('#frequency').change(function(){
+        if(jQuery('#frequency').val() == 'custom'){
+            jQuery('.check-day').show();
+        }
+        else{
+            jQuery('.check-day').hide();
+        }
+    });
         
     $('adminForm').addEvent('submit',function(){
-            if(jQuery('#block-slot').val() != ''){
-                fillBlockSlot();
-            }            
-            if((jQuery('#block-start-hour').val()== null || jQuery('#block-start-hour').val()=='') || 
-               (jQuery('#block-end-hour').val()== null || jQuery('#block-end-hour').val()== '')){
+        jQuery('#block-end-date').val(jQuery('#block-from-date').val());
+        if(jQuery('#block-slot').val() != ''){
+            fillBlockSlot();
+        }            
+        if((jQuery('#block-start-hour').val()== null || jQuery('#block-start-hour').val()=='') || 
+           (jQuery('#block-end-hour').val()== null || jQuery('#block-end-hour').val()== '')){
                 jQuery('#block-start-hour').val('0900');
                 jQuery('#block-end-hour').val('2000');
-            }
-                
-            //loop through all the time inputs and replace the colons...
-            $$('.time-input').each(function(el,index){
-                el.setProperty('value',el.getProperty('value').replace(/\:/,''));
-            });
-    })
-	
-	
-	
-	
-	
-})
+        }
+
+        //loop through all the time inputs and replace the colons...
+        $$('.time-input').each(function(el,index){
+            el.setProperty('value',el.getProperty('value').replace(/\:/,''));
+        });        
+    });
+});
 
 function fillBlockSlot(){
     var block_hour_arr = jQuery('#block-slot').val().split('-');

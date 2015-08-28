@@ -542,7 +542,16 @@ class Pbbookinghelper
     }
         
     public static function validate_block($input)
-    {         
+    {   
+        $today = date_create("now", new DateTimeZone(PBBOOKING_TIMEZONE));
+        $block_start_date = $input->get('block-from-date', null, 'string');
+        $array_start_date = explode("-", $block_start_date);
+        $block_start_date = $array_start_date[2]."-".$array_start_date[1]."-".$array_start_date[0];
+        $start_date = date_create($block_start_date, new DateTimeZone(PBBOOKING_TIMEZONE));
+        if($today >= $start_date){
+            return ['type'=> 'error', 'message'=>'La Data del blocco deve essere posteriore alla data odierna'];
+        }
+        
         $block_start_hour = $input->get('block-start-hour', null, 'string');
         $block_end_hour = $input->get('block-end-hour', null, 'string');
         if((isset($block_start_hour) && trim($block_start_hour)!='') && (!isset($block_end_hour) && trim($block_end_hour)==='')){                
@@ -554,6 +563,23 @@ class Pbbookinghelper
         $block_calendars = implode(',',$input->get('block_calendars',null,'array'));
         if($block_calendars == ''){
             return ['type'=> 'error', 'message'=>'Selezionare almeno un calendario'];                
+        }
+        
+        $make_recurring = $input->get('reccur', 0, 'integer');
+        if ($make_recurring == 1) {
+            $r_end = $input->get('recur_end', null, 'string');            
+            if(!$r_end){
+                return ['type'=> 'error', 'message'=>'Indicare Data fine della Ripetizione'];
+            }
+            else {
+                $array_r_end = explode("-", $r_end);
+                $r_end = $array_r_end[2]."-".$array_r_end[1]."-".$array_r_end[0]; 
+                $end_date = date_create($r_end, new DateTimeZone(PBBOOKING_TIMEZONE));
+                if($today >= $end_date){
+                    return ['type'=> 'error', 'message'=>'La Data fine del blocco deve essere posteriore alla data odierna'];
+                }
+            }
+            
         }
         return ['type'=> 'message', 'message'=>'Blocco salvato correttamente'];
     } 
