@@ -38,7 +38,8 @@ class Pbbookinghelper
         $start_time = str_split($data['treatment_time'],2);
         $treatment_start->setTime((int)ltrim($start_time[0],'0'),(int)ltrim($start_time[1],'0'));
         $treatment_end = date_create($treatment_start->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-        $treatment_end->modify('+'.$treatment->duration.' minutes');
+        $end_time = str_split($data['treatment_end_time'],2);
+        $treatment_end->setTime((int)ltrim($end_time[0],'0'),(int)ltrim($end_time[1],'0'));        
         if (!$cal->is_free_from_to($treatment_start,$treatment_end)) {
             error_log ('cal is free');
             return true;
@@ -59,6 +60,17 @@ class Pbbookinghelper
         $dtstart = date_create($data['date'],new DateTimeZone(PBBOOKING_TIMEZONE));
         $start_time = str_split($data['treatment-time'],2);            
         $dtstart->setTime((int)ltrim($start_time[0],'0'),(int)ltrim($start_time[1],'0'));
+        
+        $dtend = clone $dtstart;
+        if($data['treatment-end-time']){
+            $end_time = str_split($data['treatment-end-time'],2);
+            $dtend->setTime((int)ltrim($end_time[0],'0'),(int)ltrim($end_time[1],'0'));
+        }
+        else{
+            $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($data['treatment_id']));
+            $treatment = $db->loadObject();
+            $dtend->modify('+ '.$treatment->duration.' minutes');
+        }
         $user_id = $data['calendar-user'];
         $user = JFactory::getUser($user_id);                
         try {
@@ -67,8 +79,8 @@ class Pbbookinghelper
                     self::validate_event($data['treatment_id'], $dtstart, $user, $data['cal_id']);
             }
             $emailfield = $user->email;
-            $sql = sprintf('insert into #__pbbooking_pending (date,dtstart,service,verified,cal_id,user_id,email) values ("%s","%s",%s,0,%s,"%s","%s")',
-                    $db->escape(date_create($data['date'],new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d')),$dtstart->format(DATE_ATOM),$db->escape($data['treatment_id']),
+            $sql = sprintf('insert into #__pbbooking_pending (date,dtstart,dtend,service,verified,cal_id,user_id,email) values ("%s","%s","%s",%s,0,%s,"%s","%s")',
+                    $db->escape(date_create($data['date'],new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d')),$dtstart->format(DATE_ATOM),$dtend->format(DATE_ATOM),$db->escape($data['treatment_id']),
                     $db->escape($data['cal_id']),$db->escape($data['calendar-user']),$db->escape($emailfield));
         
             $db->setQuery($sql);
@@ -169,21 +181,16 @@ class Pbbookinghelper
         date_default_timezone_set($joom_config->get('offset'));
 	
         $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($pending_id));
-        $pending = $db->loadObject();            
-        $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($pending->service));
-        $treatment = $db->loadObject();
-            
+        $pending = $db->loadObject();          
         $user = JFactory::getUser($pending->user_id);                
         $dtstart = date_create($pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE));
-		
-        $validation_arr = array('date'=>$pending->date,'treatment_time'=>$dtstart->format('Hi'),'cal_id'=>$pending->cal_id,'treatment_id'=>$pending->service);
+	$dtend	= date_create($pending->dtend,new DateTimeZone(PBBOOKING_TIMEZONE));
+        $validation_arr = array('date'=>$pending->date,'treatment_time'=>$dtstart->format('Hi'),'treatment_end_time'=>$dtend->format('Hi'),'cal_id'=>$pending->cal_id,'treatment_id'=>$pending->service);
         if (self::valid_appointment($validation_arr)) {
             $pending->verified = 1;
             $db->updateObject('#__pbbooking_pending',$pending,'id');
 			
-            //create the new appt
-            $dtend = date_create($dtstart->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-            $dtend->modify('+ '.$treatment->duration.' minutes');
+            //create the new appt            
             $summary = $user->username;
             $description  = "";
             $appt = new JObject;

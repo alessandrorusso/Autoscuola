@@ -39,10 +39,16 @@
 						<?php echo JText::_('COM_PBBOOKING_FREE'); ?>
                                             </a>
                                         </td>    
-					<?php elseif (!is_bool($open)) :?>
-                                        <td class="busy-cell">    
-                                            <?php echo $open; ?>
-                                        </td>    
+					<?php elseif (!is_bool($open)) :?>                                        
+                                        <td class="busy-cell">
+                                            <a class="no-print" style="font-weight:bold; color: white;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=delete_block&cal_id=<?php echo $key;?>&dtstart=<?php echo $this->dt_start->format('YmdHi');?>">
+						<?php echo $open; ?>
+                                            </a>
+                                            <span class="hide-summary" style="display:none; font-weight:bold;">
+                                                <?php echo $open; ?>
+                                            </span>
+                                        </td>
+                                        
                                         <?php elseif ($event && is_bool($event)!=true) :?>
                                         <td style="background-color: <?php echo $cal->color;?>">
                                             <a class="no-print" style="font-weight:bold; color: black;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>">

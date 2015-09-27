@@ -147,17 +147,6 @@ class PbbookingController extends JControllerLegacy
     function deleteReservation()
     {
         $db = JFactory::getDbo();
-        $db->setQuery('select * from #__pbbooking_events where id = '.$db->escape(JRequest::getVar('eventId')));
-        $event = $db->loadObject();        
-        $dtstart = date_create($event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE));
-        $now = date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE));                
-        $now->modify('+ 1 Days');        
-        if($dtstart <= $now){
-            //var_dump($dtstart);
-            //var_dump($now);
-            $this->setRedirect('index.php/component/pbbooking/recap?Itemid=176','Occorre cancellare la prenotazione con più di 24 ore di anticipo!');            
-            return;
-        }        
         $db->setQuery('delete from #__pbbooking_events where id = '.$db->escape(JRequest::getVar('eventId')));
         $db->query();
         $this->recap();            
