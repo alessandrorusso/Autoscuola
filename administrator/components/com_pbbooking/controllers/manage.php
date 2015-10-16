@@ -291,36 +291,16 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $db = JFactory::getDbo();       
         $cal_id = JRequest::getVar('cal_id');
         $dtstart = JRequest::getVar('dtstart');
-        $date = date_create($dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d');
+        $date = date_create($dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM);
                 
         if (isset($cal_id) && $cal_id != null) {
             $exception = new JObject(array('cal_id' => $cal_id, 'dtexcept' => date_create($dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM)));
-            $db->insertObject('#__pbbooking_block_exceptions', $exception);
-                    //('select * from #__pbbooking_block_exceptions where cal_id=' . $db->escape((int) $cal_id) . 'order by  dtexcept ASC');           
+            $db->insertObject('#__pbbooking_block_exceptions', $exception);                   
             $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $date, 'Blocco rimosso correttamente');                    
         }
         else{
             $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $date, 'Errore nella rimozione del blocco');                    
-        }
-            
-        
-        
-        //Scorro le eccezioni estratte
-        if (count($block_exceptions) > 0) {
-            foreach ($block_exceptions as $blocked_day) {
-                
-                $calendars = $blocked_day->calendars;
-                foreach (explode(',', $calendars) as $cal_id) {
-                
-                    
-                }
-        
-                
-            }
-            return $built_blocked_days;
-        }
-        
-        
+        }       
     }
 
     /**

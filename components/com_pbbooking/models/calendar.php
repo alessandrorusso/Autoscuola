@@ -259,12 +259,14 @@ function isOpen($date)
                             $date_compare_to->setTimezone(new DateTimezone($offset));  
                             if($date>=$date_compare_from && $date<=$date_compare_to){
                                 Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');
-                                //verifico il blocco trovato è stato rimosso
-                                $db->setQuery('select * from #__pbbooking_block_exceptions where cal_id=' . $db->escape((int) $this->cal_id) . 'order by  dtexcept ASC' );
+                                //verifico il blocco trovato è stato rimosso                                
+                                $db->setQuery("select * from #__pbbooking_block_exceptions where cal_id=" . $db->escape((int) $this->cal_id) . " order by  dtexcept ASC");                                
                                 $block_exceptions = $db->loadObjectList();
                                 if(count($block_exceptions) > 0){
                                     foreach ($block_exceptions as $exception){
-                                        if($exception->dtexcept == $date){
+                                        $exceptionDate = date_create($exception->dtexcept, new DateTimeZone(PBBOOKING_TIMEZONE));
+                                        $interval = date_diff($exceptionDate,$date)->format('%i');
+                                        if($interval <1){
                                             return true;
                                         }
                                     }
@@ -281,7 +283,7 @@ function isOpen($date)
 					if ($date>=$block_from && $date<=$block_to && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {                                            
 						Pbdebug::log_msg('Calendar model found recurrant block with id '.$blocked_day->id.' at '.$date->format(DATE_ATOM),'com_pbbooking');
                                                 //verifico il blocco trovato è stato rimosso
-                                                $db->setQuery('select * from #__pbbooking_block_exceptions where cal_id=' . $db->escape((int) $this->cal_id) . 'order by  dtexcept ASC' );
+                                                $db->setQuery("select * from #__pbbooking_block_exceptions where cal_id=" . $db->escape((int) $this->cal_id) . " order by  dtexcept ASC" );
                                                 $block_exceptions = $db->loadObjectList();
                                                 if(count($block_exceptions) > 0){
                                                     foreach ($block_exceptions as $exception){
@@ -351,13 +353,13 @@ public function is_free_from_to($from_date,$to_date,$is_admin=false) {
 	//}
 	
 	//check to see if it's in a block date range.
-        $from_date = clone $date;
-        while ($from_date < $to_date){
-            $open = $this->isOpen($from_date);        
+        $date = clone $from_date;
+        while ($date < $to_date){
+            $open = $this->isOpen($date);        
             if (!$open || !is_bool($open)) {
 		return true;
             }
-            $from_date->modify('+ '.$pbb_config->time_increment.' minutes');
+            $date->modify('+ '.$pbb_config->time_increment.' minutes');
         }    
         
 	
