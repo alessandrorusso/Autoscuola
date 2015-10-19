@@ -20,14 +20,14 @@ public $office;
 
 function __construct() {
 
-	$db=JFactory::getDBO();
+    $db=JFactory::getDBO();
 	
-	//set the timezone for the calendars
-	$config =JFactory::getConfig();
+    //set the timezone for the calendars
+    $config =JFactory::getConfig();
     date_default_timezone_set($config->get('offset'));	
 	
-	//set a default cal_id;
-	$this->cal_id = -1;
+    //set a default cal_id;
+    $this->cal_id = -1;
 }
 
 
@@ -38,7 +38,6 @@ function __construct() {
 * @return nil loads $this->events with appointments
 * @since 2.1
 */
-
 function loadCalendarFromDbase($cals)
 {
     $db = JFactory::getDBO();
@@ -119,21 +118,15 @@ function isFree($date,$timeslot){
         }
     	
         //check for recurrance
-		if (isset($event->r_int)) {
-			//we have a recurring event...
-			$dt_until = date_create($event->r_end,new DateTimeZone(PBBOOKING_TIMEZONE));
-			$dt_until->setTimezone(new DateTimeZone($config->get('offset')));
-			$dt_until->setTime(23,59,59);
+        if (isset($event->r_int)) {
+            //we have a recurring event...
+            $dt_until = date_create($event->r_end,new DateTimeZone(PBBOOKING_TIMEZONE));
+            $dt_until->setTimezone(new DateTimeZone($config->get('offset')));
+            $dt_until->setTime(23,59,59);		
+            }
+    }
 
-			/*while ($event->dtstart < $dt_until) {
-
-			}*/
-			
-			
-		}
-	}
-	
-	return $bookedEvent;
+    return $bookedEvent;
 }
 
 /**
@@ -142,57 +135,56 @@ function isFree($date,$timeslot){
 * @param the calfile to write to
 * @deprecated 2.1
 */
-
 function writeEvent($event,$calfile) {
-	global $kOutcal;
-	//BEGIN:VEVENT
-	//DTEND;VALUE=DATE-TIME:20100426T172429Z
-	//DTSTART;VALUE=DATE-TIME:20100426T162429
-	//SUMMARY:New Event
-	//END:VEVENT
+    global $kOutcal;
+    //BEGIN:VEVENT
+    //DTEND;VALUE=DATE-TIME:20100426T172429Z
+    //DTSTART;VALUE=DATE-TIME:20100426T162429
+    //SUMMARY:New Event
+    //END:VEVENT
 	
-	$path_parts = pathinfo($calfile);
-	if ($path_parts['dirname'] == '.') {
-		#the cal is in the component subdir so add relevant info to path
-		$realpath = JPATH_SITE.DS.'components'.DS.'com_pbbooking'.DS.$calfile;
-		$calfile = $realpath;
-	}
+    $path_parts = pathinfo($calfile);
+    if ($path_parts['dirname'] == '.') {
+        #the cal is in the component subdir so add relevant info to path
+        $realpath = JPATH_SITE.DS.'components'.DS.'com_pbbooking'.DS.$calfile;
+        $calfile = $realpath;
+    }
 	
-	$file = @fopen($calfile,"r");
-	$lines = Array();
-	$i = 0;
-	$insert=0;
-	while(!feof($file)) {
-		//read entire file into memory and if line == BEGIN:VTIMEZONE then note the line in $i
-		$line = fgets($file);
-		if (preg_match("/^BEGIN:VTIMEZONE/",$line) == 1) {
-			$insert=$i;
-		}
-		$i++;
-		$lines[]=$line;
-	}
-	fclose($file);
+    $file = @fopen($calfile,"r");
+    $lines = Array();
+    $i = 0;
+    $insert=0;
+    while(!feof($file)) {
+        //read entire file into memory and if line == BEGIN:VTIMEZONE then note the line in $i
+        $line = fgets($file);
+        if (preg_match("/^BEGIN:VTIMEZONE/",$line) == 1) {
+            $insert=$i;
+        }
+        $i++;
+        $lines[]=$line;
+    }
+    fclose($file);
 	
-	//slice array from insert to end
-	//add elements recursively to end of array and merge again
-	$arr1 = array_slice($lines,0,$insert);
-	$arr2 = array_slice($lines,$insert,(count($lines)-$insert));
-	//pop new elements to end of $arr1
-	$arr1[] = "BEGIN:VEVENT\n";
-	$arr1[] = sprintf("DTEND;VALUE=DATE-TIME:%sT%s\n",date_format($event->dtend,'Ymd'),date_format($event->dtend,'His'));
-	$arr1[] = sprintf("DTSTART;VALUE=DATE-TIME:%sT%s\n",date_format($event->dtstart,'Ymd'),date_format($event->dtstart,'His'));
-	$arr1[]=sprintf("SUMMARY:%s\n",$event->summary);
-	$arr1[]="DESCRIPTION:$event->description\n";
-	$arr1[]="END:VEVENT\n";
+    //slice array from insert to end
+    //add elements recursively to end of array and merge again
+    $arr1 = array_slice($lines,0,$insert);
+    $arr2 = array_slice($lines,$insert,(count($lines)-$insert));
+    //pop new elements to end of $arr1
+    $arr1[] = "BEGIN:VEVENT\n";
+    $arr1[] = sprintf("DTEND;VALUE=DATE-TIME:%sT%s\n",date_format($event->dtend,'Ymd'),date_format($event->dtend,'His'));
+    $arr1[] = sprintf("DTSTART;VALUE=DATE-TIME:%sT%s\n",date_format($event->dtstart,'Ymd'),date_format($event->dtstart,'His'));
+    $arr1[]=sprintf("SUMMARY:%s\n",$event->summary);
+    $arr1[]="DESCRIPTION:$event->description\n";
+    $arr1[]="END:VEVENT\n";
 	
-	$lines = array_merge($arr1,$arr2);
+    $lines = array_merge($arr1,$arr2);
 	
-	$file = @fopen($calfile,"w");
-	foreach($lines as $line) {
-		fwrite($file,$line);
-	}
+    $file = @fopen($calfile,"w");
+    foreach($lines as $line) {
+        fwrite($file,$line);
+    }
 	
-	fclose($file);
+    fclose($file);
 }
 
 
@@ -203,30 +195,27 @@ function writeEvent($event,$calfile) {
 * @return bool success or failure
 * @since 2.1
 */
-
-
 function writeEventToDatabase($event,$cal_id)
 {
 	
-	$db = JFactory::getDBO();
-	if ($event->id) {
-		$sql = sprintf("update #__pbbooking_events set cal_id = %s, summary = '%s', dtend = %s, dtstart = %s, description = '%s' where id=%s",
-				$db->escape($cal_id),$db->escape($event->summary),
-				$db->escape($event->dtend->format('U')),
-				$db->escape($event->dtstart->format('U')),
-				$event->description,
-				$db->escape($event->id));	
-		//error_log($sql);			
-	} else {
-		$sql = sprintf("insert into #__pbbooking_events (cal_id,summary,dtend,dtstart,description) values (%s,'%s',%s,%s,'%s')",
-				$db->escape($cal_id),$db->escape($event->summary),
-				$db->escape($event->dtend->format('U')),
-				$db->escape($event->dtstart->format('U')),
-				$db->escape($event->description));		
-	}
-	$db->setQuery($sql);
-	$db->query();
-	return $db->insertid();
+    $db = JFactory::getDBO();
+    if ($event->id) {
+        $sql = sprintf("update #__pbbooking_events set cal_id = %s, summary = '%s', dtend = %s, dtstart = %s, description = '%s' where id=%s",
+        $db->escape($cal_id),$db->escape($event->summary),
+        $db->escape($event->dtend->format('U')),
+        $db->escape($event->dtstart->format('U')),
+        $event->description,
+        $db->escape($event->id));	        
+    } else {
+        $sql = sprintf("insert into #__pbbooking_events (cal_id,summary,dtend,dtstart,description) values (%s,'%s',%s,%s,'%s')",
+        $db->escape($cal_id),$db->escape($event->summary),
+        $db->escape($event->dtend->format('U')),
+        $db->escape($event->dtstart->format('U')),
+        $db->escape($event->description));		
+    }
+    $db->setQuery($sql);
+    $db->query();
+    return $db->insertid();
 }
 
 /**
@@ -235,71 +224,125 @@ function writeEventToDatabase($event,$cal_id)
 * @param datetime the date to block
 * @return bool true or false true = is open and false = is closed
 */
-
 function isOpen($date)
 {
-	//is the date a block day?
-	$db=JFactory::getDBO();
-	$db->setQuery("select * from #__pbbooking_block_days");
-	$blocked_days = $db->loadObjectList();
-	$config = JFactory::getConfig();
-	$offset = $config->get('offset');      
-        $date_compare = clone $date;
-        $date_compare->setTime(00, 00);        
-	if (count($blocked_days)>0) {            
-		foreach ($blocked_days as $blocked_day) {
-			$block_from = date_create($blocked_day->block_start_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-        		$block_to = date_create($blocked_day->block_end_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-			if (($date_compare>=$block_from && $date_compare<=$block_to) && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {
-                            $date_compare_from = clone $date_compare;
-                            $date_compare_from->setTime(substr($blocked_day->block_start_hour, 0,2),substr($blocked_day->block_start_hour, 2),00);
-                            $date_compare_from->setTimezone(new DateTimezone($offset));
-                            $date_compare_to = clone $date_compare;
-                            $date_compare_to->setTime(substr($blocked_day->block_end_hour, 0,2),substr($blocked_day->block_end_hour, 2),00);                        
-                            $date_compare_to->setTimezone(new DateTimezone($offset));  
-                            if($date>=$date_compare_from && $date<=$date_compare_to){
-                                Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');
-                                //verifico il blocco trovato è stato rimosso                                
-                                $db->setQuery("select * from #__pbbooking_block_exceptions where cal_id=" . $db->escape((int) $this->cal_id) . " order by  dtexcept ASC");                                
-                                $block_exceptions = $db->loadObjectList();
-                                if(count($block_exceptions) > 0){
-                                    foreach ($block_exceptions as $exception){
-                                        $exceptionDate = date_create($exception->dtexcept, new DateTimeZone(PBBOOKING_TIMEZONE));
-                                        $interval = date_diff($exceptionDate,$date)->format('%i');
-                                        if($interval <1){
-                                            return true;
-                                        }
-                                    }
+    $isOpen = true;
+    //is the date a block day?
+    $db=JFactory::getDBO();
+    $db->setQuery("select * from #__pbbooking_block_days");
+    $blocked_days = $db->loadObjectList();
+    $config = JFactory::getConfig();
+    $offset = $config->get('offset');      
+    //clono la data da confrontare e resetto l'ora
+    $date_compare = clone $date;
+    $date_compare->setTime(00, 00);        
+    if (count($blocked_days)>0) {            
+        //ciclo tutti i blocchi trovati
+        foreach ($blocked_days as $blocked_day) {            
+            //verifico che il calendario sia coinvolto nel blocco corrente
+            if (in_array($this->cal_id,explode(',',$blocked_day->calendars))) 
+            {   
+                //calcolo i blocchi rimossi per il calendario
+                $db->setQuery("select * from #__pbbooking_block_exceptions where cal_id=" . $db->escape((int) $this->cal_id) . " order by  dtexcept ASC");                                
+                $block_exceptions = $db->loadObjectList();                
+                $block_from = date_create($blocked_day->block_start_date,new DateTimeZone(PBBOOKING_TIMEZONE));
+                $block_to = date_create($blocked_day->block_end_date,new DateTimeZone(PBBOOKING_TIMEZONE));
+
+                if($date_compare>=$block_from && $date_compare<=$block_to){
+                    //data e ora inizio del blocco
+                    $date_compare_from = clone $date_compare;
+                    $date_compare_from->setTime(substr($blocked_day->block_start_hour, 0,2),substr($blocked_day->block_start_hour, 2),00);
+                    $date_compare_from->setTimezone(new DateTimezone($offset));
+                    
+                    //data e ora fine del blocco
+                    $date_compare_to = clone $date_compare;
+                    $date_compare_to->setTime(substr($blocked_day->block_end_hour, 0,2),substr($blocked_day->block_end_hour, 2),00);                        
+                    $date_compare_to->setTimezone(new DateTimezone($offset));  
+                    
+                    //verifico se la data in input rientra nel blocco
+                    if($date>=$date_compare_from && $date<=$date_compare_to){
+                        Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');                    
+                        $isOpen = false;                        
+                    }
+                }
+                
+                if($isOpen){
+                    //verifico se il blocco è ricorrente
+                    $blocked_day->r_dtend = date_create($blocked_day->r_end,new DateTimeZone(PBBOOKING_TIMEZONE));
+                    $blocked_day->r_dtend->setTimezone(new DateTimeZone($offset));
+                
+                    if (isset($blocked_day->r_int) && $blocked_day->r_int != 0 && 
+                        $date_compare>=$block_from && $date_compare <= $blocked_day->r_dtend) 
+                    {                     
+                        /* se si tratta di una ricorrenza custom
+                         * devo verificare che il giorno in input ricada
+                         * tra quelli segnalati nel blocco
+                         */                                        
+                        if($blocked_day->r_freq == 'custom'){                            
+                            if (in_array($date->format('w'),explode(',',$blocked_day->custom_recurrence))) {                            
+                                $date_compare_from = clone $date_compare;
+                                $date_compare_from->setTime(substr($blocked_day->block_start_hour, 0,2),substr($blocked_day->block_start_hour, 2),00);
+                                $date_compare_from->setTimezone(new DateTimezone($offset));                    
+                        
+                                $date_compare_to = clone $date_compare;
+                                $date_compare_to->setTime(substr($blocked_day->block_end_hour, 0,2),substr($blocked_day->block_end_hour, 2),00);                        
+                                $date_compare_to->setTimezone(new DateTimezone($offset));                      
+                         
+                                //verifico se la data in input rientra nel blocco
+                                if($date>=$date_compare_from && $date<=$date_compare_to){
+                                    Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');                    
+                                    $isOpen = false;                        
                                 }
-                                return $blocked_day->block_note != '' ?  $blocked_day->block_note : 'Non disponibile';
+                            }                            
+                        }
+                        else{  
+                            while ($isOpen && ($block_from<=$date && $block_to <= $date) || ($block_from<=$blocked_day->r_dtend && $block_to <= $blocked_day->r_dtend)) 
+                            {
+                                $block_from->modify('+ '.$blocked_day->r_int.' '.$blocked_day->r_freq);
+                                $block_from->setTime(substr($blocked_day->block_start_hour, 0,2),substr($blocked_day->block_start_hour, 2),00);
+                                $block_from->setTimezone(new DateTimezone($offset));                            
+                    
+                                $block_to->modify('+ '.$blocked_day->r_int.' '.$blocked_day->r_freq);
+                                $block_to->setTime(substr($blocked_day->block_end_hour, 0,2),substr($blocked_day->block_end_hour, 2),00);                        
+                                $block_to->setTimezone(new DateTimezone($offset));                      
+                            
+                                //verifico se la data in input rientra nel blocco
+                                if($date>=$block_from && $date<=$block_to){
+                                    Pbdebug::log_msg('Calendar model found single block at '.$date->format(DATE_ATOM),'com_pbbooking');                    
+                                    $isOpen = false;                        
+                                }
                             }
-			}
-			$blocked_day->r_dtend = date_create($blocked_day->r_end,new DateTimeZone(PBBOOKING_TIMEZONE));
-			$blocked_day->r_dtend->setTimezone(new DateTimeZone($offset));
-			if (isset($blocked_day->r_int) && $date <= $blocked_day->r_dtend && $blocked_day->r_int != 0) { 
-				while (($block_from<=$date && $block_to <= $date) || ($block_from<=$blocked_day->r_dtend && $block_to <= $blocked_day->r_dtend)) {
-					$block_from->modify('+ '.$blocked_day->r_int.' '.$blocked_day->r_freq);
-					$block_to->modify('+ '.$blocked_day->r_int.' '.$blocked_day->r_freq);
-					if ($date>=$block_from && $date<=$block_to && in_array($this->cal_id,explode(',',$blocked_day->calendars))) {                                            
-						Pbdebug::log_msg('Calendar model found recurrant block with id '.$blocked_day->id.' at '.$date->format(DATE_ATOM),'com_pbbooking');
-                                                //verifico il blocco trovato è stato rimosso
-                                                $db->setQuery("select * from #__pbbooking_block_exceptions where cal_id=" . $db->escape((int) $this->cal_id) . " order by  dtexcept ASC" );
-                                                $block_exceptions = $db->loadObjectList();
-                                                if(count($block_exceptions) > 0){
-                                                    foreach ($block_exceptions as $exception){
-                                                        if($exception->dtexcept == $date){
-                                                            return true;
-                                                        }
-                                                    }
-                                                }
-						return false;
-					}
-				}
-			}
-		}
-	}
-	return true;		
+                        }
+                    }   
+                }                             
+            }
+            if(!$isOpen){
+                //verifico il blocco trovato è stato rimosso                                
+                if(count($block_exceptions) > 0){
+                    foreach ($block_exceptions as $exception){
+                        $exceptionDate = date_create($exception->dtexcept, new DateTimeZone(PBBOOKING_TIMEZONE));                        
+                        $interval = date_diff($exceptionDate,$date);
+                        $diffYear= $interval->format('%y');
+                        $diffMonth= $interval->format('%m');
+                        $diffDay= $interval->format('%d');
+                        $diffHour= $interval->format('%h');
+                        $diffMin= $interval->format('%i');
+                        if($diffYear <1 &&
+                           $diffMonth <1 && 
+                           $diffDay <1 && 
+                           $diffHour <1 && 
+                           $diffMin <1  ){
+                            return true;
+                        }
+                    }
+                }
+                return $blocked_day->block_note != '' ?  $blocked_day->block_note : 'Non disponibile';
+            }            
+        }
+    }
+    return true;		
 }
+
 
 /**
 * is_free_from_to() - 

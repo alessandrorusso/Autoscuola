@@ -25,7 +25,7 @@
 
 
 	<!-- build table content-->
-	<?php while($this->dt_start<=$this->dt_end) :?>
+	<?php while($this->dt_start<$this->dt_end) :?>
 		<?php $dt_slot_end = date_create($this->dt_start->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));?>
 		<?php $dt_slot_end->modify('+ '.$this->config->time_increment.' minutes');?>
 		<tr>
