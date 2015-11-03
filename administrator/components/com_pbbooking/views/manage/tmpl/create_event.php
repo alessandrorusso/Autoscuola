@@ -88,6 +88,18 @@ JHtml::_('behavior.formvalidation');
                         <tr>
                             <td><?php echo JText::_('COM_PBBOOKING_SUCCESS_TIME');?></td>
                             <td><?php echo JHtml::_('date',$this->dateparam->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></td>
+                        </tr
+                        
+                        <tr>
+                            <td>Ora fine</td>
+                            <td>
+                                <select name="treatment-end-time">
+                                    <?php while($this->booking_time<= $this->closing_time) :?>
+                                        <option value="<?php echo $this->booking_time->format('Hi');?>"><?php echo JHtml::_('date',$this->booking_time->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></option>
+                                        <?php $this->booking_time->modify('+ '.$this->config->time_increment.' minutes');?>
+                                    <?php endwhile;?>
+                                </select>
+                            </td>
                         </tr>
 		
                         

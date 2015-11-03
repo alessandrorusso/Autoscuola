@@ -53,6 +53,7 @@ function loadCalendarFromDbase($cals)
         $this->license = $cal->license;
         $this->transport = $cal->transport;
         $this->color = $cal->color;
+        $this->trading_hours = $cal->hours;
     }
 
     $events = array();
@@ -405,16 +406,16 @@ public function is_free_from_to($from_date,$to_date,$is_admin=false) {
             $date->modify('+ '.$pbb_config->time_increment.' minutes');
         }    
         
-	
-	
-	foreach($this->events as $event) {
-		
-		$event->dtend->modify("-1 second");
-		
-		if ($event->dtend >= $from_date && $event->dtend <= $to_date) {
-			$free = false;
-			$bookedEvent = clone $event;
+	foreach($this->events as $event) {		
+				
+		if ($event->dtend > $from_date && $event->dtend <= $to_date) {
+                    $free = false;
+                    $bookedEvent = clone $event;
 		}
+                elseif ($event->dtstart >= $from_date && $event->dtstart < $to_date ) {
+                    $free = false;
+                    $bookedEvent = clone $event;
+                }
 		
 		//check for multi day events
 		if ($event->dtstart <= $from_date && $event->dtend >= $to_date) {
@@ -423,7 +424,7 @@ public function is_free_from_to($from_date,$to_date,$is_admin=false) {
 		}
 		
 		//check for recurrance
-		if (isset($event->r_int)) {
+		/*if (isset($event->r_int)) {
 			//we have a recurring event
 			$dt_until = date_create($event->r_end,new DateTimeZone(PBBOOKING_TIMEZONE));
 			$dt_until->setTimezone(new DateTimeZone($config->get('offset')));
@@ -442,7 +443,7 @@ public function is_free_from_to($from_date,$to_date,$is_admin=false) {
 				$dt_recur_cur_dtstart->modify('+'.$event->r_int.' '.$event->r_freq);
 				$dt_recur_cur_dtend->modify('+'.$event->r_int.' '.$event->r_freq);
 			}
-		}
+		}*/
 	}
 	
 	return $bookedEvent;

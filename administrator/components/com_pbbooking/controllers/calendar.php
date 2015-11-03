@@ -37,8 +37,6 @@ class PbbookingsControllercalendar extends JControllerLegacy {
 
     /**
      * Method to display the view
-     *
-     * @access    public
      */
     function display($cacheable = false, $options = array()) {
         //Select all calendar even closed.
@@ -103,7 +101,7 @@ class PbbookingsControllercalendar extends JControllerLegacy {
         $status = JRequest::getVar('status');
         $color = JRequest::getVar('color');
 
-        //retreive opening hours
+        //retrieve opening hours
         $opening_hours = array();
         $i = 0;
         foreach (array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $day) {
@@ -193,5 +191,4 @@ class PbbookingsControllercalendar extends JControllerLegacy {
         $lovTransport = $this->calculateTransport($db, $licenseId);
         $view->transport = $lovTransport;
     }
-
 }

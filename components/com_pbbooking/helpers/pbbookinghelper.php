@@ -1,10 +1,4 @@
 <?php
-/**
-* @package		PurpleBeanie.PBBooking
-* @license		GNU General Public License version 2 or later; see LICENSE.txt
-* @link		http://www.purplebeanie.com
-*/
- 
 // No direct access
  
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -19,8 +13,7 @@ class Pbbookinghelper
      * @param array appointment details - requires an assoc array with cal_id, treatment_id, treatment_time, and date (as string) defined
      * @return bool returns a true or false to indiciate whether the appointment is valid or not
      */
-    static function valid_appointment($data)
-    {
+    static function valid_appointment($data) {
         $db = JFactory::getDbo();
         $db->setQuery('select * from #__pbbooking_config');
         $config = $db->loadObject();
@@ -48,221 +41,6 @@ class Pbbookinghelper
             return false;
         }
         return true;
-    }
-	
-    static function save_pending_event($data) 
-    {
-        error_log('save_pending_event');
-        $db = JFactory::getDbo();
-        $config =JFactory::getConfig();
-        date_default_timezone_set($config->get('offset'));	
-        	
-        $dtstart = date_create($data['date'],new DateTimeZone(PBBOOKING_TIMEZONE));
-        $start_time = str_split($data['treatment-time'],2);            
-        $dtstart->setTime((int)ltrim($start_time[0],'0'),(int)ltrim($start_time[1],'0'));
-        
-        $dtend = clone $dtstart;
-        if($data['treatment-end-time']){
-            $end_time = str_split($data['treatment-end-time'],2);
-            $dtend->setTime((int)ltrim($end_time[0],'0'),(int)ltrim($end_time[1],'0'));
-        }
-        else{
-            $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($data['treatment_id']));
-            $treatment = $db->loadObject();
-            $dtend->modify('+ '.$treatment->duration.' minutes');
-        }
-        $user_id = $data['calendar-user'];
-        $user = JFactory::getUser($user_id);                
-        try {
-            
-            if ($user->get('Super Users')) { 
-                    self::validate_event($data['treatment_id'], $dtstart, $user, $data['cal_id']);
-            }
-            $emailfield = $user->email;
-            $sql = sprintf('insert into #__pbbooking_pending (date,dtstart,dtend,service,verified,cal_id,user_id,email) values ("%s","%s","%s",%s,0,%s,"%s","%s")',
-                    $db->escape(date_create($data['date'],new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d')),$dtstart->format(DATE_ATOM),$dtend->format(DATE_ATOM),$db->escape($data['treatment_id']),
-                    $db->escape($data['cal_id']),$db->escape($data['calendar-user']),$db->escape($emailfield));
-        
-            $db->setQuery($sql);
-            $result = $db->query();
-            if ($result) {
-                $pending_id = $db->insertid();                
-                return $pending_id;
-            }
-            else {
-                return 'Problemi nel salvataggio della prenotazione, si prega di riprovare.';
-            }
-        } catch (Exception $exc) {            
-            return $exc->getMessage();
-        }           
-    }
-	
-    /**
-     * email_user - sends the validation email to the user with format defined in configuration.
-     * 			- New in 2.2 this method now supports all customfield tags based on |*varname*|
-     *
-     * @param array data the array of appt specific data
-     */	
-    static function email_user($data)
-    {
-        Pbdebug::log_msg('email_user() sending email to user for pending event id'.$data['pending_id'],'com_pbbooking');
-        $db = JFactory::getDbo();
-        $db->setQuery('select * from #__pbbooking_config');
-        $config = $db->loadObject();
-        $db->setQuery('select * from #__pbbooking_customfields where is_email = 1');
-        $emailfield = $db->loadObject();
-        $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($data['treatment_id']));
-        $service = $db->loadObject();
-        $db->setQuery('select cf.varname,cfd.data from #__pbbooking_customfields cf,#__pbbooking_customfields_data cfd where cf.id = cfd.customfield_id and cfd.pending_id = '.$db->escape($data['pending_id']));
-        $customfields = $db->loadObjectList();
-        $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($data['pending_id']));
-        $pending_appt = $db->loadObject();
-        $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($data['cal_id']))->loadObject();
-        $calendar = $db->loadObject();
-	
-        $mailer =JFactory::getMailer();
-        $mailer_config =JFactory::getConfig();
-
-        $recipient = $data[$emailfield->varname];
-        $bcc = null;
-        if ($config->bcc_admin == 1) {
-            $bcc = array($mailer_config->get('mailfrom'));
-            if (isset($cal->email)) $bcc[] = $cal->email;
-        }
-        if (JURI::base(true) != '')
-            $url = str_replace(JURI::base(true).'/','',JURI::base()).JRoute::_('index.php?option=com_pbbooking&task=validate&id='.$data['pending_id'].'&email='.$data[$emailfield->varname]);
-        else
-            $url = preg_replace('/(.*)\/$/','$1',JURI::base()).JRoute::_('index.php?option=com_pbbooking&task=validate&id='.$data['pending_id'].'&email='.$data[$emailfield->varname]);	
-        Pbdebug::log_msg('email_user() final url is '.$url,'com_pbbooking');
-        $urlstring = '<a href="'.$url.'">'.JTEXT::_('COM_PBBOOKING_VALIDATE_ANCHOR_TEXT')."</a>";
-		
-        //send email to client to let them know what is going on
-        $body = self::_prepare_email('email_body',array('service_id'=>$data['treatment_id'],'dtstart'=>$pending_appt->dtstart,'url'=>$urlstring),(array)$customfields);
-                self::send_email($config->email_subject,$body,$recipient,$bcc);
-    }
-        
-    static function save_event(){
-        $dtend = date_create($dtstart->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-        $dtend->modify('+ '.$treatment->duration.' minutes');
-        $summary = $treatment->name.' for '.$customdata['first_name']->data.' '.$customdata['last_name']->data;
-            
-        $appt = new JObject;            
-        $appt->setProperties(array('summary'=>$summary,'dtend'=>$dtend->format(DATE_ATOM),'dtstart'=>$dtstart->format(DATE_ATOM),'description'=>$description,'service_id'=>$pending->service,'email'=>$pending->email,
-                                    'customfields_data'=>json_encode($all_fields),'deposit_paid'=>0,'amount_paid'=>0.00));
-        //write to database
-        if ($db->insertObject('#__pbbooking_events',$appt)) {
-            $event_id = $db->insertid();
-            //self::email_admin($event_id,$pending->id);
-            Pbdebug::log_msg('validate_pending() successful validation of pending_event id '.$db->escape($pending_id),'com_pbbooking');
-            /*if ($config->validation == 'admin') {
-                //the appt is admin validated so we need to let the client know that it has been validated as well....
-                $body = self::_prepare_email('admin_validation_confirmed_email_body',array('service_id'=>$treatment->id,'dtstart'=>$dtstart->format(DATE_ATOM),'url'=>null),json_decode($appt->customfields_data));
-                self::send_email($config->admin_validation_confirmed_email_subject,$body,$appt->email);
-            }*/
-            return $event_id;
-        }
-    }
-	
-    /**
-     * validate_pending - looks up a pending booking and if still valid writes to the dbase.
-     *
-     * @param int the id of the pending booking
-     * @param string the users email address or possibly null if admin validated
-     * @param string the token or possibly null if user validated
-     * @returns mixed returns an int with the event_id or false for failure
-     */
-    static function validate_pending($pending_id,$email=null,$token=null)
-    {
-        $db = JFactory::getDbo();
-        $db->setQuery('select * from #__pbbooking_config');
-        $config = $db->loadObject();
-	
-        $joom_config =JFactory::getConfig();
-        date_default_timezone_set($joom_config->get('offset'));
-	
-        $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($pending_id));
-        $pending = $db->loadObject();          
-        $user = JFactory::getUser($pending->user_id);                
-        $dtstart = date_create($pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE));
-	$dtend	= date_create($pending->dtend,new DateTimeZone(PBBOOKING_TIMEZONE));
-        $validation_arr = array('date'=>$pending->date,'treatment_time'=>$dtstart->format('Hi'),'treatment_end_time'=>$dtend->format('Hi'),'cal_id'=>$pending->cal_id,'treatment_id'=>$pending->service);
-        if (self::valid_appointment($validation_arr)) {
-            $pending->verified = 1;
-            $db->updateObject('#__pbbooking_pending',$pending,'id');
-			
-            //create the new appt            
-            $summary = $user->username;
-            $description  = "";
-            $appt = new JObject;
-            $appt->setProperties(array('summary'=>$summary,'dtend'=>$dtend->format(DATE_ATOM),'dtstart'=>$dtstart->format(DATE_ATOM),'description'=>$description,'uid'=>$pending->user_id,'service_id'=>$pending->service,'email'=>$pending->email,
-                                        'customfields_data'=>json_encode($all_fields),'deposit_paid'=>0,'amount_paid'=>0.00));
-            if ($pending->cal_id == 0) {
-                $db->setQuery('select * from #__pbbooking_cals where out_cal = 1');
-                $out_cal = $db->loadObject();
-                $appt->set('cal_id',$out_cal->id);
-            } else {
-                $appt->set('cal_id',$pending->cal_id);
-            }
-    
-            //write to database
-            if ($db->insertObject('#__pbbooking_events',$appt)) {
-                $event_id = $db->insertid();
-                return $event_id;
-            }            			
-        } else {
-            return false;
-        }
-    }
-	
-    /**
-    * email admin - sends email to the administrator notifying them of a new appt in the calendar.
-    *
-    * @param int the id of the event in the database
-    * @param int the id of the pending event in the databse
-    */
-    static function email_admin($event_id,$pending_id)
-    {
-        //load up data
-        Pbdebug::log_msg('email_admin: starting email of admin','com_pbbooking');
-        $db = JFactory::getDbo();
-        $db->setQuery('select * from #__pbbooking_config');
-        $config = $db->loadObject();
-        $db->setQuery('select * from #__pbbooking_events where id = '.$db->escape($event_id));
-        $event = $db->loadObject();
-        $db->setQuery('select cd.data,c.fieldname from #__pbbooking_customfields c,#__pbbooking_customfields_data cd where c.id = cd.customfield_id and cd.pending_id = '.$db->escape($pending_id));
-        $customdata = $db->loadObjectList();
-        $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($pending_id));
-        $pending = $db->loadObject();
-        $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($pending->service));
-        $treatment = $db->loadObject();
-        $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($pending->cal_id));
-        $calendar = $db->loadObject();
-
-        //build email
-        $body = JText::_('COM_PBBOOKING_ADMIN_EMAIL_BODY');
-        $body .= '<br><b>'.JText::_('COM_PBBOOKING_SUCCESS_DATE').'</b> '.JHtml::_('date',date_create($event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),$config->date_format_message.' '.JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));
-        $body .= '<br><b>'.JText::_('COM_PBBOOKING_BOOKINGTYPE').'</b> '.$treatment->name;
-        $body .= '<ul>';
-        $body .= '<p>'.JText::_('COM_PBBOOKING_EDIT_LINK_MSG').' ';
-        $body .= '<a href="'.JURI::root(false).'/administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id='.$event_id.'">';
-        $body .= JURI::root(false).'/administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id='.$event_id.'</a></p>';
-        foreach ($customdata as $data) {
-                $body .= '<li>'.$data->fieldname.'  - '.$data->data.'</li>';
-        }
-        $body .- '</ul>';
-        Pbdebug::log_msg('email_admin: body of email said....','com_pbbooking');
-        Pbdebug::log_msg($db->escape($body),'com_pbbooking');
-
-        //build recipient list
-        $mailer_config =JFactory::getConfig();
-        if ($calendar->email) {
-            $recipient = array($calendar->email,$mailer_config->get('mailfrom'));
-        } else {
-            $recipient = $mailer_config->get('mailfrom');
-        }
-
-        //send_email($subject,$body,$recipient,$bcc=null)
-        self::send_email(JText::_('COM_PBBOOKING_ADMIN_EMAIL_SUBJECT'),$body,$recipient);
     }
 	
     /**
@@ -388,78 +166,9 @@ class Pbbookinghelper
         $db->updateObject('#__pbbooking_events',$event,'id');
     }
 
-    /**
-    * a function to handle sending of mail from pbbooking.  We send a few emails to let's centralise the code
-    * @param string the message subject
-    * @param string the message body
-    * @param string the recipient
-    * @param string the bcc
-    * @return bool
-    * @since 2.3
-    */
-    public static function send_email($subject,$body,$recipient,$bcc=null)
-    {
-        Pbdebug::log_msg('send_email() send email to '.$recipient,'com_pbbooking');
-        Pbdebug::log_msg('send_email() email body = '.$body,'com_pbbooking');
+    
 
-        $mailer =JFactory::getMailer();
-        $config =JFactory::getConfig();
-        $mailer->setSender(array($config->get('mailfrom'),$config->get('fromname')));
-	
-        $mailer->addRecipient($recipient);
-        $mailer->addBCC($bcc);
-        $mailer->setSubject($subject);
-        $mailer->isHTML(true);
-    	
-        $mailer->setBody($body);
-        $mailer->Send();
-
-        return true;
-    }
-
-    /**
-    * prepares an email for sending loads the template from config, parses custom field tags
-    * @param string the template to load and parse
-    * @param assoc array containing appointment details
-    * @param assoc array containing the custom fields and data
-    * @return string email body
-    * @since 2.3.1
-    * @access private
-    */
-    private static function _prepare_email($template,$details,$customfields)
-    {
-        Pbdebug::log_msg('_prepare_email() using template '.$template,'com_pbbooking');
-        Pbdebug::log_msg(json_encode($details),'com_pbbooking');
-        Pbdebug::log_msg(json_encode($customfields),'com_pbbooking');
-
-        $db = JFactory::getDbo();
-        $config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
-        $service = $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($details['service_id']))->loadObject();
-
-        Pbdebug::log_msg('_prepare_email() template is '.$config->$template,'com_pbbooking');
-        $body = $config->$template;
-
-        //parse custom fields tags
-        foreach ($customfields as $customfield) {
-            $body = preg_replace('/\|\*'.$customfield->varname.'\*\|/',$customfield->data,$body);
-        }
-		
-        //append service details if required
-        $booking_details = '';
-        $booking_details .= "<p><table>";
-        $booking_details .= "<tr><th>".JTEXT::_('COM_PBBOOKING_SUCCESS_DATE')."</th><td>".JHtml::_('date',date_create($details['dtstart'],new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),$config->date_format_message);
-        $booking_details .= "<tr><th>".JTEXT::_('COM_PBBOOKING_SUCCESS_TIME')."</th><td>".JHtml::_('date',date_create($details['dtstart'],new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'))."</td></tr>";
-        $booking_details .= "<tr><th>".JTEXT::_('COM_PBBOOKING_BOOKINGTYPE')."</th><td>".$service->name."</td></tr></table></p>";
-        $body = preg_replace('/\|\*booking_details\*\|/',$booking_details,$body);
-
-        //append url string if we have it.....
-        $body = preg_replace('/\|\*URL\*\|/',$details['url'],$body);
-
-        Pbdebug::log_msg('_prepare_email() template after all replacements '.$body,'com_pbbooking');
-
-        //return completed string
-        return $body;
-    }
+    
 
     /** 
     * free appointments for day - returns whether there are any free appointment times for the given day bail as soon as possbile cause this method is called A LOT....
@@ -547,9 +256,170 @@ class Pbbookinghelper
             throw new Exception('Non ci sono utenti abilitati per il calendario selezionato.');
         }
     }
+    
+    public static function get_calendar_hours($cal = null, $date){
+        $db = JFactory::getDbo();        
+        if (isset($cal)) {
+           $trading_hours = json_decode($cal->hours,true);
+           
+        }
+        else{
+          $config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
+          $trading_hours = json_decode($config->trading_hours,true);          
+        }
         
-    public static function validate_block($input)
-    {   
+        if ($trading_hours[$date->format('w')]['status'] == 'open') {                
+            $str_opening_time = $trading_hours[$from_date->format('w')]['open_time'];
+            $str_closing_time = $trading_hours[$from_date->format('w')]['close_time'];
+            /*$opening_time_arr = str_split($str_opening_time,2);
+            $closing_time_arr = str_split($str_closing_time,2);
+            $opening_date = date_create($from_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+            $closing_date = date_create($from_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+            $opening_date->setTime($opening_time_arr[0],$opening_time_arr[1]);                
+            $closing_date->setTime($closing_time_arr[0],$closing_time_arr[1]);*/
+            $cal_hours = array();
+            $cal_hours['open_time']  = $str_opening_time;
+            $cal_hours['close_time'] = $str_closing_time;
+            return $cal_hours;
+        }
+        return null;
+    }
+
+
+
+
+
+
+//METODI GESTIONE EVENTI
+    
+    /**
+     * Salva un evento che deve essere ancora confermato
+     * @param type $data
+     * @return string
+     */
+    static function save_pending_event($data){
+        error_log('save_pending_event');
+        $db = JFactory::getDbo();
+        $config =JFactory::getConfig();
+        date_default_timezone_set($config->get('offset'));	
+        	
+        $dtstart = date_create($data['date'],new DateTimeZone(PBBOOKING_TIMEZONE));
+        $start_time = str_split($data['treatment-time'],2);            
+        $dtstart->setTime((int)ltrim($start_time[0],'0'),(int)ltrim($start_time[1],'0'));
+        
+        $dtend = clone $dtstart;
+        if($data['treatment-end-time']){
+            $end_time = str_split($data['treatment-end-time'],2);
+            $dtend->setTime((int)ltrim($end_time[0],'0'),(int)ltrim($end_time[1],'0'));
+        }
+        else{
+            $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($data['treatment_id']));
+            $treatment = $db->loadObject();
+            $dtend->modify('+ '.$treatment->duration.' minutes');
+        }
+        $user_id = $data['calendar-user'];
+        $user = JFactory::getUser($user_id);                
+        try {
+            
+            if ($user->get('Super Users')) { 
+                    self::validate_event($data['treatment_id'], $dtstart, $user, $data['cal_id']);
+            }
+            $emailfield = $user->email;
+            $sql = sprintf('insert into #__pbbooking_pending (date,dtstart,dtend,service,verified,cal_id,user_id,email) values ("%s","%s","%s",%s,0,%s,"%s","%s")',
+                    $db->escape(date_create($data['date'],new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d')),$dtstart->format(DATE_ATOM),$dtend->format(DATE_ATOM),$db->escape($data['treatment_id']),
+                    $db->escape($data['cal_id']),$db->escape($data['calendar-user']),$db->escape($emailfield));
+        
+            $db->setQuery($sql);
+            $result = $db->query();
+            if ($result) {
+                $pending_id = $db->insertid();                
+                return $pending_id;
+            }
+            else {
+                return 'Problemi nel salvataggio della prenotazione, si prega di riprovare.';
+            }
+        } catch (Exception $exc) {            
+            return $exc->getMessage();
+        }           
+    }
+	
+    /**
+     * Salva una prenotazione confermata
+     * @return type
+     */        
+    static function save_event(){
+        $dtend = date_create($dtstart->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+        $dtend->modify('+ '.$treatment->duration.' minutes');
+        $summary = $treatment->name.' for '.$customdata['first_name']->data.' '.$customdata['last_name']->data;
+            
+        $appt = new JObject;            
+        $appt->setProperties(array('summary'=>$summary,'dtend'=>$dtend->format(DATE_ATOM),'dtstart'=>$dtstart->format(DATE_ATOM),'description'=>$description,'service_id'=>$pending->service,'email'=>$pending->email,
+                                    'customfields_data'=>json_encode($all_fields),'deposit_paid'=>0,'amount_paid'=>0.00));
+        //write to database
+        if ($db->insertObject('#__pbbooking_events',$appt)) {
+            $event_id = $db->insertid();
+            //self::email_admin($event_id,$pending->id);
+            Pbdebug::log_msg('validate_pending() successful validation of pending_event id '.$db->escape($pending_id),'com_pbbooking');
+            /*if ($config->validation == 'admin') {
+                //the appt is admin validated so we need to let the client know that it has been validated as well....
+                $body = self::_prepare_email('admin_validation_confirmed_email_body',array('service_id'=>$treatment->id,'dtstart'=>$dtstart->format(DATE_ATOM),'url'=>null),json_decode($appt->customfields_data));
+                self::send_email($config->admin_validation_confirmed_email_subject,$body,$appt->email);
+            }*/
+            return $event_id;
+        }
+    }
+	
+    /**
+     * validate_pending - looks up a pending booking and if still valid writes to the dbase.
+     *
+     * @param int the id of the pending booking
+     * @param string the users email address or possibly null if admin validated
+     * @param string the token or possibly null if user validated
+     * @returns mixed returns an int with the event_id or false for failure
+     */
+    static function validate_pending($pending_id,$email=null,$token=null){
+        $db = JFactory::getDbo();
+        $db->setQuery('select * from #__pbbooking_config');
+        $config = $db->loadObject();
+	
+        $joom_config =JFactory::getConfig();
+        date_default_timezone_set($joom_config->get('offset'));
+	
+        $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($pending_id));
+        $pending = $db->loadObject();          
+        $user = JFactory::getUser($pending->user_id);                
+        $dtstart = date_create($pending->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE));
+	$dtend	= date_create($pending->dtend,new DateTimeZone(PBBOOKING_TIMEZONE));
+        $validation_arr = array('date'=>$pending->date,'treatment_time'=>$dtstart->format('Hi'),'treatment_end_time'=>$dtend->format('Hi'),'cal_id'=>$pending->cal_id,'treatment_id'=>$pending->service);
+        if (self::valid_appointment($validation_arr)) {
+            $pending->verified = 1;
+            $db->updateObject('#__pbbooking_pending',$pending,'id');
+			
+            //create the new appt            
+            $summary = $user->username;
+            $description  = "";
+            $appt = new JObject;
+            $appt->setProperties(array('summary'=>$summary,'dtend'=>$dtend->format(DATE_ATOM),'dtstart'=>$dtstart->format(DATE_ATOM),'description'=>$description,'uid'=>$pending->user_id,'service_id'=>$pending->service,'email'=>$pending->email,
+                                        'customfields_data'=>json_encode($all_fields),'deposit_paid'=>0,'amount_paid'=>0.00));
+            if ($pending->cal_id == 0) {
+                $db->setQuery('select * from #__pbbooking_cals where out_cal = 1');
+                $out_cal = $db->loadObject();
+                $appt->set('cal_id',$out_cal->id);
+            } else {
+                $appt->set('cal_id',$pending->cal_id);
+            }
+    
+            //write to database
+            if ($db->insertObject('#__pbbooking_events',$appt)) {
+                $event_id = $db->insertid();
+                return $event_id;
+            }            			
+        } else {
+            return false;
+        }
+    }
+    
+    public static function validate_block($input){   
         $today = date_create("now", new DateTimeZone(PBBOOKING_TIMEZONE));
         $block_start_date = $input->get('block-from-date', null, 'string');
         $array_start_date = explode("-", $block_start_date);
@@ -641,5 +511,169 @@ class Pbbookinghelper
         return true;
     }
     
+// METODI GESTIONE/INVIO MAIL
     
+    /**
+    * prepares an email for sending loads the template from config, parses custom field tags
+    * @param string the template to load and parse
+    * @param assoc array containing appointment details
+    * @param assoc array containing the custom fields and data
+    * @return string email body
+    * @since 2.3.1
+    * @access private
+    */
+    private static function _prepare_email($template,$details,$customfields){
+        Pbdebug::log_msg('_prepare_email() using template '.$template,'com_pbbooking');
+        Pbdebug::log_msg(json_encode($details),'com_pbbooking');
+        Pbdebug::log_msg(json_encode($customfields),'com_pbbooking');
+
+        $db = JFactory::getDbo();
+        $config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
+        $service = $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($details['service_id']))->loadObject();
+
+        Pbdebug::log_msg('_prepare_email() template is '.$config->$template,'com_pbbooking');
+        $body = $config->$template;
+
+        //parse custom fields tags
+        foreach ($customfields as $customfield) {
+            $body = preg_replace('/\|\*'.$customfield->varname.'\*\|/',$customfield->data,$body);
+        }
+		
+        //append service details if required
+        $booking_details = '';
+        $booking_details .= "<p><table>";
+        $booking_details .= "<tr><th>".JTEXT::_('COM_PBBOOKING_SUCCESS_DATE')."</th><td>".JHtml::_('date',date_create($details['dtstart'],new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),$config->date_format_message);
+        $booking_details .= "<tr><th>".JTEXT::_('COM_PBBOOKING_SUCCESS_TIME')."</th><td>".JHtml::_('date',date_create($details['dtstart'],new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'))."</td></tr>";
+        $booking_details .= "<tr><th>".JTEXT::_('COM_PBBOOKING_BOOKINGTYPE')."</th><td>".$service->name."</td></tr></table></p>";
+        $body = preg_replace('/\|\*booking_details\*\|/',$booking_details,$body);
+
+        //append url string if we have it.....
+        $body = preg_replace('/\|\*URL\*\|/',$details['url'],$body);
+
+        Pbdebug::log_msg('_prepare_email() template after all replacements '.$body,'com_pbbooking');
+
+        //return completed string
+        return $body;
+    }
+    
+    /**
+    * a function to handle sending of mail from pbbooking.  We send a few emails to let's centralise the code
+    * @param string the message subject
+    * @param string the message body
+    * @param string the recipient
+    * @param string the bcc
+    * @return bool
+    * @since 2.3
+    */
+    public static function send_email($subject,$body,$recipient,$bcc=null){
+        Pbdebug::log_msg('send_email() send email to '.$recipient,'com_pbbooking');
+        Pbdebug::log_msg('send_email() email body = '.$body,'com_pbbooking');
+
+        $mailer =JFactory::getMailer();
+        $config =JFactory::getConfig();
+        $mailer->setSender(array($config->get('mailfrom'),$config->get('fromname')));
+	
+        $mailer->addRecipient($recipient);
+        $mailer->addBCC($bcc);
+        $mailer->setSubject($subject);
+        $mailer->isHTML(true);
+    	
+        $mailer->setBody($body);
+        $mailer->Send();
+
+        return true;
+    }
+    
+    /**
+     * email_user - sends the validation email to the user with format defined in configuration.
+     * 			- New in 2.2 this method now supports all customfield tags based on |*varname*|
+     *
+     * @param array data the array of appt specific data
+     */	
+    static function email_user($data){
+        Pbdebug::log_msg('email_user() sending email to user for pending event id'.$data['pending_id'],'com_pbbooking');
+        $db = JFactory::getDbo();
+        $db->setQuery('select * from #__pbbooking_config');
+        $config = $db->loadObject();
+        $db->setQuery('select * from #__pbbooking_customfields where is_email = 1');
+        $emailfield = $db->loadObject();
+        $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($data['treatment_id']));
+        $service = $db->loadObject();
+        $db->setQuery('select cf.varname,cfd.data from #__pbbooking_customfields cf,#__pbbooking_customfields_data cfd where cf.id = cfd.customfield_id and cfd.pending_id = '.$db->escape($data['pending_id']));
+        $customfields = $db->loadObjectList();
+        $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($data['pending_id']));
+        $pending_appt = $db->loadObject();
+        $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($data['cal_id']))->loadObject();
+        $calendar = $db->loadObject();
+	
+        $mailer =JFactory::getMailer();
+        $mailer_config =JFactory::getConfig();
+
+        $recipient = $data[$emailfield->varname];
+        $bcc = null;
+        if ($config->bcc_admin == 1) {
+            $bcc = array($mailer_config->get('mailfrom'));
+            if (isset($cal->email)) $bcc[] = $cal->email;
+        }
+        if (JURI::base(true) != '')
+            $url = str_replace(JURI::base(true).'/','',JURI::base()).JRoute::_('index.php?option=com_pbbooking&task=validate&id='.$data['pending_id'].'&email='.$data[$emailfield->varname]);
+        else
+            $url = preg_replace('/(.*)\/$/','$1',JURI::base()).JRoute::_('index.php?option=com_pbbooking&task=validate&id='.$data['pending_id'].'&email='.$data[$emailfield->varname]);	
+        Pbdebug::log_msg('email_user() final url is '.$url,'com_pbbooking');
+        $urlstring = '<a href="'.$url.'">'.JTEXT::_('COM_PBBOOKING_VALIDATE_ANCHOR_TEXT')."</a>";
+		
+        //send email to client to let them know what is going on
+        $body = self::_prepare_email('email_body',array('service_id'=>$data['treatment_id'],'dtstart'=>$pending_appt->dtstart,'url'=>$urlstring),(array)$customfields);
+                self::send_email($config->email_subject,$body,$recipient,$bcc);
+    }
+    
+    /**
+    * email admin - sends email to the administrator notifying them of a new appt in the calendar.
+    *
+    * @param int the id of the event in the database
+    * @param int the id of the pending event in the databse
+    */
+    static function email_admin($event_id,$pending_id){
+        //load up data
+        Pbdebug::log_msg('email_admin: starting email of admin','com_pbbooking');
+        $db = JFactory::getDbo();
+        $db->setQuery('select * from #__pbbooking_config');
+        $config = $db->loadObject();
+        $db->setQuery('select * from #__pbbooking_events where id = '.$db->escape($event_id));
+        $event = $db->loadObject();
+        $db->setQuery('select cd.data,c.fieldname from #__pbbooking_customfields c,#__pbbooking_customfields_data cd where c.id = cd.customfield_id and cd.pending_id = '.$db->escape($pending_id));
+        $customdata = $db->loadObjectList();
+        $db->setQuery('select * from #__pbbooking_pending where id = '.$db->escape($pending_id));
+        $pending = $db->loadObject();
+        $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($pending->service));
+        $treatment = $db->loadObject();
+        $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($pending->cal_id));
+        $calendar = $db->loadObject();
+
+        //build email
+        $body = JText::_('COM_PBBOOKING_ADMIN_EMAIL_BODY');
+        $body .= '<br><b>'.JText::_('COM_PBBOOKING_SUCCESS_DATE').'</b> '.JHtml::_('date',date_create($event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM),$config->date_format_message.' '.JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));
+        $body .= '<br><b>'.JText::_('COM_PBBOOKING_BOOKINGTYPE').'</b> '.$treatment->name;
+        $body .= '<ul>';
+        $body .= '<p>'.JText::_('COM_PBBOOKING_EDIT_LINK_MSG').' ';
+        $body .= '<a href="'.JURI::root(false).'/administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id='.$event_id.'">';
+        $body .= JURI::root(false).'/administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id='.$event_id.'</a></p>';
+        foreach ($customdata as $data) {
+                $body .= '<li>'.$data->fieldname.'  - '.$data->data.'</li>';
+        }
+        $body .- '</ul>';
+        Pbdebug::log_msg('email_admin: body of email said....','com_pbbooking');
+        Pbdebug::log_msg($db->escape($body),'com_pbbooking');
+
+        //build recipient list
+        $mailer_config =JFactory::getConfig();
+        if ($calendar->email) {
+            $recipient = array($calendar->email,$mailer_config->get('mailfrom'));
+        } else {
+            $recipient = $mailer_config->get('mailfrom');
+        }
+
+        //send_email($subject,$body,$recipient,$bcc=null)
+        self::send_email(JText::_('COM_PBBOOKING_ADMIN_EMAIL_SUBJECT'),$body,$recipient);
+    }
 }

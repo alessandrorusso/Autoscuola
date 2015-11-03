@@ -136,18 +136,22 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
             $dateparam = $input->get('dtstart', date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE))->format('YmdHi'), 'string');
             $cal_id = $input->get('cal_id', 0, 'integer');
-            $opening_hours = json_decode($config->trading_hours, true);
-            $closing_time_arr = str_split($opening_hours[date_create($dateparam, new DateTimezone(PBBOOKING_TIMEZONE))->format('w')]['close_time'], 2);
-
+            
+            $view->cal = new Calendar();
+            $view->cal->loadCalendarFromDbase(array((int) $cal_id));            
+            $opening_hours = json_decode($config->trading_hours, true);            
+            $closing_time_arr = str_split($opening_hours[date_create($dateparam, new DateTimezone(PBBOOKING_TIMEZONE))->format('w')]['close_time'], 2);                        
+            
             $view->dateparam = date_create($dateparam, new DateTimeZone(PBBOOKING_TIMEZONE));
             $db->setQuery('select * from #__pbbooking_customfields');
             $view->customfields = $db->loadObjectList();
             $db->setQuery('select* from #__pbbooking_treatments');
             $view->services = $db->loadObjectList();
             $view->config = $config;
-            $view->cal = new Calendar();
-            $view->cal->loadCalendarFromDbase(array((int) $cal_id));
+            
             $view->users = Pbbookinghelper::get_calendar_users($view->cal);
+            $view->booking_time = clone $view->dateparam;
+            $view->booking_time->modify('+ '.$config->time_increment.' minutes'); 
             $view->closing_time = clone $view->dateparam;
             $view->closing_time->setTime((int) $closing_time_arr[0], (int) $closing_time_arr[1], 0);
             
