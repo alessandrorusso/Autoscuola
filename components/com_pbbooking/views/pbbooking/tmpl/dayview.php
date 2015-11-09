@@ -26,7 +26,7 @@
 		<?php $slot_end->modify('+ '.$this->config->time_increment.' minutes');?>
 		<tr>
 			<th><?php echo Jhtml::_('date',$this->day_dt_start->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></th>
-			<?php foreach ($this->cals as $cal) :?>
+			<?php foreach ($this->cals as $cal) :?>                                
 				<td class="pbbooking-<?php echo (!$cal->is_free_from_to($this->day_dt_start,$slot_end)) ? 'free' : 'busy';?>-cell">
 					<?php if ($this->day_dt_start>date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE)) && !$cal->is_free_from_to($this->day_dt_start,$slot_end)) :?>
 						<a href="<?php echo JRoute::_('index.php?option=com_pbbooking&task=create&dtstart='.$this->day_dt_start->format('YmdHi').'&cal_id='.$cal->cal_id);?>">

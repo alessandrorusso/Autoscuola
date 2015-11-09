@@ -300,10 +300,10 @@ class PbbookingsControllermanage extends JControllerLegacy {
         if (isset($cal_id) && $cal_id != null) {
             $exception = new JObject(array('cal_id' => $cal_id, 'dtexcept' => date_create($dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM)));
             $db->insertObject('#__pbbooking_block_exceptions', $exception);                   
-            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $date, 'Blocco rimosso correttamente');                    
+            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $dtstart, 'Blocco rimosso correttamente');                    
         }
         else{
-            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $date, 'Errore nella rimozione del blocco');                    
+            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $dtstart, 'Errore nella rimozione del blocco');                    
         }       
     }
 
