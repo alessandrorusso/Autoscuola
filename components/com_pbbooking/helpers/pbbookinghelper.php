@@ -6,6 +6,42 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class Pbbookinghelper
 {
+    const CONFIG_QUERY = 'select * from #__pbbooking_config';
+    const ALL_EVENTS_QUERY = 'select * from #__pbbooking_events';    
+    
+    
+    /**
+     * Retrieve pbbooking_config from session
+     * @return pbbooking_config
+     */
+    static function get_config(){
+        $session = JFactory::getSession();        
+        $config = $session->get('pbbooking_config');
+        if(!isset($config)){
+            $db = JFactory::getDbo();
+            $db->setQuery(self::CONFIG_QUERY);
+            $config = $db->loadObject();    
+            $session->set('pbbooking_config', $config);
+        }
+        return $config;
+    }
+    
+    /**
+     * Load all events for given calendar from DB
+     * @param int $cal_id
+     * @return list of pbbooking_events
+     */
+    static function get_all_events(){
+        $db = JFactory::getDbo();
+        $db->setQuery(self::ALL_EVENTS_QUERY);
+        $all_events = $db->loadObjectList();
+        return $all_events;
+    }
+    
+    static function get_day_name($day_id){
+        $giorni = array('Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato');
+        return $giorni[$day_id];
+    }
     /**
      * valid_appointment - ensures that appointment details provided during input are actually valid. 
      * loads up appropriate calendars and tests.
@@ -14,9 +50,8 @@ class Pbbookinghelper
      * @return bool returns a true or false to indiciate whether the appointment is valid or not
      */
     static function valid_appointment($data) {
-        $db = JFactory::getDbo();
-        $db->setQuery('select * from #__pbbooking_config');
-        $config = $db->loadObject();
+        $db = JFactory::getDbo();        
+        $config = self::get_config();
         $db->setQuery('select * from #__pbbooking_treatments where id = '.$db->escape($data['treatment_id']));
         $treatment = $db->loadObject();
 	
@@ -40,38 +75,18 @@ class Pbbookinghelper
             error_log('cal is busy');
             return false;
         }
-        return true;
-    }
-	
-    /**
-    * Is date a blocked day? - ideally this would be in the calendar model but it doesn't really fit there at present
-    *
-    * @param date the date
-    * @returns bool whether the day is blocked or not
-    */
-    public static function is_blocked_date($date)
-    {
-        $db = JFactory::getDbo();
-        $config =JFactory::getConfig();
-        date_default_timezone_set($config->get('offset'));	
-
-        $db->setQuery('select * from #__pbbooking_block_days');
-        $block_ranges = $db->loadObjectList();
-        foreach ($block_ranges as $range) {
-            $block_start = date_create($range->block_start_date,new DateTimeZone(PBBOOKING_TIMEZONE));
-            $block_start_hour_arr = explode('=',$range->block_start_hour);
-            $block_start->setTime($block_start_hour_arr[0],$block_start_hour_arr[1],00);
-            
-            $block_end = date_create($range->block_end_date,new DateTimeZone(PBBOOKING_TIMEZONE));            
-            $block_end_hour_arr = explode('=',$range->block_end_hour);
-            $block_end->setTime($block_end_hour_arr[0],$block_end_hour_arr[1],00);
-            $block_end->modify("-1 seconds");
-            
-            if ($date >= $block_start && $date<= $block_end) {
-                return true;
+        //check to see if it's in a block date range.
+        $date = clone $treatment_start;
+        while ($date < $treatment_end){
+            $open = $this->isOpen($date);        
+            if (!$open || !is_bool($open)) {
+                error_log('cal is blocked');
+		return false;
             }
+            $date->modify('+ '.$config->time_increment.' minutes');
         }
-    }
+        return true;
+    }   
 
     /**
     * booking_for_day - returns an int with the number of bookings for nominated day
@@ -79,19 +94,29 @@ class Pbbookinghelper
     * @param datetime check_date - a datetime object containing the day to be checked
     * @return int the number of bookings for nominated date
     */
-    public static function booking_for_day($check_date = null)
-    {
-        $db = JFactory::getDbo();
+    public static function booking_for_day($check_date = null, $events) {
+        if(isset($events)){
+            $system_config =JFactory::getConfig();
+            date_default_timezone_set($system_config->get('offset'));	
+	
+            $bod = date_create($check_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+            $eod = date_create($check_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
+            $bod->setTimezone(new DateTimeZone($system_config->get('offset')));
+            $eod->setTimezone(new DateTimeZone($system_config->get('offset')));
+            $bod->setTime(0,0,0);
+            $eod->setTime(23,59,59);
 
-        //load up all the calendars
-        $db->setQuery("select id from #__pbbooking_cals");
-        $cals = $db->loadColumn();
-        $cal = new calendar();
-        $cal->loadCalendarFromDbase($cals);	
-	
-        $events = $cal->number_of_bookings_for_date($check_date);
-	
-        return $events;		
+            $num_events = 0;
+            foreach ($events as $event) {
+                $dtend = date_create($event->dtend,new DateTimeZone(PBBOOKING_TIMEZONE));
+                
+                if ($dtend >= $bod && $dtend <= $eod) {
+                    return $event;
+                }                
+            }
+        }	
+	//$events = $cal->number_of_bookings_for_date($check_date);
+	return null;		
     }
 	
     /**
@@ -100,8 +125,7 @@ class Pbbookinghelper
     * @param datetime check_date - a datetime object containing the day to be checked
     * @return array array of arrays containing busy times.  array('1000','1130') - starttime / endtime
     */	
-    static function busy_times_for_day($check_date = null)
-    {		
+    static function busy_times_for_day($check_date = null) {		
         $db = JFactory::getDbo();
         $config =JFactory::getConfig();
     	date_default_timezone_set($config->get('offset'));	
@@ -124,8 +148,7 @@ class Pbbookinghelper
             $dtstart = date_create($appt->dtstart);
             $busy_times[] = array('start_hour'=>$dtstart->format('H'),'start_min'=>$dtstart->format('i'),
                                   'end_hour'=>$dtend->format('H'),'end_min'=>$dtend->format('i'));
-        }
-    	
+        }    	
         return $busy_times;
     }
 
@@ -135,8 +158,7 @@ class Pbbookinghelper
     * @return string the calendar name
     * @since 2.3
     */
-    public static function get_calendar_name_for_id($cal_id)
-    {
+    public static function get_calendar_name_for_id($cal_id) {
         $db = JFactory::getDbo();
         $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($cal_id));
         $calendar = $db->loadObject();
@@ -150,8 +172,7 @@ class Pbbookinghelper
     * @return bool true or updated successfuly or false for failure
     * @since 2.3
     */
-    public static function make_recurring($id,$details)
-    {
+    public static function make_recurring($id,$details) {
         //load up the event to manipulate
         $db = JFactory::getDbo();
         $query = $db->getQuery(true);
@@ -166,10 +187,6 @@ class Pbbookinghelper
         $db->updateObject('#__pbbooking_events',$event,'id');
     }
 
-    
-
-    
-
     /** 
     * free appointments for day - returns whether there are any free appointment times for the given day bail as soon as possbile cause this method is called A LOT....
     * @param datetime 
@@ -177,10 +194,9 @@ class Pbbookinghelper
     * @since 2.0.6
     * @access public
     */
-    public static function free_appointments_for_day($date)
-    {
+    public static function free_appointments_for_day($date) {
         $db = JFactory::getDbo();
-        $config = $db->setQuery('select * from #__pbbooking_config')->loadObject();
+        $config = self::get_config();
         $cals = $db->setQuery('select * from #__pbbooking_cals')->loadObjectList();
 		
         $dt_start = date_create($date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
@@ -224,8 +240,7 @@ class Pbbookinghelper
     * @since 2.0.6
     * @access public
     */
-    public static function get_calendar_users($cal)
-    {
+    public static function get_calendar_users($cal) {
         try{
             $result = array();
             $reservationGroupUsers = JAccess::getUsersByGroup(11);            
@@ -284,11 +299,6 @@ class Pbbookinghelper
         }
         return null;
     }
-
-
-
-
-
 
 //METODI GESTIONE EVENTI
     
@@ -378,9 +388,7 @@ class Pbbookinghelper
      * @returns mixed returns an int with the event_id or false for failure
      */
     static function validate_pending($pending_id,$email=null,$token=null){
-        $db = JFactory::getDbo();
-        $db->setQuery('select * from #__pbbooking_config');
-        $config = $db->loadObject();
+        $db = JFactory::getDbo();      
 	
         $joom_config =JFactory::getConfig();
         date_default_timezone_set($joom_config->get('offset'));

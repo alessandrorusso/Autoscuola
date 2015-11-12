@@ -68,7 +68,7 @@ class PbbookingController extends JControllerLegacy
 		
         //parse a valid cal from the database		
         if ($view->config->consolidated_view == 0) {
-            $db->setQuery("select * from #__pbbooking_cals");
+            $db->setQuery("select * from #__pbbooking_cals where status=1");
             $cals = $db->loadObjectList();
             foreach ($cals as $cal) {
                 $new_cal = new calendar();
@@ -78,7 +78,7 @@ class PbbookingController extends JControllerLegacy
                 $view->cals[]=$new_cal;
             }
         } else {
-            $db->setQuery("select id from #__pbbooking_cals");
+            $db->setQuery("select id from #__pbbooking_cals where status=1");
             $cals = $db->loadResultArray();
             $view->cal = new calendar();
             $view->cal->loadCalendarFromDbase($cals);	

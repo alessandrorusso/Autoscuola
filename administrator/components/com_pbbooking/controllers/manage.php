@@ -36,14 +36,18 @@ class PbbookingsControllermanage extends JControllerLegacy {
         //Recupero la data selezionata
         $view->dateString = JRequest::getVar('date') ? JRequest::getVar('date') : '';
         $view->date = (JRequest::getVar('date')) ? date_create(JRequest::getVar('date'), new DateTimeZone(PBBOOKING_TIMEZONE)) : date_create("now", new DateTimeZone(PBBOOKING_TIMEZONE));
+        $view->selectedOffice = (JRequest::getVar('selectedOffice')) ? JRequest::getVar('selectedOffice') : 1;
         
         //Recupero la configurazione generale, i calendari attivi e le note
         $db->setQuery('select * from #__pbbooking_config');
         $view->config = $db->loadObject();
         $db->setQuery('select * from #__pbbooking_day_note');
         $view->day_notes = $db->loadObjectList();
-        $db->setQuery('select * from #__pbbooking_cals where status=1 order by office, license');
+        $db->setQuery('select * from #__pbbooking_cals where status=1 and office='.$db->escape($view->selectedOffice).  ' order by office, license');
         $view->cals = $db->loadObjectList();
+        $db->setQuery('select * from #__pbbooking_lov_office');
+        $view->offices = $db->loadObjectList();
+        $view->events = Pbbookinghelper::get_all_events();
         
         //Popolo l'oggetto calendario da utilizzare in pagina
         foreach ($view->cals as $cal) {
@@ -60,6 +64,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $view->dt_start->setTime((int) $opening_time_arr[0], (int) $opening_time_arr[1]);
         $view->dt_end->setTime((int) $closing_time_arr[0], (int) $closing_time_arr[1]);
 
+        $view->setLayout('display');
         $view->display();
     }
 
@@ -86,7 +91,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $view->services = $db->loadObjectList();
             $db->setQuery('select * from #__pbbooking_cals where id = ' . $view->event->cal_id);
             $view->cal = $db->loadObject();
-
+            $view->selectedOffice = (JRequest::getVar('selectedOffice')) ? JRequest::getVar('selectedOffice') : 1;
             //Imposto gli orari di apertura e chiusura
             $opening_hours = ($view->cal->hours > '') ? json_decode($view->cal->hours, true) : json_decode($config->trading_hours, true);
             $opening_time_arr = str_split($opening_hours[date_create($view->event->dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format('w')]['open_time'], 2);
@@ -108,10 +113,10 @@ class PbbookingsControllermanage extends JControllerLegacy {
         if ($_SERVER['REQUEST_METHOD'] == "POST") {
             $db->setQuery('select * from #__pbbooking_events where id = ' . $db->escape(JRequest::getInt('id')));
             $event = $db->loadObject();
-
+            $selectedOffice = (JRequest::getVar('selectedOffice')) ? JRequest::getVar('selectedOffice') : 1;
             $event->description = JRequest::getVar('description');
             if ($db->updateObject('#__pbbooking_events', $event, 'id')) {
-                $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date'), Jtext::_('COM_PBBOOKING_EDIT_SUCCESS'));
+                $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date') . '&selectedOffice=' . $selectedOffice, Jtext::_('COM_PBBOOKING_EDIT_SUCCESS'));
             } else {
                 echo $db->getErrorMsg();
             }
@@ -139,6 +144,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
             
             $view->cal = new Calendar();
             $view->cal->loadCalendarFromDbase(array((int) $cal_id));            
+            $view->selectedOffice = $input->get('selectedOffice', 1, 'integer');
             $opening_hours = json_decode($config->trading_hours, true);            
             $closing_time_arr = str_split($opening_hours[date_create($dateparam, new DateTimezone(PBBOOKING_TIMEZONE))->format('w')]['close_time'], 2);                        
             
@@ -163,15 +169,16 @@ class PbbookingsControllermanage extends JControllerLegacy {
 
         if ($_SERVER['REQUEST_METHOD'] == "POST") {
             $event_id = Pbbookinghelper::save_pending_event($_POST);
+            $selectedOffice = (JRequest::getVar('selectedOffice')) ? JRequest::getVar('selectedOffice') : 1;
             if (is_int($event_id)) {
                 $validated_id = Pbbookinghelper::validate_pending($event_id);
                 if ($validated_id) {
-                    $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date'), "Prenotazione salvata correttamente.");
+                    $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date') . '&selectedOffice=' . $selectedOffice, "Prenotazione salvata correttamente.");
                 } else {
-                    $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date'), JText::_('COM_PBBOOKING_VALIDATION_ERROR') . ' ' . $db->getErrorMsg());
+                    $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date') . '&selectedOffice=' . $selectedOffice, JText::_('COM_PBBOOKING_VALIDATION_ERROR') . ' ' . $db->getErrorMsg());
                 }
             } else {
-                $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date'), JText::_('COM_PBBOOKING_CREATE_ERROR') . ' ' . $event_id);
+                $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date') . '&selectedOffice=' . $selectedOffice, JText::_('COM_PBBOOKING_CREATE_ERROR') . ' ' . $event_id);
             }
         }
     }
@@ -209,10 +216,9 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $db->setQuery('select * from #__pbbooking_config');
         $config = $db->loadObject();
         $view->trading_hours = json_decode($config->trading_hours, true);
+        $view->config = $config;
         $db->setQuery('select * from #__pbbooking_cals');
-        $view->cals = $db->loadObjectList();
-        $db->setQuery('select * from #__pbbooking_config');
-        $view->config = $db->loadObject();
+        $view->cals = $db->loadObjectList();               
         
         $view->dt_start = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
         $view->dt_end = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
@@ -243,7 +249,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
             if (count($builtBlockedDays) > 0) {
                 $ret['aaData'] = $builtBlockedDays;
                 $db = JFactory::getDbo();
-                $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, r_end FROM #__pbbooking_block_days where block_end_date >= CURDATE() order by block_end_date asc");
+                $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, custom_recurrence, DATE_FORMAT(r_end,'%d-%m-%Y') as r_end FROM #__pbbooking_block_days where block_end_date >= CURDATE() order by block_end_date asc");
                 $blocked_days = $db->loadObjectList();
                 $ret['iTotalDisplayRecords'] = count($blocked_days);
                 $ret['iTotalRecords'] = count($blocked_days);
@@ -261,7 +267,12 @@ class PbbookingsControllermanage extends JControllerLegacy {
 
     private function getBlockedDays($from = 0, $to = 999999) {
         $db = JFactory::getDbo();
-        $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, block_end_hour, block_note, calendars, r_int, r_freq, r_end FROM #__pbbooking_block_days where block_end_date >= CURDATE() order by block_end_date asc");
+        $db->setQuery("SELECT id, DATE_FORMAT(block_start_date,'%d-%m-%Y') as block_start_date, "
+                    . "DATE_FORMAT(block_end_date,'%d-%m-%Y') as block_end_date, block_start_hour, "
+                    . "block_end_hour, block_note, calendars, r_int, r_freq, custom_recurrence, "
+                    . "DATE_FORMAT(r_end,'%d-%m-%Y') as r_end "
+                    . "FROM #__pbbooking_block_days where block_end_date >= CURDATE() "
+                    . "order by block_end_date asc");
 
         $blocked_days = $db->loadObjectList();
         if (count($blocked_days) > 0) {
@@ -270,13 +281,27 @@ class PbbookingsControllermanage extends JControllerLegacy {
             foreach ($blocked_days as $blocked_day) {
                 if ($index >= $from && $index < $to) {
                     $row = array();
-                    $calName = '';
+                    $calName = '';                    
                     foreach (explode(',', $blocked_day->calendars) as $cal_id) {
                         if (isset($cal_id) && $cal_id != null) {
                             $calName = $calName . Pbbookinghelper::get_calendar_name_for_id($cal_id) . '<br/>';
                         }
                     }
-                    $row = [$calName, $blocked_day->block_start_date, $blocked_day->block_end_date, $blocked_day->block_start_hour, $blocked_day->block_end_hour, $blocked_day->block_note, $blocked_day->id];
+                    $frequency = '';
+                    if (isset($blocked_day->r_int) && $blocked_day->r_int != 0) {                     
+                        if($blocked_day->r_freq == 'custom'){                            
+                            foreach (explode(',',$blocked_day->custom_recurrence) as $day_id) {
+                                if (isset($day_id) && $day_id != null) {
+                                    $frequency = $frequency . Pbbookinghelper::get_day_name($day_id) . '<br/>';
+                                }
+                            }                            
+                        }
+                        else {
+                            $frequency = JText::_('COM_PBBOOKING_EVENT_RECUR_' . strtoupper($blocked_day->r_freq));
+                        }
+                    }                  
+                    
+                    $row = [$calName, $blocked_day->block_start_date, $blocked_day->block_start_hour, $blocked_day->block_end_hour, $frequency, $blocked_day->r_end, $blocked_day->block_note, $blocked_day->id];
                     $built_blocked_days[] = $row;
                 }
                 $index++;
@@ -295,15 +320,15 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $db = JFactory::getDbo();       
         $cal_id = JRequest::getVar('cal_id');
         $dtstart = JRequest::getVar('dtstart');
-        $date = date_create($dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM);
+        $selectedOffice = (JRequest::getVar('selectedOffice'));
                 
         if (isset($cal_id) && $cal_id != null) {
             $exception = new JObject(array('cal_id' => $cal_id, 'dtexcept' => date_create($dtstart, new DateTimeZone(PBBOOKING_TIMEZONE))->format(DATE_ATOM)));
             $db->insertObject('#__pbbooking_block_exceptions', $exception);                   
-            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $dtstart, 'Blocco rimosso correttamente');                    
+            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $dtstart . '&selectedOffice=' . $selectedOffice, 'Blocco rimosso correttamente');                    
         }
         else{
-            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $dtstart, 'Errore nella rimozione del blocco');                    
+            $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . $dtstart . '&selectedOffice=' . $selectedOffice, 'Errore nella rimozione del blocco');                    
         }       
     }
 

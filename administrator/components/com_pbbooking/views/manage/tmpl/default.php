@@ -161,6 +161,14 @@ jQuery(document).ready(function()
         });
     }
     
+    jQuery('#office_select').on('change', function( event ) {
+        var selectedOffice = jQuery('#office_select').val();
+        var date ="<?php echo $this->date->format('Y-m-d');?>";
+        var url = '<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date='+date+'&selectedOffice='+selectedOffice;
+        window.location.href =url;
+        
+    });
+    
     
     
 });
@@ -180,13 +188,13 @@ jQuery(document).ready(function()
             <table class="calendar-table">
                 <tr>
                     <th colspan=2>
-                        <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $last_month->format('Y-m-d');?>">
+                        <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $last_month->format('Y-m-d');?>&selectedOffice=<?php echo $this->selectedOffice ;?>">
                             <<
                         </a>
                     </th>
                     <th colspan=3><?php echo JHtml::_('date',$bom->format(DATE_ATOM),'F');?></th>
                     <th colspan=2>
-			<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $next_month->format('Y-m-d');?>">
+			<a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $next_month->format('Y-m-d');?>&selectedOffice=<?php echo $this->selectedOffice ;?>">
                             >>
 			</a>
                     </th>
@@ -222,16 +230,16 @@ jQuery(document).ready(function()
                     <?php endif;?>
                     <!-- end cal padding -->
                     <?php for ($i=0;$i<=$num_days;$i++) :?>                        
-                        <td
+                         <td
                             <?php $class = "";?>
                             
                             <?php if ($curr_day->format("z") == $this->date->format("z")) :?>
                                 <?php $class .= "selected-date";?>
                             <?php endif;?>
-                            <?php $isReserved = Pbbookinghelper::booking_for_day($curr_day);?>
+                            <?php $isReserved = Pbbookinghelper::booking_for_day($curr_day, $this->events);?>
                             <?php $class .= ($isReserved) ? 'bookings' : '';?>
                             <?php echo ($class !="") ? 'class = "'.$class.'"' : "";?>>	
-                            <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>">
+                            <a href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date=<?php echo $curr_day->format('Y-m-d');?>&selectedOffice=<?php echo $this->selectedOffice ;?>">
                                     <?php echo JHtml::_('date',$curr_day->format(DATE_ATOM),'j');?></a>
                         </td>
                         

@@ -73,10 +73,11 @@ $doc->addStyleDeclaration(".icon-32-delete_shift {background:url('/administrator
                                         <tr>	
                                             
                                             <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_CALENDAR'); ?></th>
-                                            <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_START'); ?></th>
-                                            <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_END'); ?></th>
+                                            <th align="left">Data</th>                                            
                                             <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_START_HOUR'); ?></th>
                                             <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_END_HOUR'); ?></th>
+                                            <th align="left">Ripeti ogni</th>
+                                            <th align="left">Ripeti fino</th>
                                             <th align="left"><?php echo JText::_('COM_PBBOOKING_BLOCK_NOTE'); ?></th> 
                                             <th align="left">Id</th>
                                             <th align="left">Delete</th>    

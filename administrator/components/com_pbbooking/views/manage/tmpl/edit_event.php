@@ -68,7 +68,7 @@
 				</table>
 			</fieldset>
 
-
+                        <input type="hidden" name="selectedOffice" value="<?php echo $this->selectedOffice;?>"/> 
 			<input type="hidden" name="id" value="<?php echo $this->event->id;?>"/>
 			<input type="hidden" name="option" value="com_pbbooking"/>
 			<input type="hidden" name="controller" value="manage"/>

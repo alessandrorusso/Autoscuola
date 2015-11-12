@@ -149,7 +149,8 @@ JHtml::_('behavior.formvalidation');
 
                 <?php if ($this->config->consolidated_view == 1) : ?>
                     <input type="hidden" name="cal_id" value="<?php echo $this->outcal->id; ?>"/>
-                <?php endif; ?>
+                <?php endif; ?>                    
+                <input type="hidden" name="selectedOffice" id="text-selectedOffice" value="<?php echo $this->selectedOffice;?>"/> 
                 <input type="hidden" name="cal_id" id="text-cal-id" value="<?php echo $this->cal->cal_id;?>"/> 
                 <input type="hidden" name="date" value="<?php echo $this->dateparam->format('Ymd');?>"/>
                 <input type="hidden" name="treatment-time" value="<?php echo $this->dateparam->format('Hi');?>"/>

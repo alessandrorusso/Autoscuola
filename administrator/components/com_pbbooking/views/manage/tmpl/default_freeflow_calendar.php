@@ -7,8 +7,16 @@
 */
 
 ?>
+<div>
+    <p style="text-align: center"><b>Selezionare una Sede:</b>
+        <select name="office_select" id="office_select">
+    <?php foreach ($this->offices as $office) : ?>
+        <option value="<?php echo $office->id; ?>" <?php echo $office->id ==$this->selectedOffice ? 'selected' : '' ;?>><?php echo $office->desc; ?></option>
+    <?php endforeach; ?>
+    </select>    </p>
+</div>
 <div class="diary-table">
-<table>
+<table style="width: 100%;">
 
 	<tr>
             <th>
@@ -35,13 +43,13 @@
                                         <?php $open = $cal->isOpen($this->dt_start);?>
                                         <?php if ($open  && is_bool($open) && !$event) :?>
                                         <td style="background-color: <?php echo $cal->color;?>">
-                                            <a class="no-print" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=create&cal_id=<?php echo $key;?>&dtstart=<?php echo $this->dt_start->format('YmdHi');?>">
+                                            <a class="no-print" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=create&cal_id=<?php echo $key;?>&dtstart=<?php echo $this->dt_start->format('YmdHi');?>&selectedOffice=<?php echo $this->selectedOffice ;?>">
 						<?php echo JText::_('COM_PBBOOKING_FREE'); ?>
                                             </a>
                                         </td>    
 					<?php elseif (!is_bool($open)) :?>                                        
                                         <td class="busy-cell">
-                                            <a class="no-print" style="font-weight:bold; color: white;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=delete_block&cal_id=<?php echo $key;?>&dtstart=<?php echo $this->dt_start->format('YmdHi');?>">
+                                            <a class="no-print" style="font-weight:bold; color: white;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=delete_block&cal_id=<?php echo $key;?>&dtstart=<?php echo $this->dt_start->format('YmdHi');?>&selectedOffice=<?php echo $this->selectedOffice ;?>">
 						<?php echo $open; ?>
                                             </a>
                                             <span class="hide-summary" style="display:none; font-weight:bold;">
@@ -51,7 +59,7 @@
                                         
                                         <?php elseif ($event && is_bool($event)!=true) :?>
                                         <td style="background-color: <?php echo $cal->color;?>">
-                                            <a class="no-print" style="font-weight:bold; color: black;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>">
+                                            <a class="no-print" style="font-weight:bold; color: black;" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=edit&id=<?php echo $event->id;?>&selectedOffice=<?php echo $this->selectedOffice ;?>">
 						<?php echo $event->admin_summary();?>	
                                             </a>
                                             <span class="hide-summary" style="display:none; font-weight:bold;">
