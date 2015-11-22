@@ -2015,15 +2015,14 @@ p .price
 
 #slider-row 
 {
-	padding-top: 20px;
-        width: 94%;
+	padding-left: 0%;
 }
 
 #slider-row .container
 {
-	padding: 10px 0px 20px;
-	margin-bottom: 20px;
-	position: relative;
+	//padding: 10px 0px 20px;
+	//margin-bottom: 20px;
+	//position: relative;
 }
 
 #slider-row .shadow
@@ -3377,3 +3376,65 @@ aside .moduletable ul.nav ul li:last-child
     border-radius: 20px 20px 20px 20px;
 }
 
+/**************************************************************************************/
+/*   Spans																			  */
+
+.span12
+{
+	width: 940px;
+}
+
+.span11
+{
+	width: 860px;
+}
+
+.span10
+{
+	width: 780px;
+}
+
+.span9
+{
+	width: 700px;
+}
+
+.span8
+{
+	width: 620px;
+}
+
+.span7
+{
+	width: 540px;
+}
+
+.span6
+{
+	width: 460px;
+}
+
+.span5
+{
+	width: 380px;
+}
+
+.span4
+{
+	width: 300px;
+}
+
+.span3
+{
+	width: 220px;
+}
+
+.span2
+{
+	width: 140px;
+}
+
+.span1
+{
+	width: 60px;
+}

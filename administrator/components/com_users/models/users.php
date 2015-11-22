@@ -262,6 +262,13 @@ class UsersModelUsers extends JModelList
                                 else{
                                     $item->license = 'Vuota';
                                 }
+                                $transport = $this->_getUserDisplayedTransport($item->id);
+                                if($transport){                                    
+                                        $item->transport = $transport;
+                                }
+                                else{
+                                    $item->transport = 'Vuoto';
+                                }
 			}
 
 			// Add the items to the internal cache.
@@ -485,6 +492,36 @@ class UsersModelUsers extends JModelList
                             ->select('profile_value')			
                             ->from('#__user_profiles')
                             ->where('profile_key =' .$db->quote('profileautoscuola.license').' and user_id = '.$user_id);
+
+                        
+                $query->where('id IN (' . $subQuery->__toString() . ')');
+            
+		$db->setQuery($query);
+		$result = $db->loadColumn();
+
+		return implode("\n", $result);		
+	}
+        
+         /**
+	 * SQL server change
+	 *
+	 * @param   integer  $user_id  User identifier
+	 *
+	 * @return  string   the transport description :$
+	 */
+	function _getUserDisplayedTransport($user_id)
+	{
+		$db = JFactory::getDbo();
+                
+                $query = $db->getQuery(true)
+                        ->select('l.desc')
+                        ->from('#__pbbooking_lov_transport'. ' as l');
+                
+                        
+                $subQuery = $db->getQuery(true)
+                            ->select('profile_value')			
+                            ->from('#__user_profiles')
+                            ->where('profile_key =' .$db->quote('profileautoscuola.transport').' and user_id = '.$user_id);
 
                         
                 $query->where('id IN (' . $subQuery->__toString() . ')');

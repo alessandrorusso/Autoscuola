@@ -161,13 +161,13 @@ jQuery(document).ready(function()
         });
     }
     
-    jQuery('#office_select').on('change', function( event ) {
+    /*jQuery('#office_select').on('change', function( event ) {
         var selectedOffice = jQuery('#office_select').val();
         var date ="<?php echo $this->date->format('Y-m-d');?>";
         var url = '<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=display&date='+date+'&selectedOffice='+selectedOffice;
         window.location.href =url;
         
-    });
+    });*/
     
     
     

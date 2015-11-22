@@ -36,34 +36,39 @@
 			
 			<fieldset>
 				<?php echo JText::_('COM_PBBOOKING_EDIT_WARNING');?>
-				<table>
-					<tr>
-						<th><label><?php echo JText::_('COM_PBBOOKING_EVENT_SUMMARY');?></label></th>
-                                                <td><input type="text" name="summary" value="<?php echo $this->event->summary;?>" style="width:500px;" readonly="readonly"/></td>
-					</tr>
-
-					<tr>
-						<th><label><?php echo JText::_('COM_PBBOOKING_EVENT_DESCRIPTION');?></label></th>
-						<td><textarea name="description" style="width:500px;"><?php echo $this->event->description;?></textarea></td>
-					</tr>
-
-					<tr>
-						<th><label><?php echo JText::_('COM_PBBOOKING_BOOKING_DATE');?></label></th>
-						<td><input type="text" name="date" value="<?php echo date_create($this->event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d');?>" style="width:500px;" readonly="readonly"/></td>
-					</tr>
-					
-
-					<tr>
-						<th><label><?php echo JText::_('COM_PBBOOKING_BOOKING_TIME');?></label></th>
-                                                <td><input type="text" name="treatment-time" value="<?php echo date_create($this->event->dtstart,new DateTimezone(PBBOOKING_TIMEZONE))->format('Hi');?>" style="width:500px;" readonly="readonly"/></td>
-						
-					</tr>
-
-					<tr>
-						<th><label><?php echo JText::_('COM_PBBOOKING_CAL_LABEL');?></label></th>
-						<td><input type="text" name="cal_id" value="<?php echo $this->cal->name;?>" style="width:500px;" readonly="readonly"/></td>
-                                        </tr>				
-					
+				<table>				
+                                    <tr>
+                                        <th><label><?php echo JText::_('COM_PBBOOKING_BOOKING_DATE');?></label></th>
+                                        <td><input type="text" name="date" value="<?php echo date_create($this->event->dtstart,new DateTimeZone(PBBOOKING_TIMEZONE))->format('Y-m-d');?>" readonly="readonly"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th><label><?php echo JText::_('COM_PBBOOKING_BOOKING_TIME');?></label></th>
+                                        <td><input type="text" name="treatment-time" value="<?php echo date_create($this->event->dtstart,new DateTimezone(PBBOOKING_TIMEZONE))->format('Hi');?>" readonly="readonly"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th><label><?php echo JText::_('COM_PBBOOKING_CAL_LABEL');?></label></th>
+                                        <td><input type="text" name="cal_id" value="<?php echo $this->cal->name;?>" readonly="readonly"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th><?php echo JText::_('COM_PBBOOKING_USER_LABEL'); ?></label></th>
+                                        <td>
+                                            <select name="calendar-user" id="calendar-user" class="required">                                                        
+                                            <?php foreach($this->users as $user) : ?>                                                
+                                                <option value="<?php echo $user->id;?>" <?php if ($user->id == $this->event->uid) echo ' selected="selected"'; ?>>
+                                                    <?php echo ($user->username.' ('.Pbbookinghelper::calculateUserTransport($user->id).')');?>
+                                                </option>                                        
+                                            <?php endforeach;?>                                    
+                                            </select>
+                                        </td>
+                                    </tr>                                        
+                                    <tr>
+                                        <th><label><?php echo JText::_('COM_PBBOOKING_EVENT_SUMMARY');?></label></th>
+                                        <td><input type="text" name="summary" value="<?php echo $this->event->summary;?>"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th><label><?php echo JText::_('COM_PBBOOKING_EVENT_DESCRIPTION');?></label></th>
+                                        <td><textarea name="description"><?php echo $this->event->description;?></textarea></td>
+                                    </tr>
 					
 				</table>
 			</fieldset>

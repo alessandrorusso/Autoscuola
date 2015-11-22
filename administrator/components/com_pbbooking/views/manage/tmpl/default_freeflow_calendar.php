@@ -7,14 +7,14 @@
 */
 
 ?>
-<div>
+<!--div>
     <p style="text-align: center"><b>Selezionare una Sede:</b>
         <select name="office_select" id="office_select">
     <?php foreach ($this->offices as $office) : ?>
         <option value="<?php echo $office->id; ?>" <?php echo $office->id ==$this->selectedOffice ? 'selected' : '' ;?>><?php echo $office->desc; ?></option>
     <?php endforeach; ?>
     </select>    </p>
-</div>
+</div-->
 <div class="diary-table">
 <table style="width: 100%;">
 

@@ -1,5 +1,5 @@
 window.addEvent('domready',function(){    
-    var table = jQuery('#blockedDayTable').dataTable({
+    /*var table = jQuery('#blockedDayTable').dataTable({
 	"bProcessing": true,
 	"bServerSide": true,
         "bPaginate": true,
@@ -14,6 +14,20 @@ window.addEvent('domready',function(){
             "defaultContent": "<a class =\"delete-reservation\"><img src=\"components/com_pbbooking/images/delete.png\"/></a>"
             }        
         ]
+    });*/
+    var table = jQuery('#blockedDayTable').dataTable({
+        "data": dataSet,
+        "bPaginate": true,
+        "bLengthChange": false,
+        "bFilter":true,
+        "bSort": false,
+        "iDisplayLength" : 5,        
+        "columnDefs": [ {
+            "targets": -1,            
+            "defaultContent": "<a class =\"delete-reservation\"><img src=\"components/com_pbbooking/images/delete.png\"/></a>"
+            }        
+        ]
+        
     });
     
     jQuery('#blockedDayTable tbody').on( 'click', 'a', function () {

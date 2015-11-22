@@ -63,6 +63,9 @@ $sortFields = $this->getSortFields();
                                 <th width="5%" class="nowrap center">
 					<?php echo JText::_('COM_USERS_HEADING_LICENSE'); ?>
 				</th>
+                                <th width="15%" class="nowrap center">					
+                                        <?php echo JText::_('COM_USERS_HEADING_TRANSPORT'); ?>
+				</th>
 				<th width="5%" class="nowrap center">
 					<?php echo JHtml::_('searchtools.sort', 'COM_USERS_HEADING_ENABLED', 'a.block', $listDirn, $listOrder); ?>
 				</th>
@@ -71,10 +74,7 @@ $sortFields = $this->getSortFields();
 				</th>
 				<th width="10%" class="nowrap center">
 					<?php echo JText::_('COM_USERS_HEADING_GROUPS'); ?>
-				</th>
-				<th width="15%" class="nowrap center hidden-phone">
-					<?php echo JHtml::_('searchtools.sort', 'JGLOBAL_EMAIL', 'a.email', $listDirn, $listOrder); ?>
-				</th>
+				</th>				
 				<th width="10%" class="nowrap center hidden-phone">
 					<?php echo JHtml::_('searchtools.sort', 'COM_USERS_HEADING_LAST_VISIT_DATE', 'a.lastvisitDate', $listDirn, $listOrder); ?>
 				</th>
@@ -137,6 +137,9 @@ $sortFields = $this->getSortFields();
                                 <td class="center">
 					<?php echo $this->escape($item->license); ?>
 				</td>  
+                                <td class="center">
+                                        <?php echo $this->escape($item->transport); ?>					
+				</td>
 				<td class="center">
 					<?php if ($canChange) : ?>
 						<?php
@@ -159,10 +162,7 @@ $sortFields = $this->getSortFields();
 					<?php else : ?>
 						<?php echo nl2br($item->group_names); ?>
 					<?php endif; ?>
-				</td>
-				<td class="center hidden-phone">
-					<?php echo JStringPunycode::emailToUTF8($this->escape($item->email)); ?>
-				</td>
+				</td>				
 				<td class="center hidden-phone">
 					<?php if ($item->lastvisitDate != '0000-00-00 00:00:00'):?>
 						<?php echo JHtml::_('date', $item->lastvisitDate, 'Y-m-d H:i:s'); ?>

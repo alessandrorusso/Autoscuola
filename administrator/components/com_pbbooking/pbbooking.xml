@@ -73,6 +73,7 @@
 		<folder>sql</folder>
 		<folder>assets</folder>
 		<folder>css</folder>
+                <folder>models</folder>
 	</files>
 	
 	<languages>

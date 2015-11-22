@@ -16,7 +16,14 @@ include ('includes/includes.php');
         $doc->addStyleSheet('templates/' . $this->template . '/css/media.480.css');
         ?>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <?php
+            $user = JFactory::getUser();
+            if ($user->get('guest') == 1) {
+            $headerstuff = $this->getHeadData();
+            $headerstuff['scripts'] = array();
+            $this->setHeadData($headerstuff); }
+        ?>
         <jdoc:include type="head" />
 
         <?php
@@ -63,9 +70,19 @@ include ('includes/includes.php');
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/<?php echo $this->template ?>/css/ext.phocagallery.css" type="text/css" />
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/<?php echo $this->template ?>/css/style.custom.css" type="text/css" />
 
+        
     </head>
 
     <body class="<?php echo $option . " view-" . $view . " task-" . $task . " itemid-" . $itemid . " body__" . $pageClass; ?>">
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.5";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        </script>
         <div class="wrapper">
 
             <!-- HEADER ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  -->    
@@ -126,9 +143,13 @@ include ('includes/includes.php');
         </div>
 
         <?php if ($this->countModules('as-position-5')): ?>
-            <div class="container">
-                <div id="slider-row">
-                    <jdoc:include type="modules" name="as-position-5" style="themeHtml5" />
+            <div id="slider-row">
+                <div class="wrapper">
+                    <div class="container">      
+                        <div class="row">
+                            <jdoc:include type="modules" name="as-position-5" style="themeHtml5" />
+                        </div>
+                    </div>
                 </div>
             </div>
         <?php endif; ?>
@@ -309,33 +330,25 @@ include ('includes/includes.php');
                     </div>
                 </div>
             </div>
-
-
-
-
 <?php if ($this->countModules('as-position-24')): ?>
-                <div id="content-row-5">
-                    <div class="container">
-                        <div class="row">
-                            <jdoc:include type="modules" name="as-position-24" style="themeHtml5" />
-                        </div>
+            <div id="content-row-5">
+                <div class="container">
+                    <div class="row">
+                        <jdoc:include type="modules" name="as-position-24" style="themeHtml5" />
                     </div>
                 </div>
-            <?php endif; ?> 
-
+            </div>
+<?php endif; ?> 
 <?php if ($this->countModules('as-position-25')): ?>
-                <div id="content-row-6">
-                    <div class="container">
-                        <div class="row">
-                            <jdoc:include type="modules" name="as-position-25" style="themeHtml5" />
-                        </div>
+            <div id="content-row-6">
+                <div class="container">
+                    <div class="row">
+                        <jdoc:include type="modules" name="as-position-25" style="themeHtml5" />
                     </div>
                 </div>
-<?php endif; ?>       
-
+            </div>
+<?php endif; ?>
         </div>
-        </div>
-
         <!-- FOOTER ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <div id="footer">
 <?php if ($this->countModules('as-position-30') || $this->countModules('as-position-31')): ?>

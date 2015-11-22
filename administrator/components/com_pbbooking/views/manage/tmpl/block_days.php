@@ -22,7 +22,10 @@ $doc->addStyleDeclaration(".icon-32-add_shift {background:url('/administrator/co
 $doc->addStyleDeclaration(".icon-32-delete_shift {background:url('/administrator/components/com_pbbooking/images/button_purple_delete.png');}");
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo JURI::root(false); ?>administrator/components/com_pbbooking/css/jquery.dataTables.css">
-<script>base_url = "<?php echo JURI::root(false); ?>";</script>
+<script>
+    base_url = "<?php echo JURI::root(false); ?>";
+    dataSet = <?php echo json_encode($this->blocked_days); ?>;
+</script>
 <script src="<?php echo JURI::root(false); ?>administrator/components/com_pbbooking/scripts/jquery.dataTables.min.js"></script>
 <script src="<?php echo JURI::root(false); ?>administrator/components/com_pbbooking/scripts/pbbooking_block_days.js"></script>
 

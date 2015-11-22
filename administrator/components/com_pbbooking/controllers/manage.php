@@ -43,7 +43,8 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $view->config = $db->loadObject();
         $db->setQuery('select * from #__pbbooking_day_note');
         $view->day_notes = $db->loadObjectList();
-        $db->setQuery('select * from #__pbbooking_cals where status=1 and office='.$db->escape($view->selectedOffice).  ' order by office, license');
+        $db->setQuery('select * from #__pbbooking_cals where status=1 order by office, license');
+        //$db->setQuery('select * from #__pbbooking_cals where status=1 and office='.$db->escape($view->selectedOffice).  ' order by office, license');
         $view->cals = $db->loadObjectList();
         $db->setQuery('select * from #__pbbooking_lov_office');
         $view->offices = $db->loadObjectList();
@@ -87,6 +88,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $view->config = $db->loadObject();
             $db->setQuery('select * from #__pbbooking_events where id = ' . $db->escape(JRequest::getInt('id')));
             $view->event = $db->loadObject();
+            $view->event->summary = '';
             $db->setQuery('select * from #__pbbooking_treatments');
             $view->services = $db->loadObjectList();
             $db->setQuery('select * from #__pbbooking_cals where id = ' . $view->event->cal_id);
@@ -100,6 +102,8 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $view->dt_end = date_create($view->event->dtstart, new DateTimeZone(PBBOOKING_TIMEZONE));
             $view->dt_start->setTime($opening_time_arr[0], $opening_time_arr[1]);
             $view->dt_end->setTime($closing_time_arr[0], $closing_time_arr[1]);
+            
+            $view->users = Pbbookinghelper::get_calendar_users($view->cal);
 
             //Imposto i pulsanti di Modifica, Salva, Cancella, EsportaCalendario, Annulla
             $view->setLayout('edit_event');
@@ -115,6 +119,13 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $event = $db->loadObject();
             $selectedOffice = (JRequest::getVar('selectedOffice')) ? JRequest::getVar('selectedOffice') : 1;
             $event->description = JRequest::getVar('description');
+            $event->uid = JRequest::getVar('calendar-user');
+            if(JRequest::getVar('summary') == ''){
+                $event->summary = JFactory::getUser($event->uid)->username; 
+            }
+            else{
+                $event->summary = JRequest::getVar('summary');
+            }
             if ($db->updateObject('#__pbbooking_events', $event, 'id')) {
                 $this->setRedirect('index.php?option=com_pbbooking&controller=manage&date=' . JRequest::getVar('date') . '&selectedOffice=' . $selectedOffice, Jtext::_('COM_PBBOOKING_EDIT_SUCCESS'));
             } else {
@@ -212,7 +223,7 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $view->setLayout('block_days');
 
         //load up data in the view        
-        $view->blocked_days = $this->getBlockedDays();
+        $view->blocked_days = $this->getBlockedDays();        
         $db->setQuery('select * from #__pbbooking_config');
         $config = $db->loadObject();
         $view->trading_hours = json_decode($config->trading_hours, true);
@@ -276,35 +287,31 @@ class PbbookingsControllermanage extends JControllerLegacy {
 
         $blocked_days = $db->loadObjectList();
         if (count($blocked_days) > 0) {
-            $built_blocked_days = array();
-            $index = 0;
-            foreach ($blocked_days as $blocked_day) {
-                if ($index >= $from && $index < $to) {
-                    $row = array();
-                    $calName = '';                    
-                    foreach (explode(',', $blocked_day->calendars) as $cal_id) {
-                        if (isset($cal_id) && $cal_id != null) {
-                            $calName = $calName . Pbbookinghelper::get_calendar_name_for_id($cal_id) . '<br/>';
-                        }
+            $built_blocked_days = array();            
+            foreach ($blocked_days as $blocked_day) {                
+                $row = array();
+                $calName = '';                    
+                foreach (explode(',', $blocked_day->calendars) as $cal_id) {
+                    if (isset($cal_id) && $cal_id != null) {
+                        $calName = $calName . Pbbookinghelper::get_calendar_name_for_id($cal_id) . '<br/>';
                     }
-                    $frequency = '';
-                    if (isset($blocked_day->r_int) && $blocked_day->r_int != 0) {                     
-                        if($blocked_day->r_freq == 'custom'){                            
-                            foreach (explode(',',$blocked_day->custom_recurrence) as $day_id) {
-                                if (isset($day_id) && $day_id != null) {
-                                    $frequency = $frequency . Pbbookinghelper::get_day_name($day_id) . '<br/>';
-                                }
-                            }                            
-                        }
-                        else {
-                            $frequency = JText::_('COM_PBBOOKING_EVENT_RECUR_' . strtoupper($blocked_day->r_freq));
-                        }
-                    }                  
-                    
-                    $row = [$calName, $blocked_day->block_start_date, $blocked_day->block_start_hour, $blocked_day->block_end_hour, $frequency, $blocked_day->r_end, $blocked_day->block_note, $blocked_day->id];
-                    $built_blocked_days[] = $row;
                 }
-                $index++;
+                $frequency = '';
+                if (isset($blocked_day->r_int) && $blocked_day->r_int != 0) {                     
+                    if($blocked_day->r_freq == 'custom'){                            
+                        foreach (explode(',',$blocked_day->custom_recurrence) as $day_id) {
+                            if (isset($day_id) && $day_id != null) {
+                                $frequency = $frequency . Pbbookinghelper::get_day_name($day_id) . '<br/>';
+                            }
+                        }                            
+                    }
+                    else {
+                        $frequency = JText::_('COM_PBBOOKING_EVENT_RECUR_' . strtoupper($blocked_day->r_freq));
+                    }
+                }                  
+
+                $row = [$calName, $blocked_day->block_start_date, $blocked_day->block_start_hour, $blocked_day->block_end_hour, $frequency, $blocked_day->r_end, $blocked_day->block_note, $blocked_day->id];
+                $built_blocked_days[] = $row;               
             }
             return $built_blocked_days;
         }

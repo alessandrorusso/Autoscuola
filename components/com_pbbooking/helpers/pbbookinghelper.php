@@ -299,6 +299,24 @@ class Pbbookinghelper
         }
         return null;
     }
+    
+    public static function calculateUserTransport($userId) {
+        $db = JFactory::getDbo();        
+        if ($userId) {
+            $userProfile = JUserHelper::getProfile($userId);            
+            if($userProfile->profileautoscuola['transport']){
+                $sql = "select * from #__pbbooking_lov_transport";
+                $db->setQuery($sql);
+                $transportList = $db->loadAssocList();
+                foreach ($transportList as $transport) {                    
+                    if((int)$userProfile->profileautoscuola['transport'] == $transport['id']){
+                        return $transport['desc'];
+                    }                    
+                }                
+            }
+        }
+        return 'Nessun Veicolo';        
+    }
 
 //METODI GESTIONE EVENTI
     
