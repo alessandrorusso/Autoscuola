@@ -247,16 +247,18 @@ class Pbbookinghelper
             if(count($reservationGroupUsers)>0){
                 foreach($reservationGroupUsers as $user_id) {
                     $user = JFactory::getUser($user_id);
-                    $userProfile = JUserHelper::getProfile($user->id);                        
-                    $licenseField = $userProfile->profileautoscuola['license'];
-                    $officeField = $userProfile->profileautoscuola['office'];
-                    //if(strcmp($cal->license, $licenseField) == 0 && strcmp($cal->office, $officeField) == 0){
-                    if(strcmp($cal->license, $licenseField) == 0){    
-                        //$transportField = $userProfile->profileautoscuola['transport'];                            
-                        //if(!$transportField || strcasecmp($cal->transport, $transportField) == 0){
-                            $result[$user_id] = $user;                               
-                        //}
-                    }                    
+                    if($user->block == 0){
+                        $userProfile = JUserHelper::getProfile($user->id);                        
+                        $licenseField = $userProfile->profileautoscuola['license'];
+                        //$officeField = $userProfile->profileautoscuola['office'];
+                        //if(strcmp($cal->license, $licenseField) == 0 && strcmp($cal->office, $officeField) == 0){
+                        if(strcmp($cal->license, $licenseField) == 0){    
+                            //$transportField = $userProfile->profileautoscuola['transport'];                            
+                            //if(!$transportField || strcasecmp($cal->transport, $transportField) == 0){
+                                $result[$user_id] = $user;                               
+                            //}
+                        }    
+                    }                                       
                 }
             }
                 

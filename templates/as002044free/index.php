@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 defined('_JEXEC') or die;
 include ('includes/includes.php');
 ?>
@@ -16,7 +16,7 @@ include ('includes/includes.php');
         $doc->addStyleSheet('templates/' . $this->template . '/css/media.480.css');
         ?>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
         <?php
             $user = JFactory::getUser();
             if ($user->get('guest') == 1) {
@@ -145,11 +145,11 @@ include ('includes/includes.php');
         <?php if ($this->countModules('as-position-5')): ?>
             <div id="slider-row">
                 <div class="wrapper">
-                    <div class="container">      
+            <div class="container">
                         <div class="row">
-                            <jdoc:include type="modules" name="as-position-5" style="themeHtml5" />
-                        </div>
-                    </div>
+                    <jdoc:include type="modules" name="as-position-5" style="themeHtml5" />
+                </div>
+            </div>
                 </div>
             </div>
         <?php endif; ?>
@@ -331,23 +331,23 @@ include ('includes/includes.php');
                 </div>
             </div>
 <?php if ($this->countModules('as-position-24')): ?>
-            <div id="content-row-5">
-                <div class="container">
-                    <div class="row">
-                        <jdoc:include type="modules" name="as-position-24" style="themeHtml5" />
+                <div id="content-row-5">
+                    <div class="container">
+                        <div class="row">
+                            <jdoc:include type="modules" name="as-position-24" style="themeHtml5" />
+                        </div>
                     </div>
                 </div>
-            </div>
-<?php endif; ?> 
+            <?php endif; ?> 
 <?php if ($this->countModules('as-position-25')): ?>
-            <div id="content-row-6">
-                <div class="container">
-                    <div class="row">
-                        <jdoc:include type="modules" name="as-position-25" style="themeHtml5" />
+                <div id="content-row-6">
+                    <div class="container">
+                        <div class="row">
+                            <jdoc:include type="modules" name="as-position-25" style="themeHtml5" />
+                        </div>
                     </div>
                 </div>
-            </div>
-<?php endif; ?>
+<?php endif; ?>       
         </div>
         <!-- FOOTER ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <div id="footer">
