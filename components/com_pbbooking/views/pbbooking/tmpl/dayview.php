@@ -26,16 +26,18 @@
 		<?php $slot_end->modify('+ '.$this->config->time_increment.' minutes');?>
 		<tr>
 			<th><?php echo Jhtml::_('date',$this->day_dt_start->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></th>
-			<?php foreach ($this->cals as $cal) :?>                                
-				<td class="pbbooking-<?php echo (!$cal->is_free_from_to($this->day_dt_start,$slot_end)) ? 'free' : 'busy';?>-cell">
-					<?php if ($this->day_dt_start>date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE)) && !$cal->is_free_from_to($this->day_dt_start,$slot_end)) :?>
-						<a href="<?php echo JRoute::_('index.php?option=com_pbbooking&task=create&dtstart='.$this->day_dt_start->format('YmdHi').'&cal_id='.$cal->cal_id);?>">
-							<?php echo (!$cal->is_free_from_to($this->day_dt_start,$slot_end)) ? JText::_('COM_PBBOOKING_FREE') : JText::_('COM_PBBOOKING_BUSY');?>
-						</a>
-					<?php else :?>
-						<?php echo JText::_('COM_PBBOOKING_BUSY');?>
-					<?php endif;?>
-				</td>
+			<?php foreach ($this->cals as $cal) :?>
+                                <?php $event = $cal->is_free_from_to($this->day_dt_start,$slot_end);?>
+                                <?php $open = $cal->isOpen($this->day_dt_start);?>
+                        <td class="pbbooking-<?php echo ($open  && is_bool($open) && !$event) ? 'free' : 'busy';?>-cell">
+                        <?php if ($this->day_dt_start>date_create("now",new DateTimeZone(PBBOOKING_TIMEZONE)) && ($open  && is_bool($open) && !$event)) :?>
+                            <a href="<?php echo JRoute::_('index.php?option=com_pbbooking&task=create&dtstart='.$this->day_dt_start->format('YmdHi').'&cal_id='.$cal->cal_id);?>">
+                                <?php echo ($open  && is_bool($open) && !$event) ? JText::_('COM_PBBOOKING_FREE') : JText::_('COM_PBBOOKING_BUSY');?>
+                            </a>
+                            <?php else :?>
+                                <?php echo JText::_('COM_PBBOOKING_BUSY');?>
+                            <?php endif;?>
+                        </td>                            	
 			<?php endforeach;?>
 		</tr>
 		<?php $this->day_dt_start->modify('+ '.$this->config->time_increment.' minutes');?>
