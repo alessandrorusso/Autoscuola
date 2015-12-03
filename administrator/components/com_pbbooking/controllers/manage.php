@@ -234,12 +234,12 @@ class PbbookingsControllermanage extends JControllerLegacy {
         $view->dt_start = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
         $view->dt_end = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
         $view->dt_start->setTime("09", "00");
-        $view->dt_end->setTime("20", "00");
+        $view->dt_end->setTime("24", "00");
         
         $view->dt_start_2 = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
         $view->dt_end_2 = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
         $view->dt_start_2->setTime("09", "00");
-        $view->dt_end_2->setTime("20", "00");
+        $view->dt_end_2->setTime("24", "00");
 
         //display the view
         JToolBarHelper::save('save_block_days');
