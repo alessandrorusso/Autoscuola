@@ -57,13 +57,9 @@ class PbbookingsControllermanage extends JControllerLegacy {
         }
 
         //Imposto gli orari di apertura e chiusura
-        $opening_hours = json_decode($view->config->trading_hours, true);
-        $opening_time_arr = str_split($opening_hours[$view->date->format('w')]['open_time'], 2);
-        $closing_time_arr = str_split($opening_hours[$view->date->format('w')]['close_time'], 2);
-        $view->dt_start = date_create($view->date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
-        $view->dt_end = date_create($view->date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
-        $view->dt_start->setTime((int) $opening_time_arr[0], (int) $opening_time_arr[1]);
-        $view->dt_end->setTime((int) $closing_time_arr[0], (int) $closing_time_arr[1]);
+        $hours_array = Pbbookinghelper::get_estremi_orario($view->cals, $view->date);        
+        $view->dt_start = $hours_array['open_time'];
+        $view->dt_end = $hours_array['close_time'];
 
         $view->setLayout('display');
         $view->display();
@@ -233,12 +229,12 @@ class PbbookingsControllermanage extends JControllerLegacy {
         
         $view->dt_start = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
         $view->dt_end = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
-        $view->dt_start->setTime("09", "00");
+        $view->dt_start->setTime("00", "00");
         $view->dt_end->setTime("24", "00");
         
         $view->dt_start_2 = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
         $view->dt_end_2 = date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE));
-        $view->dt_start_2->setTime("09", "00");
+        $view->dt_start_2->setTime("00", "00");
         $view->dt_end_2->setTime("24", "00");
 
         //display the view

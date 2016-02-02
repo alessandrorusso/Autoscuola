@@ -469,10 +469,11 @@ public function is_free_from_to($from_date,$to_date,$is_admin=false) {
 	
     $pbb_config = self::get_config();
 
-    $trading_hours = ($this->cal_id != 0 && $cal->hours > '') ? json_decode($this->hours,true) : json_decode($pbb_config->trading_hours,true);
+    $trading_hours = ($this->cal_id != 0 && $this->trading_hours != '') ? json_decode($this->trading_hours,true) : json_decode($pbb_config->trading_hours,true);
         	
     //if (!$is_admin) {
     if ($trading_hours[$from_date->format('w')]['status'] == 'open') {
+        
         //catches for outside trading times.
         $str_opening_time = $trading_hours[$from_date->format('w')]['open_time'];
         $opening_time_arr = str_split($str_opening_time,2);

@@ -286,20 +286,47 @@ class Pbbookinghelper
         }
         
         if ($trading_hours[$date->format('w')]['status'] == 'open') {                
-            $str_opening_time = $trading_hours[$from_date->format('w')]['open_time'];
-            $str_closing_time = $trading_hours[$from_date->format('w')]['close_time'];
-            /*$opening_time_arr = str_split($str_opening_time,2);
-            $closing_time_arr = str_split($str_closing_time,2);
-            $opening_date = date_create($from_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-            $closing_date = date_create($from_date->format(DATE_ATOM),new DateTimeZone(PBBOOKING_TIMEZONE));
-            $opening_date->setTime($opening_time_arr[0],$opening_time_arr[1]);                
-            $closing_date->setTime($closing_time_arr[0],$closing_time_arr[1]);*/
+            $str_opening_time = $trading_hours[$date->format('w')]['open_time'];
+            $str_closing_time = $trading_hours[$date->format('w')]['close_time'];           
             $cal_hours = array();
             $cal_hours['open_time']  = $str_opening_time;
             $cal_hours['close_time'] = $str_closing_time;
             return $cal_hours;
         }
         return null;
+    }
+    
+    public static function get_estremi_orario($cals = null, $date){
+        $opening_time_arr = '';
+        $closing_time_arr = '';
+        $dt_start = date_create($date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
+        $dt_end = date_create($date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
+        
+        foreach ($cals as $cal) {
+            $cal_hours = self::get_calendar_hours($cal, $date);
+            $dt_cal_start = date_create($date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
+            $dt_cal_end = date_create($date->format(DATE_ATOM), new DateTimeZone(PBBOOKING_TIMEZONE));
+            $opening_cal_time_arr = str_split($cal_hours['open_time'], 2);
+            $closing_cal_time_arr = str_split($cal_hours['close_time'], 2);
+            $dt_cal_start->setTime((int) $opening_cal_time_arr[0], (int) $opening_cal_time_arr[1]);
+            $dt_cal_end->setTime((int) $closing_cal_time_arr[0], (int) $closing_cal_time_arr[1]);
+            if($opening_time_arr == '' && $closing_time_arr == ''){
+                $opening_time_arr = $opening_cal_time_arr;
+                $closing_time_arr = $closing_cal_time_arr;
+                $dt_start->setTime((int) $opening_time_arr[0], (int) $opening_time_arr[1]);
+                $dt_end->setTime((int) $closing_time_arr[0], (int) $closing_time_arr[1]);
+            }
+            if($dt_cal_start < $dt_start){
+                $dt_start = $dt_cal_start;
+            }
+            if($dt_cal_end > $dt_end){
+                $dt_end = $dt_cal_end;
+            }           
+        }
+        $hours_array= array();
+        $hours_array['open_time']  = $dt_start;
+        $hours_array['close_time'] = $dt_end;
+        return $hours_array;
     }
     
     public static function calculateUserTransport($userId) {

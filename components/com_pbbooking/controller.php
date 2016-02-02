@@ -283,12 +283,11 @@ class PbbookingController extends JControllerLegacy
 
         $view->cals = array();
         $view->opening_hours = $opening_hours[(int)$view->dateparam->format('w')];
-        $view->day_dt_start = date_create($dateparam,new DateTimezone(PBBOOKING_TIMEZONE));
-        $view->day_dt_end = date_create($dateparam,new DateTimezone(PBBOOKING_TIMEZONE));
-        $view->day_dt_start->setTime($start_time_arr[0],$start_time_arr[1],0);
-        $view->day_dt_end->setTime($end_time_arr[0],$end_time_arr[1],0);
+        
         $view->config = $config;
-
+        $hours_array = Pbbookinghelper::get_estremi_orario($cals, $view->dateparam);              
+        $view->day_dt_start = $hours_array['open_time'];
+        $view->day_dt_end = $hours_array['close_time'];
         //step back one time slot on $view->day_dt_end
         $view->dt_last_slot = clone $view->day_dt_end;
         $view->dt_last_slot->modify('- '.$config->time_increment.' minutes');

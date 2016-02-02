@@ -40,7 +40,7 @@
 			<th><?php echo Jhtml::_('date',$this->dt_start->format(DATE_ATOM),JText::_('COM_PBBOOKING_SUCCESS_TIME_FORMAT'));?></th>
 			<?php foreach ($this->cal_objs as $key => $cal) :?>                        
 					<?php $event = $cal->is_free_from_to($this->dt_start,$dt_slot_end,true);?>
-                                        <?php $open = $cal->isOpen($this->dt_start);?>
+                                        <?php $open = $cal->isOpen($this->dt_start);?>                       
                                         <?php if ($open  && is_bool($open) && !$event) :?>
                                         <td style="background-color: <?php echo $cal->color;?>">
                                             <a class="no-print" href="<?php echo JURI::root(false);?>administrator/index.php?option=com_pbbooking&controller=manage&task=create&cal_id=<?php echo $key;?>&dtstart=<?php echo $this->dt_start->format('YmdHi');?>&selectedOffice=<?php echo $this->selectedOffice ;?>">
@@ -64,6 +64,12 @@
                                             </a>
                                             <span class="hide-summary" style="display:none; font-weight:bold;">
                                                 <?php echo $event->admin_summary();?>
+                                            </span>
+                                        </td>
+                                        <?php elseif($event && is_bool($event) && $open  && is_bool($open)) :?>
+                                        <td class="busy-cell">
+                                            <span class="hide-summary" style=" font-weight:bold;">
+                                                Chiuso
                                             </span>
                                         </td>
 					<?php endif;?>			
