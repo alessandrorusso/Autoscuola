@@ -3370,6 +3370,10 @@ aside .moduletable ul.nav ul li:last-child
     margin-left: 10% !important;
 }
 
+.latestnews li {
+margin-bottom: 6px;
+}
+
 .booking-button
 {    
     padding: 1%;
