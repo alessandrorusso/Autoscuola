@@ -52,7 +52,25 @@
 			onchange="this.form.submit();"
 			>
 			<option value="">COM_USERS_OPTION_FILTER_OFFICE</option>
-		</field>                    
+		</field> 
+                <field
+			name="user_license"
+			type="userlicense"
+			label="COM_USERS_OPTION_FILTER_LICENSE"
+			description="COM_USERS_OPTION_FILTER_LICENSE"
+			onchange="this.form.submit();"
+			>
+			<option value="">COM_USERS_OPTION_FILTER_LICENSE</option>
+		</field>
+                <field
+			name="user_transport"
+			type="usertransport"
+			label="COM_USERS_OPTION_FILTER_TRANSPORT"
+			description="COM_USERS_OPTION_FILTER_TRANSPORT"
+			onchange="this.form.submit();"
+			>
+			<option value="">COM_USERS_OPTION_FILTER_TRANSPORT</option>
+		</field>                                                      
 	</fields>
 	<fields name="list">
 		<field

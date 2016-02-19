@@ -45,6 +45,8 @@ class UsersModelUsers extends JModelList
 				'range',
 				'state',
                                 'user_office',
+                                'user_license',
+                                'user_transport'
 			);
 		}
 
@@ -91,7 +93,13 @@ class UsersModelUsers extends JModelList
                 
                 $user_office = $this->getUserStateFromRequest($this->context . '.filter.user_office', 'filter.user_office');
 		$this->setState('filter.user_office', $user_office);
-
+                
+                $user_license = $this->getUserStateFromRequest($this->context . '.filter.user_license', 'filter.user_license');
+                $this->setState('filter.user_license', $user_license);
+                
+                $user_transport = $this->getUserStateFromRequest($this->context . '.filter.user_transport', 'filter.user_transport');
+                $this->setState('filter.user_transport', $user_transport);
+                
 		$groups = json_decode(base64_decode($app->input->get('groups', '', 'BASE64')));
 
 		if (isset($groups))
@@ -140,6 +148,8 @@ class UsersModelUsers extends JModelList
 		$id .= ':' . $this->getState('filter.group_id');
 		$id .= ':' . $this->getState('filter.range');
                 $id .= ':' . $this->getState('filter.user_office');
+                $id .= ':' . $this->getState('filter.user_license');
+                $id .= ':' . $this->getState('filter.user_transport');
 
 		return parent::getStoreId($id);
 	}
@@ -436,6 +446,35 @@ class UsersModelUsers extends JModelList
                             );
                     $db->setQuery($query);                    
                 }
+                
+                // Add filter for registration ranges select list
+                $user_license = $this->getState('filter.user_license');
+                if ($user_license){
+                    
+                    $subQuery = $db->getQuery(true)
+			->select('user_id')			
+			->from('#__user_profiles')
+			->where('profile_key =' .$db->quote('profileautoscuola.license').' and profile_value = '.$user_license);
+
+                    $query->where('a.id IN (' . $subQuery->__toString() . ')'
+                            );
+                    $db->setQuery($query);                    
+                    
+                }
+                
+                // Add filter for registration ranges select list
+                $user_transport = $this->getState('filter.user_transport');
+                if ($user_transport){
+                    
+                    $subQuery = $db->getQuery(true)
+			->select('user_id')			
+			->from('#__user_profiles')
+			->where('profile_key =' .$db->quote('profileautoscuola.transport').' and profile_value = '.$user_transport);
+
+                    $query->where('a.id IN (' . $subQuery->__toString() . ')'
+                            );
+                    $db->setQuery($query); 
+                }
 
 		// Filter by excluded users
 		$excluded = $this->getState('filter.excluded');
@@ -448,6 +487,16 @@ class UsersModelUsers extends JModelList
 		// Add the list ordering clause.
 		$query->order($db->escape($this->getState('list.ordering', 'a.name')) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
 
+                /*if($user_license){
+                    $sqlReloadTransport = sprintf("select tr.id AS value, tr.desc AS text from  #__pbbooking_lov_transport tr, #__pbbooking_lov_transport_license tr_ls "
+                    . "where tr.id = tr_ls.id_transport and "
+                    . "tr_ls.id_license = %s", $user_license);
+                    $db1 = $this->getDbo();
+                    $db1->setQuery($sqlReloadTransport);
+                    $select_transport = $db1->loadObjectList();                    
+                    $this->setState('filter.user_transport', $select_transport);
+                }*/
+                
 		return $query;
 	}
 
