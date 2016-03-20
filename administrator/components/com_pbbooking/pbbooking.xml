@@ -57,6 +57,7 @@
 		<menu controller="customfields" task="display">COM_PBBOOKING_SUB_MENU_MANAGE_CUSTOM_FIELDS</menu>
 		<menu controller="manage" task="display">COM_PBBOOKING_SUB_MENU_MANAGE_DIARIES</menu>
 		<menu controller="manage" task="blockdays">COM_PBBOOKNG_TRADING_HOURS_HOLIDAYS</menu>
+                <menu controller="report" task="display">COM_PBBOOKING_SUB_MENU_MANAGE_REPORT</menu>                
 	</submenu>
 
 	<!-- Administration Main File Copy Section -->

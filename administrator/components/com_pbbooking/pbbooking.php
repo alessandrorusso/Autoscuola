@@ -66,6 +66,7 @@ if (JOOMLA_VERSION == '2.5') {
 	JSubMenuHelper::addEntry(JText::_('COM_PBBOOKING_SUB_MENU_MANAGE_CONFIGURATION'), 'index.php?option=com_pbbooking&controller=configuration&task=edit',($input->get('controller',null,'string') == 'configuration'));
 	JSubMenuHelper::addEntry(JText::_('COM_PBBOOKING_SUB_MENU_MANAGE_CUSTOM_FIELDS'), 'index.php?option=com_pbbooking&controller=customfields&task=display',($input->get('controller',null,'string') == 'customfields'));
 	JSubMenuHelper::addEntry(JText::_('COM_PBBOOKING_SUB_MENU_MANAGE_DIARIES'), 'index.php?option=com_pbbooking&controller=manage',($input->get('controller',null,'string') == 'manage' && ($input->get('task',null,'string') != 'blockdays') ));
+        JSubMenuHelper::addEntry(JText::_('COM_PBBOOKING_SUB_MENU_MANAGE_REPORT'), 'index.php?option=com_pbbooking&controller=report&task=display',($input->get('controller',null,'string') == 'report'));
 }
 
 
