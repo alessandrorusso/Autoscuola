@@ -18,9 +18,18 @@ defined('_JEXEC') or die('Restricted access');
 <script src="<?php echo JURI::root(false); ?>administrator/components/com_pbbooking/scripts/jquery.dataTables.min.js"></script>
 <script>    
     dataSet = <?php echo json_encode($this->users); ?>;
+    
+    function printReservation() {
+        
+        jQuery('.printer').click(function(event){             
+            jQuery('#recapTable').print(); 
+        });
+        
+    }  
     window.addEvent('domready',function(){    
-         var width = jQuery(window).width();
-         var height = jQuery(window).height();
+        printReservation();
+        var width = jQuery(window).width();
+        var height = jQuery(window).height();
         jQuery('#dialog-form').dialog({
             autoOpen: false,
             height: (height-(height*0.40)),
@@ -56,7 +65,7 @@ defined('_JEXEC') or die('Restricted access');
     });
 </script>
 <div class="bootstrap-wrap">
-    <div class="tab-pane" id="block-dates"> <!-- begin block dates pane -->
+    <div class="tab-pane no-print" id="block-dates"> <!-- begin block dates pane -->
         <div class="row-fluid">
             <div class="span12">
                 <table id="userTable" class="adminlist display" style="width:100%;" class="table-striped">
@@ -75,6 +84,7 @@ defined('_JEXEC') or die('Restricted access');
     </div>
 </div>
 <div id="dialog-form" title="Riepilogo Prenotazioni">
+   <img class="printer no-print" src="<?php echo JURI::root(true);?>/administrator/components/com_pbbooking/images/printer.png" border="0" alt="Stampa Prenotazioni"> 
    <table id="recapTable" class="adminlist display" style="width:100%;" class="table-striped">
                     <thead>
                         <tr>
