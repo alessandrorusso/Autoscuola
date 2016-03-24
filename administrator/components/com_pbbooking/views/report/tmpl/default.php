@@ -25,7 +25,8 @@ defined('_JEXEC') or die('Restricted access');
             jQuery('#recapTable').print(); 
         });
         
-    }  
+    }
+    
     window.addEvent('domready',function(){    
         printReservation();
         var width = jQuery(window).width();
@@ -50,7 +51,14 @@ defined('_JEXEC') or die('Restricted access');
             }        
         ]
         });
-        var recapTable = jQuery('#recapTable').dataTable();
+        var recapTable = jQuery('#recapTable').dataTable({
+            "aoColumns": [
+                { "sType": "date-uk" },                
+                null,
+                null,                
+                null
+            ]
+        });
         jQuery('#userTable').on( 'click', 'tr', function () {
             var userId = table.row( this ).data()[0];
             jQuery.get( "index.php?option=com_pbbooking&task=recap&controller=report"+"&userId="+userId, function( data ) {
@@ -61,8 +69,23 @@ defined('_JEXEC') or die('Restricted access');
             });            
         });
         
-        
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+"date-uk-pre": function ( a ) {
+    var ukDatea = a.split('-');
+    return (ukDatea[2] + ukDatea[1] + ukDatea[0]) * 1;
+},
+
+"date-uk-asc": function ( a, b ) {
+    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+},
+
+"date-uk-desc": function ( a, b ) {
+    return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+}
+} );
     });
+    
+    
 </script>
 <div class="bootstrap-wrap">
     <div class="tab-pane no-print" id="block-dates"> <!-- begin block dates pane -->
