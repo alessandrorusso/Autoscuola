@@ -14,7 +14,7 @@ class calendar
     const CONFIG_QUERY = 'select * from #__pbbooking_config';
     const ALL_CALENDARS_QUERY = 'select * from #__pbbooking_cals';
     const ACTIVE_CALENDARS_QUERY = 'select * from #__pbbooking_cals where status=1';
-    const ALL_BLOCKS_QUERY = 'select * from #__pbbooking_block_days';
+    const ALL_BLOCKS_QUERY = 'select * from #__pbbooking_block_days order by dtcreate DESC';
     const CALENDAR_EVENTS_QUERY = 'select * from #__pbbooking_events where cal_id = ';    
     const CALENDAR_BLOCK_EXCEPTIONS_QUERY = 'select * from #__pbbooking_block_exceptions where cal_id= ';
 
@@ -303,8 +303,10 @@ function isOpen($date) {
                 //verificare se è stato rimosso                                
                 if(count($calendar_block_exceptions) > 0){
                     foreach ($calendar_block_exceptions as $exception){
-                        if(self::check_block_exception($date, $exception)){
-                            return true;
+                        if($exception->dtcreate > $blocked_day->dtcreate){                            
+                            if(self::check_block_exception($date, $exception)){
+                                return true;
+                            }                        
                         }
                     }
                 }
