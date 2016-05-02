@@ -149,11 +149,15 @@ class PbbookingsControllermanage extends JControllerLegacy {
             $dateparam = $input->get('dtstart', date_create('now', new DateTimeZone(PBBOOKING_TIMEZONE))->format('YmdHi'), 'string');
             $cal_id = $input->get('cal_id', 0, 'integer');
             
-            $view->cal = new Calendar();
+            //estraggo il calendario in questione
+            $db->setQuery('select * from #__pbbooking_cals where id = '.$db->escape($cal_id));
+            $calendar = $db->loadObject();
+            
+            $view->cal = new calendar;
             $view->cal->loadCalendarFromDbase(array((int) $cal_id));            
             $view->selectedOffice = $input->get('selectedOffice', 1, 'integer');
-            $opening_hours = json_decode($config->trading_hours, true);            
-            $closing_time_arr = str_split($opening_hours[date_create($dateparam, new DateTimezone(PBBOOKING_TIMEZONE))->format('w')]['close_time'], 2);                        
+            $opening_hours = Pbbookinghelper::get_calendar_hours($calendar, date_create($dateparam, new DateTimeZone(PBBOOKING_TIMEZONE)));                        
+            $closing_time_arr = str_split($opening_hours['close_time'], 2);
             
             $view->dateparam = date_create($dateparam, new DateTimeZone(PBBOOKING_TIMEZONE));
             $db->setQuery('select * from #__pbbooking_customfields');
