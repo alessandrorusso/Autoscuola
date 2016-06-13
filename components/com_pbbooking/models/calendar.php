@@ -14,7 +14,7 @@ class calendar
     const CONFIG_QUERY = 'select * from #__pbbooking_config';
     const ALL_CALENDARS_QUERY = 'select * from #__pbbooking_cals';
     const ACTIVE_CALENDARS_QUERY = 'select * from #__pbbooking_cals where status=1';
-    const ALL_BLOCKS_QUERY = 'select * from #__pbbooking_block_days order by dtcreate DESC';
+    const ALL_BLOCKS_QUERY = 'SELECT * FROM e3xea_pbbooking_block_days where block_end_date >= CURRENT_DATE or r_end >= CURRENT_DATE order by id DESC';
     const CALENDAR_EVENTS_QUERY = 'select * from #__pbbooking_events where cal_id = ';    
     const CALENDAR_BLOCK_EXCEPTIONS_QUERY = 'select * from #__pbbooking_block_exceptions where cal_id= ';
 
